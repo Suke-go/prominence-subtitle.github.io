@@ -27,6 +27,13 @@
     </div>
 
     <div class="controls-wrapper">
+      <!-- Server connection status -->
+      <div class="server-status-bar" id="server_status_bar">
+        <span id="server_status_indicator" class="status-indicator disconnected"></span>
+        <span id="server_status_text">Not connected</span>
+        <button id="btn_connect_server" class="btn-small">Connect to Server</button>
+      </div>
+
       <div class="control-group">
         <label>
           <input type="checkbox" id="checkbox_controls" checked>
@@ -106,6 +113,7 @@
   <script src="wasm/syllable.js"></script>
 
   <!-- Application scripts -->
+  <script src="js/speech-client.js"></script>
   <script src="js/prominence-subtitle.js"></script>
 </body>
 

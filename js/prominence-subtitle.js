@@ -56,6 +56,15 @@ class ProminenceSubtitle {
         // Timing
         this.lastWordTime = 0;
         this.wordTimeEstimates = []; // For post-hoc alignment
+
+        // Server-based speech recognition (Google Cloud STT)
+        this.speechClient = null;
+        this.useServerSTT = false;
+        this.streamingStartTime = 0; // For aligning word timestamps with prominence
+
+        // Server connection UI elements
+        this.serverStatusIndicator = null;
+        this.serverStatusText = null;
     }
 
     /**
@@ -468,6 +477,15 @@ class ProminenceSubtitle {
      * Setup UI controls
      */
     setupControls() {
+        // Server connection UI
+        this.serverStatusIndicator = document.getElementById('server_status_indicator');
+        this.serverStatusText = document.getElementById('server_status_text');
+        const btnConnectServer = document.getElementById('btn_connect_server');
+
+        btnConnectServer?.addEventListener('click', () => {
+            this.connectToServer();
+        });
+
         // Controls checkbox
         const checkboxControls = document.getElementById('checkbox_controls');
         const controlsPanel = document.getElementById('controls_panel');
@@ -628,12 +646,182 @@ class ProminenceSubtitle {
     }
 
     /**
+     * Connect to backend STT server
+     */
+    async connectToServer() {
+        if (this.speechClient && this.speechClient.isConnected) {
+            // Already connected - disconnect
+            this.speechClient.disconnect();
+            this.updateServerStatus('disconnected');
+            return;
+        }
+
+        this.updateServerStatus('connecting');
+
+        this.speechClient = new SpeechClient({
+            serverUrl: 'ws://localhost:3001',
+            language: this.settings.language,
+
+            onResult: (result) => {
+                this.handleServerSpeechResult(result);
+            },
+
+            onError: (error) => {
+                console.error('[STT] Error:', error);
+                this.setStatus(`STT Error: ${error}`, 'error');
+            },
+
+            onStatusChange: (status) => {
+                this.updateServerStatus(status);
+            }
+        });
+
+        try {
+            await this.speechClient.connect();
+
+            // Stop browser-based speech recognition
+            if (this.recognition) {
+                this.recognition.stop();
+                this.isRecognizing = false;
+            }
+
+            // Start streaming to server
+            this.streamingStartTime = performance.now();
+            await this.speechClient.startStreaming();
+
+            this.useServerSTT = true;
+            this.setStatus('Connected to STT Server - Speak!', 'ready');
+
+        } catch (error) {
+            console.error('[STT] Connection failed:', error);
+            this.setStatus('Server connection failed', 'error');
+            this.updateServerStatus('disconnected');
+        }
+    }
+
+    /**
+     * Update server connection status UI
+     */
+    updateServerStatus(status) {
+        if (this.serverStatusIndicator) {
+            this.serverStatusIndicator.className = `status-indicator ${status}`;
+        }
+        if (this.serverStatusText) {
+            const statusTexts = {
+                'disconnected': 'Not connected',
+                'connecting': 'Connecting...',
+                'connected': 'Connected to STT Server'
+            };
+            this.serverStatusText.textContent = statusTexts[status] || status;
+        }
+
+        // Update button text
+        const btn = document.getElementById('btn_connect_server');
+        if (btn) {
+            btn.textContent = status === 'connected' ? 'Disconnect' : 'Connect to Server';
+        }
+    }
+
+    /**
+     * Handle speech result from server (with word-level timestamps)
+     */
+    handleServerSpeechResult(result) {
+        if (!result.words || result.words.length === 0) {
+            // Fallback to transcript without word timing
+            if (result.transcript) {
+                const words = result.transcript.split(/\s+/).filter(w => w.length > 0);
+                const aligned = this.alignWordsWithProminence(words, performance.now());
+
+                if (result.isFinal) {
+                    this.currentWords.push(...aligned);
+                    this.trimCurrentWords();
+                    this.interimWords = [];
+                } else {
+                    this.interimWords = aligned.map(w => ({ ...w, isInterim: true }));
+                }
+            }
+        } else {
+            // Use word-level timestamps for precise alignment
+            const alignedWords = result.words.map(wordInfo => {
+                // Convert server timestamp to local prominence buffer time
+                const wordStartLocal = this.streamingStartTime + wordInfo.startTime;
+                const wordEndLocal = this.streamingStartTime + wordInfo.endTime;
+
+                const prominenceScore = this.alignWordWithProminenceTimestamp(
+                    wordStartLocal,
+                    wordEndLocal
+                );
+
+                return {
+                    text: wordInfo.word,
+                    prominenceScore: prominenceScore,
+                    isInterim: !result.isFinal,
+                    confidence: wordInfo.confidence
+                };
+            });
+
+            if (result.isFinal) {
+                this.currentWords.push(...alignedWords);
+                this.trimCurrentWords();
+                this.interimWords = [];
+            } else {
+                this.interimWords = alignedWords;
+            }
+        }
+
+        this.renderSubtitles();
+    }
+
+    /**
+     * Align a single word using precise timestamps
+     * This is the key improvement - uses exact word timing from STT
+     */
+    alignWordWithProminenceTimestamp(startTime, endTime) {
+        // Find prominence events that occurred during this word's timespan
+        const wordEvents = this.prominenceBuffer.filter(e =>
+            e.timestamp >= startTime && e.timestamp <= endTime
+        );
+
+        if (wordEvents.length === 0) {
+            // No events during this word - check nearby with decay
+            const tolerance = 200; // 200ms tolerance
+            const nearbyEvents = this.prominenceBuffer.filter(e =>
+                e.timestamp >= startTime - tolerance && e.timestamp <= endTime + tolerance
+            );
+
+            if (nearbyEvents.length > 0) {
+                // Use max with distance decay
+                let bestScore = 0;
+                for (const event of nearbyEvents) {
+                    const midTime = (startTime + endTime) / 2;
+                    const distance = Math.abs(event.timestamp - midTime);
+                    const decay = 1 - (distance / tolerance);
+                    const adjustedScore = event.score * Math.max(0, decay);
+                    if (adjustedScore > bestScore) {
+                        bestScore = adjustedScore;
+                    }
+                }
+                return bestScore;
+            }
+
+            return 0.5; // Default neutral score
+        }
+
+        // MaxPooling: use maximum score among events during this word
+        return Math.max(...wordEvents.map(e => e.score));
+    }
+
+    /**
      * Cleanup
      */
     destroy() {
         if (this.recognition) {
             this.isRecognizing = false;
             this.recognition.stop();
+        }
+
+        if (this.speechClient) {
+            this.speechClient.disconnect();
         }
 
         if (this.prominenceDetector) {
