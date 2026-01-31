@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prominence Subtitle - Dynamic Speech Overlay</title>
+  <meta name="description"
+    content="Real-time subtitle overlay with dynamic font sizing based on speech prominence detection">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="main">
+    <div id="status" class="status">Initializing...</div>
+
+    <div id="video_wrapper" class="video-wrapper">
+      <video id="webcam" class="webcam" autoplay muted playsinline></video>
+      <div id="subtitle_overlay" class="subtitle-overlay">
+        <div id="subtitle_text" class="subtitle-text"></div>
+      </div>
+      <button id="fullscreen_btn" class="fullscreen-btn" title="Toggle Fullscreen">⛶</button>
+    </div>
+
+    <div class="controls-wrapper">
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="checkbox_controls" checked>
+          Show Controls
+        </label>
+      </div>
+
+      <div id="controls_panel" class="controls-panel">
+        <div class="control-row">
+          <div class="control-item">
+            <label for="select_language">Language:</label>
+            <select id="select_language">
+              <option value="en-US">English (US)</option>
+              <option value="en-GB">English (UK)</option>
+              <option value="en-AU">English (AU)</option>
+            </select>
+          </div>
+
+          <div class="control-item">
+            <label for="slider_base_size">Base Size:</label>
+            <input type="range" id="slider_base_size" min="16" max="48" value="24">
+            <span id="value_base_size">24</span>px
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-item">
+            <label for="slider_sensitivity">Prominence Sensitivity:</label>
+            <input type="range" id="slider_sensitivity" min="0" max="100" value="50">
+            <span id="value_sensitivity">50</span>%
+          </div>
+
+          <div class="control-item">
+            <button id="btn_recalibrate">Recalibrate</button>
+          </div>
+        </div>
+
+        <div class="control-row debug-row">
+          <div class="control-item">
+            <label>
+              <input type="checkbox" id="checkbox_debug">
+              Show Debug Info
+            </label>
+          </div>
+          <div id="debug_info" class="debug-info hidden">
+            <span id="debug_calibration">Calibrating...</span>
+            <span id="debug_prominence">Score: --</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="help-wrapper">
+      <p>
+        This demo combines real-time speech recognition with acoustic prominence detection
+        to dynamically adjust subtitle font sizes based on prosodic stress.
+      </p>
+      <p>
+        Speak in English. Stressed syllables will appear larger.
+        Based on WCAG accessibility guidelines (12pt/18pt/24pt sizing).
+      </p>
+    </div>
+  </div>
+
+  <!-- Wasm loader (local copy for GitHub Pages) -->
+  <script src="wasm/syllable.js"></script>
+
+  <!-- Application scripts -->
+  <script src="js/prominence-subtitle.js"></script>
+</body>
+
+</html>
