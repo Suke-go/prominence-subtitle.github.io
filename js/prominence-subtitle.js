@@ -382,11 +382,15 @@ class ProminenceSubtitle {
             // Estimate when this word was spoken
             const estimatedTime = recognitionTime - windowMs + (index + 0.5) * wordDurationMs;
 
-            // Find prominence events near this time
-            const toleranceMs = wordDurationMs * 1.5;
-            const nearbyEvents = this.prominenceBuffer.filter(e =>
-                Math.abs(e.timestamp - estimatedTime) < toleranceMs
-            );
+            // Find prominence events near this time - wider window to share events
+            const toleranceMs = wordDurationMs * 3; // Extended to 3x for better coverage
+            const nearbyEvents = this.prominenceBuffer
+                .filter(e => Math.abs(e.timestamp - estimatedTime) < toleranceMs)
+                .map(e => ({
+                    ...e,
+                    // Distance decay: closer events have higher weight
+                    distanceWeight: 1 - (Math.abs(e.timestamp - estimatedTime) / toleranceMs)
+                }));
 
             // Default score when no events detected
             if (nearbyEvents.length === 0) {
@@ -397,14 +401,22 @@ class ProminenceSubtitle {
                 };
             }
 
-            // Weighted Mean: weight = energy * duration proxy
+            // Hybrid approach: Weighted Mean + MaxPooling safeguard
             // Single-pass calculation for efficiency
             let weightedSum = 0;
             let totalWeight = 0;
+            let maxScore = 0;
 
             for (let i = 0; i < nearbyEvents.length; i++) {
                 const event = nearbyEvents[i];
                 const energy = event.features?.energy || 0.1;
+                const distanceWeight = event.distanceWeight || 1;
+
+                // Track max score (weighted by distance)
+                const distanceAdjustedScore = event.score * distanceWeight;
+                if (distanceAdjustedScore > maxScore) {
+                    maxScore = distanceAdjustedScore;
+                }
 
                 // Duration proxy: time gap to next event (or default 100ms)
                 let durationWeight = 100; // default ms
@@ -412,17 +424,21 @@ class ProminenceSubtitle {
                     durationWeight = Math.min(300, nearbyEvents[i + 1].timestamp - event.timestamp);
                 }
 
-                // Combined weight: energy * duration
-                const weight = energy * durationWeight;
+                // Combined weight: energy * duration * distance decay
+                const weight = energy * durationWeight * distanceWeight;
                 weightedSum += event.score * weight;
                 totalWeight += weight;
             }
 
             const weightedMean = totalWeight > 0 ? weightedSum / totalWeight : 0.2;
 
+            // Hybrid: use the higher of weightedMean or maxScore * 0.8
+            // This prevents strong peaks from being averaged away
+            const hybridScore = Math.max(weightedMean, maxScore * 0.8);
+
             return {
                 text,
-                prominenceScore: weightedMean,
+                prominenceScore: hybridScore,
                 isInterim: false
             };
         });
