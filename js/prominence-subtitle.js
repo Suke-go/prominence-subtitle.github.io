@@ -117,9 +117,9 @@ class ProminenceSubtitle {
 
         this.prominenceDetector = new ProminenceDetectorWasm({
             sampleRate: 48000,
-            prominenceThreshold: 0.35,      // Increased from 0.15 - less sensitive
-            minSyllableDistMs: 200,         // Increased from 150 - prevent rapid triggering
-            minEnergyThreshold: 0.001,      // Increased - filter whisper-level sounds
+            prominenceThreshold: 0.15,      // Lowered for better detection
+            minSyllableDistMs: 150,         // Reduced for faster event rate
+            minEnergyThreshold: 0.0005,     // Lowered for sensitivity
             calibrationDurationMs: 2000,
 
             onReady: () => {
@@ -616,8 +616,8 @@ class ProminenceSubtitle {
     finishVoiceCalibration() {
         this.isVoiceCalibrating = false;
 
-        if (this.calibrationScores.length < 5) {
-            this.setStatus('Not enough data - try again (need 5+ events)', 'error');
+        if (this.calibrationScores.length < 3) {
+            this.setStatus('Not enough data - try again (need 3+ events)', 'error');
             console.warn('[Calibration] Not enough data:', this.calibrationScores.length);
             return;
         }
