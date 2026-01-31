@@ -367,7 +367,8 @@ class ProminenceSubtitle {
     }
 
     /**
-     * Align words with prominence scores (MaxPooling)
+     * Align words with prominence scores (Weighted Mean with syllable-length proxy)
+     * High-performance single-pass calculation
      */
     alignWordsWithProminence(words, recognitionTime) {
         const numWords = words.length;
@@ -381,22 +382,47 @@ class ProminenceSubtitle {
             // Estimate when this word was spoken
             const estimatedTime = recognitionTime - windowMs + (index + 0.5) * wordDurationMs;
 
-            // Find prominence peak near this time (MaxPooling within tolerance)
+            // Find prominence events near this time
             const toleranceMs = wordDurationMs * 1.5;
             const nearbyEvents = this.prominenceBuffer.filter(e =>
                 Math.abs(e.timestamp - estimatedTime) < toleranceMs
             );
 
-            // MaxPooling: use maximum score among nearby events
-            // Default to 0.2 (small) when no prominence detected - whispers/quiet speech
-            let maxScore = 0.2;
-            if (nearbyEvents.length > 0) {
-                maxScore = Math.max(...nearbyEvents.map(e => e.score));
+            // Default score when no events detected
+            if (nearbyEvents.length === 0) {
+                return {
+                    text,
+                    prominenceScore: 0.2,
+                    isInterim: false
+                };
             }
+
+            // Weighted Mean: weight = energy * duration proxy
+            // Single-pass calculation for efficiency
+            let weightedSum = 0;
+            let totalWeight = 0;
+
+            for (let i = 0; i < nearbyEvents.length; i++) {
+                const event = nearbyEvents[i];
+                const energy = event.features?.energy || 0.1;
+
+                // Duration proxy: time gap to next event (or default 100ms)
+                let durationWeight = 100; // default ms
+                if (i < nearbyEvents.length - 1) {
+                    durationWeight = Math.min(300, nearbyEvents[i + 1].timestamp - event.timestamp);
+                }
+
+                // Combined weight: energy * duration
+                const weight = energy * durationWeight;
+                weightedSum += event.score * weight;
+                totalWeight += weight;
+            }
+
+            const weightedMean = totalWeight > 0 ? weightedSum / totalWeight : 0.2;
 
             return {
                 text,
-                prominenceScore: maxScore,
+                prominenceScore: weightedMean,
                 isInterim: false
             };
         });
