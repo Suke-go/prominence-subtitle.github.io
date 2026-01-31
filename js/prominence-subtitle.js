@@ -382,8 +382,9 @@ class ProminenceSubtitle {
             // Estimate when this word was spoken
             const estimatedTime = recognitionTime - windowMs + (index + 0.5) * wordDurationMs;
 
-            // Find prominence events near this time - wider window to share events
-            const toleranceMs = wordDurationMs * 3; // Extended to 3x for better coverage
+            // Find prominence events near this time
+            // Use minimum tolerance of 300ms to handle long sentences
+            const toleranceMs = Math.max(300, wordDurationMs * 3);
             const nearbyEvents = this.prominenceBuffer
                 .filter(e => Math.abs(e.timestamp - estimatedTime) < toleranceMs)
                 .map(e => ({
