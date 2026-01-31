@@ -108,8 +108,9 @@ class ProminenceSubtitle {
 
         this.prominenceDetector = new ProminenceDetectorWasm({
             sampleRate: 48000,
-            prominenceThreshold: 0.15,
-            minSyllableDistMs: 150,
+            prominenceThreshold: 0.35,      // Increased from 0.15 - less sensitive
+            minSyllableDistMs: 200,         // Increased from 150 - prevent rapid triggering
+            minEnergyThreshold: 0.001,      // Increased - filter whisper-level sounds
             calibrationDurationMs: 2000,
 
             onReady: () => {
