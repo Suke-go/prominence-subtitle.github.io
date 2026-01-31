@@ -126,9 +126,9 @@ class ProminenceSubtitle {
 
         this.prominenceDetector = new ProminenceDetectorWasm({
             sampleRate: 48000,
-            prominenceThreshold: 0.15,      // Lowered for better detection
-            minSyllableDistMs: 150,         // Reduced for faster event rate
-            minEnergyThreshold: 0.0005,     // Lowered for sensitivity
+            prominenceThreshold: 0.88,      // High threshold - only strong prominence
+            minSyllableDistMs: 150,
+            minEnergyThreshold: 0.001,
             calibrationDurationMs: 2000,
 
             onReady: () => {
@@ -733,9 +733,13 @@ class ProminenceSubtitle {
                 const aligned = this.alignWordsWithProminence(words, performance.now());
 
                 if (result.isFinal) {
-                    this.currentWords.push(...aligned);
-                    this.trimCurrentWords();
+                    // Use cached interim scores if available
+                    const finalWords = this.interimWords.length > 0
+                        ? this.interimWords.map(w => ({ ...w, isInterim: false }))
+                        : aligned;
+                    this.currentWords.push(...finalWords);
                     this.interimWords = [];
+                    this.trimCurrentWords();
                 } else {
                     this.interimWords = aligned.map(w => ({ ...w, isInterim: true }));
                 }
@@ -761,10 +765,19 @@ class ProminenceSubtitle {
             });
 
             if (result.isFinal) {
-                this.currentWords.push(...alignedWords);
-                this.trimCurrentWords();
+                // Use cached interim scores if they match count
+                // This preserves the accurate alignment from interim processing
+                let finalWords;
+                if (this.interimWords.length === alignedWords.length) {
+                    finalWords = this.interimWords.map(w => ({ ...w, isInterim: false }));
+                } else {
+                    finalWords = alignedWords;
+                }
+                this.currentWords.push(...finalWords);
                 this.interimWords = [];
+                this.trimCurrentWords();
             } else {
+                // Interim: cache scores for later use
                 this.interimWords = alignedWords;
             }
         }
@@ -777,14 +790,25 @@ class ProminenceSubtitle {
      * This is the key improvement - uses exact word timing from STT
      */
     alignWordWithProminenceTimestamp(startTime, endTime) {
+        // Debug: log buffer state
+        const bufferSize = this.prominenceBuffer.length;
+        const bufferTimeRange = bufferSize > 0
+            ? `${this.prominenceBuffer[0].timestamp.toFixed(0)} - ${this.prominenceBuffer[bufferSize - 1].timestamp.toFixed(0)}`
+            : 'empty';
+
         // Find prominence events that occurred during this word's timespan
         const wordEvents = this.prominenceBuffer.filter(e =>
             e.timestamp >= startTime && e.timestamp <= endTime
         );
 
+        // Debug log for first few words
+        if (this.debugLogging) {
+            console.log(`[Align] Word time: ${startTime.toFixed(0)}-${endTime.toFixed(0)}, Buffer: ${bufferTimeRange}, Events: ${wordEvents.length}`);
+        }
+
         if (wordEvents.length === 0) {
             // No events during this word - check nearby with decay
-            const tolerance = 200; // 200ms tolerance
+            const tolerance = 300; // Increased to 300ms tolerance
             const nearbyEvents = this.prominenceBuffer.filter(e =>
                 e.timestamp >= startTime - tolerance && e.timestamp <= endTime + tolerance
             );
@@ -804,7 +828,7 @@ class ProminenceSubtitle {
                 return bestScore;
             }
 
-            return 0.5; // Default neutral score
+            return 0.3; // Low default score for words without prominence
         }
 
         // MaxPooling: use maximum score among events during this word
