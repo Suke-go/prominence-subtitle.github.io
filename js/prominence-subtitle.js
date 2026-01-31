@@ -367,79 +367,50 @@ class ProminenceSubtitle {
     }
 
     /**
-     * Align words with prominence scores (Weighted Mean with syllable-length proxy)
-     * High-performance single-pass calculation
+     * Align words with prominence scores (Sequential Assignment)
+     * Simple and reliable: assign recent events to words in order
      */
     alignWordsWithProminence(words, recognitionTime) {
         const numWords = words.length;
         if (numWords === 0) return [];
 
-        // Estimate word timing (simple equal distribution over buffer window)
-        const windowMs = Math.min(this.bufferWindowMs, 2000);
-        const wordDurationMs = windowMs / Math.max(numWords, 1);
+        // Get recent events (within last 3 seconds, sorted by time)
+        const recentEvents = this.prominenceBuffer
+            .filter(e => recognitionTime - e.timestamp < 3000)
+            .sort((a, b) => a.timestamp - b.timestamp);
 
-        return words.map((text, index) => {
-            // Estimate when this word was spoken
-            const estimatedTime = recognitionTime - windowMs + (index + 0.5) * wordDurationMs;
+        // If no events, all words get default score
+        if (recentEvents.length === 0) {
+            return words.map(text => ({
+                text,
+                prominenceScore: 0.5, // neutral default
+                isInterim: false
+            }));
+        }
 
-            // Find prominence events near this time
-            // Use minimum tolerance of 300ms to handle long sentences
-            const toleranceMs = Math.max(300, wordDurationMs * 3);
-            const nearbyEvents = this.prominenceBuffer
-                .filter(e => Math.abs(e.timestamp - estimatedTime) < toleranceMs)
-                .map(e => ({
-                    ...e,
-                    // Distance decay: closer events have higher weight
-                    distanceWeight: 1 - (Math.abs(e.timestamp - estimatedTime) / toleranceMs)
-                }));
+        // Sequential assignment: distribute events across words
+        // Each word gets assigned events proportionally
+        const eventsPerWord = Math.max(1, Math.floor(recentEvents.length / numWords));
 
-            // Default score when no events detected
-            if (nearbyEvents.length === 0) {
-                return {
-                    text,
-                    prominenceScore: 0.2,
-                    isInterim: false
-                };
+        return words.map((text, wordIndex) => {
+            // Get events for this word
+            const startIdx = wordIndex * eventsPerWord;
+            const endIdx = Math.min(startIdx + eventsPerWord, recentEvents.length);
+            const wordEvents = recentEvents.slice(startIdx, endIdx);
+
+            // Calculate score for this word
+            let score = 0.5; // default
+            if (wordEvents.length > 0) {
+                // Use max score among assigned events
+                score = Math.max(...wordEvents.map(e => e.score));
+            } else if (recentEvents.length > 0) {
+                // Fallback: use overall max if no specific events
+                score = Math.max(...recentEvents.map(e => e.score)) * 0.7;
             }
-
-            // Hybrid approach: Weighted Mean + MaxPooling safeguard
-            // Single-pass calculation for efficiency
-            let weightedSum = 0;
-            let totalWeight = 0;
-            let maxScore = 0;
-
-            for (let i = 0; i < nearbyEvents.length; i++) {
-                const event = nearbyEvents[i];
-                const energy = event.features?.energy || 0.1;
-                const distanceWeight = event.distanceWeight || 1;
-
-                // Track max score (weighted by distance)
-                const distanceAdjustedScore = event.score * distanceWeight;
-                if (distanceAdjustedScore > maxScore) {
-                    maxScore = distanceAdjustedScore;
-                }
-
-                // Duration proxy: time gap to next event (or default 100ms)
-                let durationWeight = 100; // default ms
-                if (i < nearbyEvents.length - 1) {
-                    durationWeight = Math.min(300, nearbyEvents[i + 1].timestamp - event.timestamp);
-                }
-
-                // Combined weight: energy * duration * distance decay
-                const weight = energy * durationWeight * distanceWeight;
-                weightedSum += event.score * weight;
-                totalWeight += weight;
-            }
-
-            const weightedMean = totalWeight > 0 ? weightedSum / totalWeight : 0.2;
-
-            // Hybrid: use the higher of weightedMean or maxScore * 0.8
-            // This prevents strong peaks from being averaged away
-            const hybridScore = Math.max(weightedMean, maxScore * 0.8);
 
             return {
                 text,
-                prominenceScore: hybridScore,
+                prominenceScore: score,
                 isInterim: false
             };
         });
