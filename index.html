@@ -62,6 +62,9 @@
           <div class="control-item">
             <button id="btn_recalibrate">Recalibrate</button>
           </div>
+          <div class="control-item">
+            <button id="btn_voice_calibrate">🎤 Voice Calibrate</button>
+          </div>
         </div>
 
         <div class="control-row debug-row">
@@ -74,7 +77,15 @@
           <div id="debug_info" class="debug-info hidden">
             <span id="debug_calibration">Calibrating...</span>
             <span id="debug_prominence">Score: --</span>
+            <span id="debug_events">Events: 0</span>
           </div>
+        </div>
+
+        <div id="calibration_prompt" class="calibration-prompt hidden">
+          <p>Say: <strong>"The QUICK brown FOX jumps OVER the LAZY dog"</strong></p>
+          <p>Emphasize the CAPITALIZED words!</p>
+          <div id="calibration_progress">Recording: <span id="calibration_count">0</span> events</div>
+          <button id="btn_finish_calibration">Finish Calibration</button>
         </div>
       </div>
     </div>

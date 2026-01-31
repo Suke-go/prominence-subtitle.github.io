@@ -8,11 +8,14 @@
   --accent: #4a90d9;
   --success: #4ade80;
   --warning: #fbbf24;
-  
+
   /* WCAG-based font sizes (pt to px @ 96dpi) */
-  --size-small: 16px;   /* 12pt */
-  --size-normal: 24px;  /* 18pt */
-  --size-large: 32px;   /* 24pt */
+  --size-small: 16px;
+  /* 12pt */
+  --size-normal: 24px;
+  /* 18pt */
+  --size-large: 32px;
+  /* 24pt */
 }
 
 * {
@@ -112,7 +115,7 @@ body {
 .subtitle-word {
   display: inline-block;
   color: white;
-  text-shadow: 
+  text-shadow:
     -2px -2px 0 #000,
     2px -2px 0 #000,
     -2px 2px 0 #000,
@@ -275,6 +278,41 @@ body {
   display: none !important;
 }
 
+/* Calibration prompt */
+.calibration-prompt {
+  background: rgba(74, 144, 217, 0.2);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.calibration-prompt p {
+  margin-bottom: 8px;
+}
+
+.calibration-prompt strong {
+  color: var(--accent);
+  font-size: 1.2em;
+}
+
+#calibration_progress {
+  margin: 12px 0;
+  font-family: monospace;
+}
+
+#btn_finish_calibration {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+#btn_voice_calibrate {
+  background: var(--warning);
+  border-color: var(--warning);
+  color: #000;
+}
+
 /* Fullscreen mode adjustments */
 .video-wrapper:fullscreen {
   max-width: none;
@@ -302,16 +340,16 @@ body {
   body {
     padding: 10px;
   }
-  
+
   .controls-panel {
     padding: 16px;
   }
-  
+
   .control-row {
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .control-item input[type="range"] {
     width: 100px;
   }

@@ -34,6 +34,12 @@ class ProminenceSubtitle {
         this.currentWords = [];
         this.interimWords = [];
 
+        // Voice calibration state
+        this.isVoiceCalibrating = false;
+        this.calibrationScores = [];
+        this.calibrationCountEl = null;
+        this.totalProminenceEvents = 0;
+
         // Settings
         this.settings = {
             language: 'en-US',
@@ -41,7 +47,10 @@ class ProminenceSubtitle {
             sensitivityThreshold: {
                 smallMax: 0.35,
                 normalMax: 0.65
-            }
+            },
+            // Calibration-derived thresholds (will be updated)
+            calibratedMin: 0.2,
+            calibratedMax: 0.8
         };
 
         // Timing
@@ -256,6 +265,7 @@ class ProminenceSubtitle {
      */
     handleProminenceEvent(event) {
         const now = performance.now();
+        this.totalProminenceEvents++;
 
         // Add to buffer
         this.prominenceBuffer.push({
@@ -270,6 +280,20 @@ class ProminenceSubtitle {
         // Update debug display
         if (this.debugProminenceEl) {
             this.debugProminenceEl.textContent = `Score: ${event.fusionScore.toFixed(2)}`;
+        }
+
+        // Update events counter
+        const eventsEl = document.getElementById('debug_events');
+        if (eventsEl) {
+            eventsEl.textContent = `Events: ${this.totalProminenceEvents}`;
+        }
+
+        // Collect calibration data if voice calibrating
+        if (this.isVoiceCalibrating) {
+            this.calibrationScores.push(event.fusionScore);
+            if (this.calibrationCountEl) {
+                this.calibrationCountEl.textContent = this.calibrationScores.length;
+            }
         }
 
         // Handle demo mode if active
@@ -489,6 +513,22 @@ class ProminenceSubtitle {
             }
         });
 
+        // Voice calibration button
+        const btnVoiceCalibrate = document.getElementById('btn_voice_calibrate');
+        const calibrationPrompt = document.getElementById('calibration_prompt');
+        const btnFinishCalibration = document.getElementById('btn_finish_calibration');
+        this.calibrationCountEl = document.getElementById('calibration_count');
+
+        btnVoiceCalibrate?.addEventListener('click', () => {
+            this.startVoiceCalibration();
+            calibrationPrompt?.classList.remove('hidden');
+        });
+
+        btnFinishCalibration?.addEventListener('click', () => {
+            this.finishVoiceCalibration();
+            calibrationPrompt?.classList.add('hidden');
+        });
+
         // Debug checkbox
         const checkboxDebug = document.getElementById('checkbox_debug');
         const debugInfo = document.getElementById('debug_info');
@@ -516,6 +556,61 @@ class ProminenceSubtitle {
     setStatus(message, className) {
         this.statusEl.textContent = message;
         this.statusEl.className = `status ${className}`;
+    }
+
+    /**
+     * Start voice calibration mode
+     */
+    startVoiceCalibration() {
+        this.isVoiceCalibrating = true;
+        this.calibrationScores = [];
+        this.setStatus('Voice Calibrating - Read the phrase!', 'calibrating');
+        console.log('[Calibration] Started voice calibration');
+    }
+
+    /**
+     * Finish voice calibration and update thresholds
+     */
+    finishVoiceCalibration() {
+        this.isVoiceCalibrating = false;
+
+        if (this.calibrationScores.length < 5) {
+            this.setStatus('Not enough data - try again (need 5+ events)', 'error');
+            console.warn('[Calibration] Not enough data:', this.calibrationScores.length);
+            return;
+        }
+
+        // Calculate statistics
+        const sorted = [...this.calibrationScores].sort((a, b) => a - b);
+        const min = sorted[0];
+        const max = sorted[sorted.length - 1];
+        const median = sorted[Math.floor(sorted.length / 2)];
+        const range = max - min;
+
+        console.log('[Calibration] Stats:', {
+            min: min.toFixed(3),
+            max: max.toFixed(3),
+            median: median.toFixed(3),
+            range: range.toFixed(3),
+            count: sorted.length
+        });
+
+        // Update thresholds based on calibration
+        // Small: below 25th percentile
+        // Normal: 25th to 75th percentile
+        // Large: above 75th percentile
+        const p25 = sorted[Math.floor(sorted.length * 0.25)];
+        const p75 = sorted[Math.floor(sorted.length * 0.75)];
+
+        this.settings.sensitivityThreshold = {
+            smallMax: p25,
+            normalMax: p75
+        };
+        this.settings.calibratedMin = min;
+        this.settings.calibratedMax = max;
+
+        this.setStatus(`Calibrated! Range: ${min.toFixed(2)} - ${max.toFixed(2)}`, 'ready');
+        console.log('[Calibration] New thresholds:', this.settings.sensitivityThreshold);
     }
 
     /**
