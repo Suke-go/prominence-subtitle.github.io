@@ -364,7 +364,8 @@ class ProminenceSubtitle {
             );
 
             // MaxPooling: use maximum score among nearby events
-            let maxScore = 0.5; // Default
+            // Default to 0.2 (small) when no prominence detected - whispers/quiet speech
+            let maxScore = 0.2;
             if (nearbyEvents.length > 0) {
                 maxScore = Math.max(...nearbyEvents.map(e => e.score));
             }
