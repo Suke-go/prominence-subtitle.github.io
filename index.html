@@ -27,8 +27,18 @@
     </div>
 
     <div class="controls-wrapper">
-      <!-- Server connection status -->
-      <div class="server-status-bar" id="server_status_bar">
+      <!-- STT Mode selector -->
+      <div class="stt-mode-bar">
+        <label>STT Mode:</label>
+        <select id="select_stt_mode" class="stt-mode-select">
+          <option value="browser">🌐 Browser (Web Speech API)</option>
+          <option value="server">☁️ Server (Google Cloud STT)</option>
+        </select>
+        <span id="stt_mode_status" class="stt-mode-status"></span>
+      </div>
+
+      <!-- Server connection status (only shown when server mode selected) -->
+      <div class="server-status-bar hidden" id="server_status_bar">
         <span id="server_status_indicator" class="status-indicator disconnected"></span>
         <span id="server_status_text">Not connected</span>
         <button id="btn_connect_server" class="btn-small">Connect to Server</button>

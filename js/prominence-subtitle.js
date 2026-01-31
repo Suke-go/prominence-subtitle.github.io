@@ -477,6 +477,35 @@ class ProminenceSubtitle {
      * Setup UI controls
      */
     setupControls() {
+        // STT Mode selector
+        const selectSTTMode = document.getElementById('select_stt_mode');
+        const serverStatusBar = document.getElementById('server_status_bar');
+        const sttModeStatus = document.getElementById('stt_mode_status');
+
+        selectSTTMode?.addEventListener('change', () => {
+            const mode = selectSTTMode.value;
+            if (mode === 'server') {
+                serverStatusBar?.classList.remove('hidden');
+                sttModeStatus.textContent = 'Word-level timestamps enabled';
+                // Stop browser recognition
+                if (this.recognition && this.isRecognizing) {
+                    this.recognition.stop();
+                    this.isRecognizing = false;
+                }
+            } else {
+                serverStatusBar?.classList.add('hidden');
+                sttModeStatus.textContent = 'Using browser built-in';
+                // Disconnect from server if connected
+                if (this.speechClient && this.speechClient.isConnected) {
+                    this.speechClient.disconnect();
+                    this.updateServerStatus('disconnected');
+                }
+                // Start browser recognition
+                this.useServerSTT = false;
+                this.restartRecognition();
+            }
+        });
+
         // Server connection UI
         this.serverStatusIndicator = document.getElementById('server_status_indicator');
         this.serverStatusText = document.getElementById('server_status_text');
@@ -502,6 +531,10 @@ class ProminenceSubtitle {
                 this.recognition.lang = this.settings.language;
                 this.recognition.stop();
                 this.restartRecognition();
+            }
+            // Update server client language too
+            if (this.speechClient) {
+                this.speechClient.setLanguage(this.settings.language);
             }
         });
 
@@ -724,6 +757,7 @@ class ProminenceSubtitle {
 
     /**
      * Handle speech result from server (with word-level timestamps)
+     * INTERIM ONLY MODE: Use interim results as the stable source of prominence
      */
     handleServerSpeechResult(result) {
         if (!result.words || result.words.length === 0) {
@@ -733,51 +767,45 @@ class ProminenceSubtitle {
                 const aligned = this.alignWordsWithProminence(words, performance.now());
 
                 if (result.isFinal) {
-                    // Use cached interim scores if available
-                    const finalWords = this.interimWords.length > 0
-                        ? this.interimWords.map(w => ({ ...w, isInterim: false }))
-                        : aligned;
-                    this.currentWords.push(...finalWords);
+                    // Final: just finalize what interim showed
+                    if (this.interimWords.length > 0) {
+                        this.currentWords.push(...this.interimWords.map(w => ({ ...w, isInterim: false })));
+                    }
                     this.interimWords = [];
                     this.trimCurrentWords();
                 } else {
-                    this.interimWords = aligned.map(w => ({ ...w, isInterim: true }));
+                    // Interim: THIS IS THE MAIN DISPLAY
+                    this.interimWords = aligned.map(w => ({ ...w, isInterim: false })); // Show as normal, not italicized
                 }
             }
         } else {
             // Use word-level timestamps for precise alignment
-            const alignedWords = result.words.map(wordInfo => {
-                // Convert server timestamp to local prominence buffer time
-                const wordStartLocal = this.streamingStartTime + wordInfo.startTime;
-                const wordEndLocal = this.streamingStartTime + wordInfo.endTime;
-
-                const prominenceScore = this.alignWordWithProminenceTimestamp(
-                    wordStartLocal,
-                    wordEndLocal
-                );
-
-                return {
-                    text: wordInfo.word,
-                    prominenceScore: prominenceScore,
-                    isInterim: !result.isFinal,
-                    confidence: wordInfo.confidence
-                };
-            });
-
             if (result.isFinal) {
-                // Use cached interim scores if they match count
-                // This preserves the accurate alignment from interim processing
-                let finalWords;
-                if (this.interimWords.length === alignedWords.length) {
-                    finalWords = this.interimWords.map(w => ({ ...w, isInterim: false }));
-                } else {
-                    finalWords = alignedWords;
+                // Final: just finalize what interim showed (don't recalculate)
+                if (this.interimWords.length > 0) {
+                    this.currentWords.push(...this.interimWords.map(w => ({ ...w, isInterim: false })));
                 }
-                this.currentWords.push(...finalWords);
                 this.interimWords = [];
                 this.trimCurrentWords();
             } else {
-                // Interim: cache scores for later use
+                // INTERIM: Calculate and show immediately (this is the stable source)
+                const alignedWords = result.words.map(wordInfo => {
+                    const wordStartLocal = this.streamingStartTime + wordInfo.startTime;
+                    const wordEndLocal = this.streamingStartTime + wordInfo.endTime;
+
+                    const prominenceScore = this.alignWordWithProminenceTimestamp(
+                        wordStartLocal,
+                        wordEndLocal
+                    );
+
+                    return {
+                        text: wordInfo.word,
+                        prominenceScore: prominenceScore,
+                        isInterim: false, // Show as normal styling
+                        confidence: wordInfo.confidence
+                    };
+                });
+
                 this.interimWords = alignedWords;
             }
         }
