@@ -34,6 +34,12 @@ class ProminenceSubtitle {
         this.currentWords = [];
         this.interimWords = [];
 
+        // Voice calibration state
+        this.isVoiceCalibrating = false;
+        this.calibrationScores = [];
+        this.calibrationCountEl = null;
+        this.totalProminenceEvents = 0;
+
         // Settings
         this.settings = {
             language: 'en-US',
@@ -41,12 +47,24 @@ class ProminenceSubtitle {
             sensitivityThreshold: {
                 smallMax: 0.35,
                 normalMax: 0.65
-            }
+            },
+            // Calibration-derived thresholds (will be updated)
+            calibratedMin: 0.2,
+            calibratedMax: 0.8
         };
 
         // Timing
         this.lastWordTime = 0;
         this.wordTimeEstimates = []; // For post-hoc alignment
+
+        // Server-based speech recognition (Google Cloud STT)
+        this.speechClient = null;
+        this.useServerSTT = false;
+        this.streamingStartTime = 0; // For aligning word timestamps with prominence
+
+        // Server connection UI elements
+        this.serverStatusIndicator = null;
+        this.serverStatusText = null;
     }
 
     /**
@@ -108,8 +126,9 @@ class ProminenceSubtitle {
 
         this.prominenceDetector = new ProminenceDetectorWasm({
             sampleRate: 48000,
-            prominenceThreshold: 0.15,
+            prominenceThreshold: 0.88,      // High threshold - only strong prominence
             minSyllableDistMs: 150,
+            minEnergyThreshold: 0.001,
             calibrationDurationMs: 2000,
 
             onReady: () => {
@@ -255,6 +274,7 @@ class ProminenceSubtitle {
      */
     handleProminenceEvent(event) {
         const now = performance.now();
+        this.totalProminenceEvents++;
 
         // Add to buffer
         this.prominenceBuffer.push({
@@ -269,6 +289,20 @@ class ProminenceSubtitle {
         // Update debug display
         if (this.debugProminenceEl) {
             this.debugProminenceEl.textContent = `Score: ${event.fusionScore.toFixed(2)}`;
+        }
+
+        // Update events counter
+        const eventsEl = document.getElementById('debug_events');
+        if (eventsEl) {
+            eventsEl.textContent = `Events: ${this.totalProminenceEvents}`;
+        }
+
+        // Collect calibration data if voice calibrating
+        if (this.isVoiceCalibrating) {
+            this.calibrationScores.push(event.fusionScore);
+            if (this.calibrationCountEl) {
+                this.calibrationCountEl.textContent = this.calibrationScores.length;
+            }
         }
 
         // Handle demo mode if active
@@ -342,35 +376,50 @@ class ProminenceSubtitle {
     }
 
     /**
-     * Align words with prominence scores (MaxPooling)
+     * Align words with prominence scores (Sequential Assignment)
+     * Simple and reliable: assign recent events to words in order
      */
     alignWordsWithProminence(words, recognitionTime) {
         const numWords = words.length;
         if (numWords === 0) return [];
 
-        // Estimate word timing (simple equal distribution over buffer window)
-        const windowMs = Math.min(this.bufferWindowMs, 2000);
-        const wordDurationMs = windowMs / Math.max(numWords, 1);
+        // Get recent events (within last 3 seconds, sorted by time)
+        const recentEvents = this.prominenceBuffer
+            .filter(e => recognitionTime - e.timestamp < 3000)
+            .sort((a, b) => a.timestamp - b.timestamp);
 
-        return words.map((text, index) => {
-            // Estimate when this word was spoken
-            const estimatedTime = recognitionTime - windowMs + (index + 0.5) * wordDurationMs;
+        // If no events, all words get default score
+        if (recentEvents.length === 0) {
+            return words.map(text => ({
+                text,
+                prominenceScore: 0.5, // neutral default
+                isInterim: false
+            }));
+        }
 
-            // Find prominence peak near this time (MaxPooling within tolerance)
-            const toleranceMs = wordDurationMs * 1.5;
-            const nearbyEvents = this.prominenceBuffer.filter(e =>
-                Math.abs(e.timestamp - estimatedTime) < toleranceMs
-            );
+        // Sequential assignment: distribute events across words
+        // Each word gets assigned events proportionally
+        const eventsPerWord = Math.max(1, Math.floor(recentEvents.length / numWords));
 
-            // MaxPooling: use maximum score among nearby events
-            let maxScore = 0.5; // Default
-            if (nearbyEvents.length > 0) {
-                maxScore = Math.max(...nearbyEvents.map(e => e.score));
+        return words.map((text, wordIndex) => {
+            // Get events for this word
+            const startIdx = wordIndex * eventsPerWord;
+            const endIdx = Math.min(startIdx + eventsPerWord, recentEvents.length);
+            const wordEvents = recentEvents.slice(startIdx, endIdx);
+
+            // Calculate score for this word
+            let score = 0.5; // default
+            if (wordEvents.length > 0) {
+                // Use max score among assigned events
+                score = Math.max(...wordEvents.map(e => e.score));
+            } else if (recentEvents.length > 0) {
+                // Fallback: use overall max if no specific events
+                score = Math.max(...recentEvents.map(e => e.score)) * 0.7;
             }
 
             return {
                 text,
-                prominenceScore: maxScore,
+                prominenceScore: score,
                 isInterim: false
             };
         });
@@ -428,6 +477,44 @@ class ProminenceSubtitle {
      * Setup UI controls
      */
     setupControls() {
+        // STT Mode selector
+        const selectSTTMode = document.getElementById('select_stt_mode');
+        const serverStatusBar = document.getElementById('server_status_bar');
+        const sttModeStatus = document.getElementById('stt_mode_status');
+
+        selectSTTMode?.addEventListener('change', () => {
+            const mode = selectSTTMode.value;
+            if (mode === 'server') {
+                serverStatusBar?.classList.remove('hidden');
+                sttModeStatus.textContent = 'Word-level timestamps enabled';
+                // Stop browser recognition
+                if (this.recognition && this.isRecognizing) {
+                    this.recognition.stop();
+                    this.isRecognizing = false;
+                }
+            } else {
+                serverStatusBar?.classList.add('hidden');
+                sttModeStatus.textContent = 'Using browser built-in';
+                // Disconnect from server if connected
+                if (this.speechClient && this.speechClient.isConnected) {
+                    this.speechClient.disconnect();
+                    this.updateServerStatus('disconnected');
+                }
+                // Start browser recognition
+                this.useServerSTT = false;
+                this.restartRecognition();
+            }
+        });
+
+        // Server connection UI
+        this.serverStatusIndicator = document.getElementById('server_status_indicator');
+        this.serverStatusText = document.getElementById('server_status_text');
+        const btnConnectServer = document.getElementById('btn_connect_server');
+
+        btnConnectServer?.addEventListener('click', () => {
+            this.connectToServer();
+        });
+
         // Controls checkbox
         const checkboxControls = document.getElementById('checkbox_controls');
         const controlsPanel = document.getElementById('controls_panel');
@@ -444,6 +531,10 @@ class ProminenceSubtitle {
                 this.recognition.lang = this.settings.language;
                 this.recognition.stop();
                 this.restartRecognition();
+            }
+            // Update server client language too
+            if (this.speechClient) {
+                this.speechClient.setLanguage(this.settings.language);
             }
         });
 
@@ -487,6 +578,22 @@ class ProminenceSubtitle {
             }
         });
 
+        // Voice calibration button
+        const btnVoiceCalibrate = document.getElementById('btn_voice_calibrate');
+        const calibrationPrompt = document.getElementById('calibration_prompt');
+        const btnFinishCalibration = document.getElementById('btn_finish_calibration');
+        this.calibrationCountEl = document.getElementById('calibration_count');
+
+        btnVoiceCalibrate?.addEventListener('click', () => {
+            this.startVoiceCalibration();
+            calibrationPrompt?.classList.remove('hidden');
+        });
+
+        btnFinishCalibration?.addEventListener('click', () => {
+            this.finishVoiceCalibration();
+            calibrationPrompt?.classList.add('hidden');
+        });
+
         // Debug checkbox
         const checkboxDebug = document.getElementById('checkbox_debug');
         const debugInfo = document.getElementById('debug_info');
@@ -517,12 +624,256 @@ class ProminenceSubtitle {
     }
 
     /**
+     * Start voice calibration mode
+     */
+    startVoiceCalibration() {
+        this.isVoiceCalibrating = true;
+        this.calibrationScores = [];
+        this.setStatus('Voice Calibrating - Read the phrase!', 'calibrating');
+        console.log('[Calibration] Started voice calibration');
+    }
+
+    /**
+     * Finish voice calibration and update thresholds
+     */
+    finishVoiceCalibration() {
+        this.isVoiceCalibrating = false;
+
+        if (this.calibrationScores.length < 3) {
+            this.setStatus('Not enough data - try again (need 3+ events)', 'error');
+            console.warn('[Calibration] Not enough data:', this.calibrationScores.length);
+            return;
+        }
+
+        // Calculate statistics
+        const sorted = [...this.calibrationScores].sort((a, b) => a - b);
+        const min = sorted[0];
+        const max = sorted[sorted.length - 1];
+        const median = sorted[Math.floor(sorted.length / 2)];
+        const range = max - min;
+
+        console.log('[Calibration] Stats:', {
+            min: min.toFixed(3),
+            max: max.toFixed(3),
+            median: median.toFixed(3),
+            range: range.toFixed(3),
+            count: sorted.length
+        });
+
+        // Update thresholds based on calibration
+        // Small: below 25th percentile
+        // Normal: 25th to 75th percentile
+        // Large: above 75th percentile
+        const p25 = sorted[Math.floor(sorted.length * 0.25)];
+        const p75 = sorted[Math.floor(sorted.length * 0.75)];
+
+        this.settings.sensitivityThreshold = {
+            smallMax: p25,
+            normalMax: p75
+        };
+        this.settings.calibratedMin = min;
+        this.settings.calibratedMax = max;
+
+        this.setStatus(`Calibrated! Range: ${min.toFixed(2)} - ${max.toFixed(2)}`, 'ready');
+        console.log('[Calibration] New thresholds:', this.settings.sensitivityThreshold);
+    }
+
+    /**
+     * Connect to backend STT server
+     */
+    async connectToServer() {
+        if (this.speechClient && this.speechClient.isConnected) {
+            // Already connected - disconnect
+            this.speechClient.disconnect();
+            this.updateServerStatus('disconnected');
+            return;
+        }
+
+        this.updateServerStatus('connecting');
+
+        this.speechClient = new SpeechClient({
+            serverUrl: 'ws://localhost:3001',
+            language: this.settings.language,
+
+            onResult: (result) => {
+                this.handleServerSpeechResult(result);
+            },
+
+            onError: (error) => {
+                console.error('[STT] Error:', error);
+                this.setStatus(`STT Error: ${error}`, 'error');
+            },
+
+            onStatusChange: (status) => {
+                this.updateServerStatus(status);
+            }
+        });
+
+        try {
+            await this.speechClient.connect();
+
+            // Stop browser-based speech recognition
+            if (this.recognition) {
+                this.recognition.stop();
+                this.isRecognizing = false;
+            }
+
+            // Start streaming to server
+            this.streamingStartTime = performance.now();
+            await this.speechClient.startStreaming();
+
+            this.useServerSTT = true;
+            this.setStatus('Connected to STT Server - Speak!', 'ready');
+
+        } catch (error) {
+            console.error('[STT] Connection failed:', error);
+            this.setStatus('Server connection failed', 'error');
+            this.updateServerStatus('disconnected');
+        }
+    }
+
+    /**
+     * Update server connection status UI
+     */
+    updateServerStatus(status) {
+        if (this.serverStatusIndicator) {
+            this.serverStatusIndicator.className = `status-indicator ${status}`;
+        }
+        if (this.serverStatusText) {
+            const statusTexts = {
+                'disconnected': 'Not connected',
+                'connecting': 'Connecting...',
+                'connected': 'Connected to STT Server'
+            };
+            this.serverStatusText.textContent = statusTexts[status] || status;
+        }
+
+        // Update button text
+        const btn = document.getElementById('btn_connect_server');
+        if (btn) {
+            btn.textContent = status === 'connected' ? 'Disconnect' : 'Connect to Server';
+        }
+    }
+
+    /**
+     * Handle speech result from server (with word-level timestamps)
+     * INTERIM ONLY MODE: Use interim results as the stable source of prominence
+     */
+    handleServerSpeechResult(result) {
+        if (!result.words || result.words.length === 0) {
+            // Fallback to transcript without word timing
+            if (result.transcript) {
+                const words = result.transcript.split(/\s+/).filter(w => w.length > 0);
+                const aligned = this.alignWordsWithProminence(words, performance.now());
+
+                if (result.isFinal) {
+                    // Final: just finalize what interim showed
+                    if (this.interimWords.length > 0) {
+                        this.currentWords.push(...this.interimWords.map(w => ({ ...w, isInterim: false })));
+                    }
+                    this.interimWords = [];
+                    this.trimCurrentWords();
+                } else {
+                    // Interim: THIS IS THE MAIN DISPLAY
+                    this.interimWords = aligned.map(w => ({ ...w, isInterim: false })); // Show as normal, not italicized
+                }
+            }
+        } else {
+            // Use word-level timestamps for precise alignment
+            if (result.isFinal) {
+                // Final: just finalize what interim showed (don't recalculate)
+                if (this.interimWords.length > 0) {
+                    this.currentWords.push(...this.interimWords.map(w => ({ ...w, isInterim: false })));
+                }
+                this.interimWords = [];
+                this.trimCurrentWords();
+            } else {
+                // INTERIM: Calculate and show immediately (this is the stable source)
+                const alignedWords = result.words.map(wordInfo => {
+                    const wordStartLocal = this.streamingStartTime + wordInfo.startTime;
+                    const wordEndLocal = this.streamingStartTime + wordInfo.endTime;
+
+                    const prominenceScore = this.alignWordWithProminenceTimestamp(
+                        wordStartLocal,
+                        wordEndLocal
+                    );
+
+                    return {
+                        text: wordInfo.word,
+                        prominenceScore: prominenceScore,
+                        isInterim: false, // Show as normal styling
+                        confidence: wordInfo.confidence
+                    };
+                });
+
+                this.interimWords = alignedWords;
+            }
+        }
+
+        this.renderSubtitles();
+    }
+
+    /**
+     * Align a single word using precise timestamps
+     * This is the key improvement - uses exact word timing from STT
+     */
+    alignWordWithProminenceTimestamp(startTime, endTime) {
+        // Debug: log buffer state
+        const bufferSize = this.prominenceBuffer.length;
+        const bufferTimeRange = bufferSize > 0
+            ? `${this.prominenceBuffer[0].timestamp.toFixed(0)} - ${this.prominenceBuffer[bufferSize - 1].timestamp.toFixed(0)}`
+            : 'empty';
+
+        // Find prominence events that occurred during this word's timespan
+        const wordEvents = this.prominenceBuffer.filter(e =>
+            e.timestamp >= startTime && e.timestamp <= endTime
+        );
+
+        // Debug log for first few words
+        if (this.debugLogging) {
+            console.log(`[Align] Word time: ${startTime.toFixed(0)}-${endTime.toFixed(0)}, Buffer: ${bufferTimeRange}, Events: ${wordEvents.length}`);
+        }
+
+        if (wordEvents.length === 0) {
+            // No events during this word - check nearby with decay
+            const tolerance = 300; // Increased to 300ms tolerance
+            const nearbyEvents = this.prominenceBuffer.filter(e =>
+                e.timestamp >= startTime - tolerance && e.timestamp <= endTime + tolerance
+            );
+
+            if (nearbyEvents.length > 0) {
+                // Use max with distance decay
+                let bestScore = 0;
+                for (const event of nearbyEvents) {
+                    const midTime = (startTime + endTime) / 2;
+                    const distance = Math.abs(event.timestamp - midTime);
+                    const decay = 1 - (distance / tolerance);
+                    const adjustedScore = event.score * Math.max(0, decay);
+                    if (adjustedScore > bestScore) {
+                        bestScore = adjustedScore;
+                    }
+                }
+                return bestScore;
+            }
+
+            return 0.3; // Low default score for words without prominence
+        }
+
+        // MaxPooling: use maximum score among events during this word
+        return Math.max(...wordEvents.map(e => e.score));
+    }
+
+    /**
      * Cleanup
      */
     destroy() {
         if (this.recognition) {
             this.isRecognizing = false;
             this.recognition.stop();
+        }
+
+        if (this.speechClient) {
+            this.speechClient.disconnect();
         }
 
         if (this.prominenceDetector) {

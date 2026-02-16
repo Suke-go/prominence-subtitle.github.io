@@ -27,6 +27,23 @@
     </div>
 
     <div class="controls-wrapper">
+      <!-- STT Mode selector -->
+      <div class="stt-mode-bar">
+        <label>STT Mode:</label>
+        <select id="select_stt_mode" class="stt-mode-select">
+          <option value="browser">🌐 Browser (Web Speech API)</option>
+          <option value="server">☁️ Server (Google Cloud STT)</option>
+        </select>
+        <span id="stt_mode_status" class="stt-mode-status"></span>
+      </div>
+
+      <!-- Server connection status (only shown when server mode selected) -->
+      <div class="server-status-bar hidden" id="server_status_bar">
+        <span id="server_status_indicator" class="status-indicator disconnected"></span>
+        <span id="server_status_text">Not connected</span>
+        <button id="btn_connect_server" class="btn-small">Connect to Server</button>
+      </div>
+
       <div class="control-group">
         <label>
           <input type="checkbox" id="checkbox_controls" checked>
@@ -62,6 +79,9 @@
           <div class="control-item">
             <button id="btn_recalibrate">Recalibrate</button>
           </div>
+          <div class="control-item">
+            <button id="btn_voice_calibrate">🎤 Voice Calibrate</button>
+          </div>
         </div>
 
         <div class="control-row debug-row">
@@ -74,7 +94,15 @@
           <div id="debug_info" class="debug-info hidden">
             <span id="debug_calibration">Calibrating...</span>
             <span id="debug_prominence">Score: --</span>
+            <span id="debug_events">Events: 0</span>
           </div>
+        </div>
+
+        <div id="calibration_prompt" class="calibration-prompt hidden">
+          <p>Say: <strong>"The QUICK brown FOX jumps OVER the LAZY dog"</strong></p>
+          <p>Emphasize the CAPITALIZED words!</p>
+          <div id="calibration_progress">Recording: <span id="calibration_count">0</span> events</div>
+          <button id="btn_finish_calibration">Finish Calibration</button>
         </div>
       </div>
     </div>
@@ -95,6 +123,7 @@
   <script src="wasm/syllable.js"></script>
 
   <!-- Application scripts -->
+  <script src="js/speech-client.js"></script>
   <script src="js/prominence-subtitle.js"></script>
 </body>
 
