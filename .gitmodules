@@ -1,0 +1,3 @@
+[submodule "PROMINENCE_Detection"]
+	path = PROMINENCE_Detection
+	url = https://github.com/Suke-go/PROMINENCE_Detection.git
