@@ -157,6 +157,12 @@ const STRINGS = {
   main_trials_ready: { en: "Ready? Press Start to begin the main experiment.", ja: "準備ができたら「開始」を押して本試行を開始してください。" },
   main_trials_heading: { en: "Main Trials", ja: "本試行" },
 
+  // Rest break between clips
+  rest_break_title: { en: "Short Break", ja: "休憩" },
+  rest_break_body: { en: "Please take a short rest. The next clip will begin automatically.", ja: "少し休憩してください。次のクリップは自動的に始まります。" },
+  rest_break_remaining: { en: "Remaining: {s}s", ja: "残り: {s}秒" },
+  rest_break_skip: { en: "Skip", ja: "スキップ" },
+
   // Subjective ratings
   rating_understanding: { en: "How well did you understand the content?", ja: "内容をどの程度理解できましたか？" },
   rating_readability: { en: "How readable was the subtitle?", ja: "字幕はどの程度読みやすかったですか？" },
@@ -183,7 +189,7 @@ const STRINGS = {
   post_title: { en: "Post-Experiment Survey", ja: "事後アンケート" },
   post_notice_diff: { en: "Did you notice any differences between the subtitle styles?", ja: "字幕スタイルの違いに気づきましたか？" },
   post_notice_opts: { en: ["Yes", "No"], ja: ["はい", "いいえ"] },
-  post_describe: { en: "If yes, please describe what differences you noticed.", ja: "「はい」の場合、気づいた違いを記述してください。" },
+  post_describe: { en: "If you noticed differences between subtitle styles, please describe them below.", ja: "字幕スタイルの違いに気づいた場合、その内容を記述してください。" },
   post_preference: { en: "Which subtitle style did you prefer the most?", ja: "どの字幕スタイルが最も好ましかったですか？" },
   post_pref_opts: { en: ["All words same size", "Some words smaller/larger (grammar-based)", "Some words smaller/larger (emphasis-based)", "Combination of grammar and emphasis"], ja: ["全単語が同じサイズ", "文法に基づいて大小がある", "強調に基づいて大小がある", "文法と強調の組み合わせ"] },
   post_impressions: { en: "Please share any impressions or comments about the experiment.", ja: "実験の感想やコメントがあればお書きください。" },
@@ -192,10 +198,15 @@ const STRINGS = {
   clip_prior_exposure: { en: "Had you seen this video before today?", ja: "この動画を今日以前に見たことがありましたか？" },
   clip_prior_opts: { en: ["No, this was my first time seeing it", "Yes, but I didn't remember the content", "Yes, and I remembered the content"], ja: ["いいえ、初めて見ました", "はい、見たことがありますが内容は覚えていませんでした", "はい、見たことがあり内容も覚えていました"] },
 
-  // Completion
+  // Completion & Gift card
   complete_title: { en: "Thank you!", ja: "ご協力ありがとうございました！" },
   complete_body: { en: "Your responses have been recorded. You may now close this page.", ja: "回答が記録されました。このページを閉じていただいて結構です。" },
   complete_download: { en: "Download Data (JSON)", ja: "データをダウンロード（JSON）" },
+  reward_title: { en: "Gift Card Reward", ja: "謝礼の送付" },
+  reward_body: { en: "Please enter your email address below to receive your Amazon gift card reward (600 yen). Your email will only be used for sending the gift card.", ja: "謝礼のAmazonギフトカード（600円）をお送りします。以下にメールアドレスを入力してください。メールアドレスはギフトカード送付のみに使用します。" },
+  reward_email_prompt: { en: "Email address", ja: "メールアドレス" },
+  reward_skip: { en: "Skip (no reward)", ja: "スキップ（謝礼不要）" },
+  reward_submit: { en: "Submit", ja: "送信" },
 
   // Dummy test
   dummy_instruction: { en: "Please select option {n} to confirm you are paying attention.", ja: "注意確認: 選択肢{n}を選んでください。" },

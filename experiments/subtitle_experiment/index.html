@@ -401,6 +401,33 @@
           },
           data: { phase: 'nasa_tlx', clip_id: clipId, condition },
         });
+
+        // 6g. Rest break (30s countdown, except after last clip)
+        if (idx < clipOrder.length - 1) {
+          trials.push({
+            type: jsPsychHtmlButtonResponse,
+            stimulus: () => {
+              return `<div class="phase-card">
+                <h2>☕ ${t('rest_break_title')}</h2>
+                <p>${t('rest_break_body')}</p>
+                <p class="rest-timer" id="rest-timer" style="font-size:2em;font-weight:bold;color:var(--accent);margin:1em 0"></p>
+              </div>`;
+            },
+            choices: () => [t('rest_break_skip')],
+            trial_duration: 30000,
+            on_load: function() {
+              let remaining = 30;
+              const el = document.getElementById('rest-timer');
+              if (el) el.textContent = t('rest_break_remaining', { s: remaining });
+              const iv = setInterval(() => {
+                remaining--;
+                if (el) el.textContent = t('rest_break_remaining', { s: remaining });
+                if (remaining <= 0) clearInterval(iv);
+              }, 1000);
+            },
+            data: { phase: 'rest_break', clip_id: clipId },
+          });
+        }
       });
 
       return trials;
@@ -420,10 +447,27 @@
 
     const postSurvey2 = {
       type: jsPsychSurveyText,
+      preamble: () => `<h2>${t('post_title')}</h2>`,
       questions: () => [
         { prompt: t('post_describe'), name: 'diff_description', rows: 3, required: false },
         { prompt: t('post_impressions'), name: 'impressions', rows: 4, required: false },
       ],
+    };
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 7b: Reward email input
+    // ═══════════════════════════════════════════════════
+    const rewardEmail = {
+      type: jsPsychSurveyText,
+      preamble: () => `<div class="phase-card" style="text-align:center">
+        <h2>🎁 ${t('reward_title')}</h2>
+        <p>${t('reward_body')}</p>
+      </div>`,
+      questions: () => [
+        { prompt: t('reward_email_prompt'), name: 'reward_email', placeholder: 'email@example.com', rows: 1, required: false },
+      ],
+      button_label: () => t('reward_submit'),
+      data: { phase: 'reward_email' },
     };
 
     // ═══════════════════════════════════════════════════
@@ -461,6 +505,7 @@
           trials.forEach(t => jsPsych.addNodeToEndOfTimeline(t));
           jsPsych.addNodeToEndOfTimeline(postSurvey1);
           jsPsych.addNodeToEndOfTimeline(postSurvey2);
+          jsPsych.addNodeToEndOfTimeline(rewardEmail);
           jsPsych.addNodeToEndOfTimeline(completion);
         }
       }],

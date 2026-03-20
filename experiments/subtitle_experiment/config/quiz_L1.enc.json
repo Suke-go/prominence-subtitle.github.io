@@ -17,16 +17,16 @@
     {
       "id": "L1_C02",
       "type": "content",
-      "question": "What color represented the Arabic countries on the chart?",
+      "question": "According to the speaker, what trend is happening in Arabic countries?",
       "options": [
-        "Green",
-        "Blue",
-        "Yellow",
-        "Red"
+        "Families are getting smaller",
+        "Families are getting larger",
+        "Life expectancy is decreasing",
+        "Population is declining"
       ],
       "is_dummy": false,
-      "hint_ja": "チャートでアラブ諸国を表す色は？",
-      "correct_enc": "SQ=="
+      "hint_ja": "話者によると、アラブ諸国ではどんな傾向が起きていますか？",
+      "correct_enc": "Rw=="
     },
     {
       "id": "L1_C03",
@@ -87,16 +87,16 @@
     {
       "id": "L1_C07",
       "type": "content",
-      "question": "What color represented African countries on the chart?",
+      "question": "According to the speaker, what was the main point about African countries?",
       "options": [
-        "Yellow",
-        "Blue",
-        "Green",
-        "Red"
+        "They have caught up with Europe",
+        "They still have high birth rates and low life expectancy",
+        "They are the fastest growing economies",
+        "They have the best healthcare systems"
       ],
       "is_dummy": false,
-      "hint_ja": "チャートでアフリカ諸国を表す色は？",
-      "correct_enc": "SQ=="
+      "hint_ja": "話者によると、アフリカ諸国の主な特徴は？",
+      "correct_enc": "SA=="
     },
     {
       "id": "L1_D01",
