@@ -66,9 +66,10 @@
       display_element: 'jspsych-target',
       show_progress_bar: true,
       on_finish: async function () {
+        // Fallback: also try to push data when jsPsych finishes
+        // (may not fire if completion trial is terminal with choices:[])
         const data = jsPsych.data.get().json();
         window._experimentData = data;
-        await pushToSheet(data);
       }
     });
 
@@ -468,6 +469,19 @@
       ],
       button_label: () => t('reward_submit'),
       data: { phase: 'reward_email' },
+      on_finish: async function() {
+        // Send ALL data to Google Sheets right after email entry
+        // (must happen before the terminal completion screen)
+        const data = jsPsych.data.get().json();
+        window._experimentData = data;
+        console.log('[GAS] Sending data to Google Sheets...');
+        try {
+          await pushToSheet(data);
+          console.log('[GAS] Data sent successfully');
+        } catch (err) {
+          console.error('[GAS] Failed to send data:', err);
+        }
+      }
     };
 
     // ═══════════════════════════════════════════════════

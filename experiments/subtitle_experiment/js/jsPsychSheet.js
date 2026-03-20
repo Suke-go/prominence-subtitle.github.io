@@ -30,8 +30,9 @@ export async function pushToSheet(jsonData, sheetName = 'responses') {
   try {
     const response = await fetch(GAS_WEB_APP_URL, {
       method: 'POST',
-      mode: 'no-cors',    // GAS requires no-cors
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'no-cors',    // GAS requires no-cors from cross-origin pages
+      headers: { 'Content-Type': 'text/plain' },  // must be simple header for no-cors
+      redirect: 'follow',
       body: JSON.stringify({
         sheetName: sheetName,
         data: jsonData,
@@ -58,7 +59,8 @@ export async function pushTrialRow(trialData, sheetName = 'responses') {
     await fetch(GAS_WEB_APP_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
+      redirect: 'follow',
       body: JSON.stringify({
         sheetName: sheetName,
         row: trialData,
