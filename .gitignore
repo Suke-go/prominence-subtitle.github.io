@@ -1,1 +1,42 @@
 prominence-486014-5876519a6a7f.json
+wasm_tmp/
+PROMINENCE_Detection/experiments/realtime_prominence/wasm_build/
+cache/
+tmp/
+
+# Subtitle study pipeline data (large/generated)
+experiments/subtitle_study/downloads/
+experiments/subtitle_study/clips/
+experiments/subtitle_study/alignment/
+experiments/subtitle_study/pos/
+experiments/subtitle_study/prominence/
+experiments/subtitle_study/subtitles/
+experiments/subtitle_study/preview/
+experiments/subtitle_study/ems_output/
+experiments/subtitle_study/demo_data/
+experiments/subtitle_study/.cache/
+experiments/subtitle_study/.venv/
+
+# EMS control (large WAVs)
+experiments/ems_control/media/*.wav
+experiments/ems_control/media_src/
+
+# Subtitle verification (shared data via junction)
+experiments/subtitle_verification/demo_data/
+
+__pycache__/
+
+# Subtitle experiment (large binary files)
+experiments/subtitle_experiment/data/*/video.mp4
+experiments/subtitle_experiment/data/*/audio.wav
+experiments/subtitle_experiment/data/*/audio.json
+experiments/subtitle_experiment/data/practice/video_old_robinson.mp4
+experiments/subtitle_experiment/data/practice/sinek_full.mp4
+experiments/ethical_review/ethics_documents.zip
+experiments/ethical_review/sample/
+experiments/ethical_review/_generation_progress.json
+experiments/ethical_review/_intermediate_plan.json
+experiments/ethical_review/application_form.json
+
+# Log files
+*.log

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prosodic Captioning Experiment</title>
+  <meta name="description" content="A study on subtitle presentation for video content.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- jsPsych 7 -->
+  <script src="https://unpkg.com/jspsych@7.3.4"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css">
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+  <script src="plugins/plugin-video-subtitle.js"></script>
+  <link rel="stylesheet" href="css/experiment.css">
+</head>
+<body>
+  <div id="jspsych-target"></div>
+
+  <script type="module">
+    import { t, setLang, getLang } from './js/i18n.js';
+    import { pushToSheet } from './js/jsPsychSheet.js';
+    import { decrypt } from './js/crypto.js';
+    window._t = t; window._setLang = setLang; window._getLang = getLang;
+
+    // ── Load all data upfront (encrypted quiz files) ─────
+    const config = await fetch('config/experiment_config.json').then(r => r.json());
+    const pretestQ = await fetch('config/pretest_questions.enc.json').then(r => r.json());
+    const practiceQ = await fetch('config/quiz_practice.enc.json').then(r => r.json());
+
+    // Pre-load ALL clip questions (encrypted) + subtitles
+    const clipData = {};
+    for (const clipId of config.clip_order) {
+      const legacyDir = config.data_dir_map[clipId];
+      try {
+        const [qRes, sRes] = await Promise.all([
+          fetch(`config/quiz_${legacyDir}.enc.json`),
+          fetch(`data/${legacyDir}/subtitle.json`),
+        ]);
+        clipData[clipId] = {
+          questions: await qRes.json(),
+          subtitles: await sRes.json(),
+          legacyDir,
+        };
+      } catch (e) {
+        console.warn(`Failed to load data for ${clipId}/${legacyDir}`, e);
+        clipData[clipId] = { questions: null, subtitles: null, legacyDir };
+      }
+    }
+
+    // Pre-load practice subtitle
+    let practiceSubtitle = [];
+    try {
+      const ps = await fetch('data/practice/subtitle.json').then(r => r.json());
+      practiceSubtitle = ps.conditions?.normal || [];
+    } catch (e) { console.warn('No practice subtitle', e); }
+
+    // ── jsPsych init ─────────────────────────────────
+    const jsPsych = initJsPsych({
+      display_element: 'jspsych-target',
+      show_progress_bar: true,
+      on_finish: async function () {
+        const data = jsPsych.data.get().json();
+        window._experimentData = data;
+        await pushToSheet(data);
+      }
+    });
+
+    // ── Helpers ───────────────────────────────────────
+    // Sequential assignment guarantees perfect counterbalancing:
+    //   pattern = (participantNum - 1) % 4  → Latin Square row A/B/C/D
+    //   order   = (participantNum - 1) % 6  → Williams presentation order
+    function assignFromNumber(num) {
+      const patterns = Object.keys(config.latin_square);
+      const patternIdx = (num - 1) % patterns.length;
+      const orderIdx = (num - 1) % PRESENTATION_ORDERS.length;
+      return { pattern: patterns[patternIdx], orderIdx };
+    }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // Williams Latin Square for 6 clips (counterbalances order effects)
+    // Each row is a presentation order; 6 rows cover all necessary counterbalancing
+    const PRESENTATION_ORDERS = [
+      ['C1','C2','C6','C3','C5','C4'],
+      ['C2','C3','C1','C4','C6','C5'],
+      ['C3','C4','C2','C5','C1','C6'],
+      ['C4','C5','C3','C6','C2','C1'],
+      ['C5','C6','C4','C1','C3','C2'],
+      ['C6','C1','C5','C2','C4','C3'],
+    ];
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 1: Language Selection
+    // ═══════════════════════════════════════════════════
+    const langSelect = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `
+        <div class="phase-card" style="text-align:center">
+          <h1 style="margin-bottom:1.5rem;font-size:2.5rem">🌐</h1>
+          <h2>Select Language / 言語を選択</h2>
+        </div>`,
+      choices: ['English', '日本語'],
+      on_finish: (data) => {
+        const lang = data.response === 0 ? 'en' : 'ja';
+        setLang(lang);
+        jsPsych.data.addProperties({ language: lang });
+      }
+    };
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 1b: Participant Number + ID
+    // ═══════════════════════════════════════════════════
+    const participantId = {
+      type: jsPsychSurveyText,
+      preamble: () => `<p class="phase-subtitle">${t('pid_preamble')}</p>`,
+      questions: () => [
+        { prompt: t('pid_num_prompt'),
+          name: 'participant_num', required: true, placeholder: '1' },
+        { prompt: t('pid_id_prompt'),
+          name: 'participant_id', required: true, placeholder: 'e.g. s2100001' },
+      ],
+      on_finish: (data) => {
+        const num = parseInt(data.response.participant_num) || 1;
+        const pid = data.response.participant_id;
+        const { pattern, orderIdx } = assignFromNumber(num);
+        jsPsych.data.addProperties({
+          participant_num: num,
+          participant_id: pid,
+          latin_square_pattern: pattern,
+          presentation_order: orderIdx,
+        });
+        console.log(`Assignment: #${num} → pattern=${pattern}, order=${orderIdx}`);
+      }
+    };
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 2: Consent
+    // ═══════════════════════════════════════════════════
+    const consent = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: () => `<div class="phase-card consent-card">${t('consent_body')}<label class="consent-check"><input type="checkbox" id="consent-cb"> ${t('consent_checkbox')}</label></div>`,
+      choices: () => [t('consent_agree')],
+      on_load: () => {
+        const btn = document.querySelector('.jspsych-btn');
+        btn.disabled = true; btn.style.opacity = 0.4;
+        document.getElementById('consent-cb')?.addEventListener('change', function() {
+          btn.disabled = !this.checked;
+          btn.style.opacity = this.checked ? 1 : 0.4;
+        });
+      }
+    };
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 3: Demographics (compact)
+    // ═══════════════════════════════════════════════════
+    const demographics = {
+      type: jsPsychSurveyMultiChoice,
+      preamble: () => `<h2>${t('demo_title')}</h2>`,
+      questions: () => [
+        { prompt: t('demo_age'), name: 'age', options: t('demo_age_opts'), required: true },
+        { prompt: t('demo_gender'), name: 'gender', options: t('demo_gender_opts'), required: true },
+        { prompt: t('demo_l1'), name: 'l1', options: t('demo_l1_opts'), required: true },
+        { prompt: t('demo_subtitle_freq'), name: 'subtitle_freq', options: t('demo_subtitle_opts'), required: true },
+      ],
+      data: { phase: 'demographics' },
+    };
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 3b: English Proficiency
+    // ═══════════════════════════════════════════════════
+    const cefrAssessment = {
+      type: jsPsychSurveyMultiChoice,
+      preamble: () => `<h2>${t('cefr_title')}</h2><p class="phase-subtitle">${t('cefr_instr')}</p>`,
+      questions: () => [
+        { prompt: t('cefr_overall'), name: 'cefr_overall', options: t('cefr_overall_opts'), required: true },
+        { prompt: t('cefr_listening'), name: 'cefr_listening', options: t('cefr_listening_opts'), required: true },
+      ],
+      data: { phase: 'cefr' },
+    };
+
+    // Test score — same page, text input (no separate page)
+    const cefrTestScore = {
+      type: jsPsychSurveyText,
+      preamble: () => `<p class="phase-subtitle">${t('cefr_test_score')}</p>`,
+      questions: () => [
+        { prompt: '', name: 'test_score', placeholder: t('pid_score_placeholder'), required: false },
+      ],
+      data: { phase: 'cefr_score' },
+    };
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 4: Pre-test
+    // ═══════════════════════════════════════════════════
+    const pretestIntro = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: () => `<div class="phase-card">
+        <h2>${t('pretest_title')}</h2><p>${t('pretest_instr')}</p>
+        <audio controls controlsList="nodownload noplaybackrate"
+               src="data/pretest/pretest_audio.mp3"
+               style="width:100%;margin:1rem 0"
+               oncontextmenu="return false"></audio>
+      </div>`,
+      choices: () => [t('btn_next')],
+    };
+
+    const pretestQuestions = pretestQ.questions.map((q, i) => ({
+      type: jsPsychSurveyMultiChoice,
+      preamble: `<p class="question-counter">Q${i + 1} / ${pretestQ.questions.length}</p>`,
+      questions: [{
+        prompt: q.question, name: q.id, options: q.options, required: true,
+      }],
+      data: { phase: 'pretest', question_id: q.id, correct_enc: q.correct_enc },
+    }));
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 5: Practice Trial (Normal condition, no subtitle variation)
+    // ═══════════════════════════════════════════════════
+    const practiceIntro = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: () => `<div class="phase-card"><h2>${t('practice_title')}</h2><p>${t('practice_instr')}</p></div>`,
+      choices: () => [t('btn_start_video')],
+    };
+
+    const practiceVideo = {
+      type: jsPsychVideoSubtitle,
+      video_src: 'data/practice/video.mp4',
+      subtitle_words: [],  // Practice uses Normal condition (no size variation)
+      clip_label: () => t('practice_title'),
+      lookback_s: config.presentation.lookback_window_s,
+      instruction: () => t('trial_video_instr'),
+      auto_advance: true,
+      data: { phase: 'practice' },
+    };
+
+    // Practice quiz (2 comprehension + 2 intent, lightweight)
+    const practiceQuizTrials = [];
+    if (practiceQ.comprehension) {
+      practiceQ.comprehension.forEach((q, qi) => {
+        practiceQuizTrials.push({
+          type: jsPsychSurveyMultiChoice,
+          preamble: `<p class="question-counter">${t('practice_title')} — Q${qi + 1}/${practiceQ.comprehension.length}</p>`,
+          questions: [{ prompt: q.question, name: q.id, options: q.options, required: true }],
+          data: { phase: 'practice_quiz', question_id: q.id, correct_enc: q.correct_enc },
+        });
+      });
+    }
+    if (practiceQ.speaker_intent) {
+      const si = practiceQ.speaker_intent;
+      if (si.emphasis_identification) {
+        const emp = si.emphasis_identification;
+        practiceQuizTrials.push({
+          type: jsPsychSurveyMultiChoice,
+          preamble: `<p class="question-counter">${t('practice_title')} — ${t('trial_intent_title')}</p>`,
+          questions: [{ prompt: `"${emp.sentence}"<br><br>${emp.question}`, name: 'practice_intent_emph', options: emp.options, required: true }],
+          data: { phase: 'practice_quiz', intent_type: 'emphasis', correct_enc: emp.correct_enc },
+        });
+      }
+      if (si.attitude_estimation) {
+        const att = si.attitude_estimation;
+        practiceQuizTrials.push({
+          type: jsPsychSurveyMultiChoice,
+          preamble: `<p class="question-counter">${t('practice_title')} — ${t('trial_intent_title')}</p>`,
+          questions: [{ prompt: att.question, name: 'practice_intent_att', options: att.options, required: true }],
+          data: { phase: 'practice_quiz', intent_type: 'attitude', correct_enc: att.correct_enc },
+        });
+      }
+    }
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 6: Main Trials — built from pre-loaded data
+    // ═══════════════════════════════════════════════════
+    function buildMainTrials(participantNum) {
+      const { pattern, orderIdx } = assignFromNumber(participantNum);
+      const assignment = config.latin_square[pattern];
+      const clipOrder = PRESENTATION_ORDERS[orderIdx];
+      const trials = [];
+
+      clipOrder.forEach((clipId, idx) => {
+        const condition = assignment[clipId];
+        const cd = clipData[clipId];
+        const clipInfo = config.clips[clipId];
+        const subtitleWords = cd.subtitles?.conditions?.[condition] || [];
+        const qData = cd.questions;
+
+        // 6a. Video
+        trials.push({
+          type: jsPsychVideoSubtitle,
+          video_src: `data/${cd.legacyDir}/video.mp4`,
+          subtitle_words: subtitleWords,
+          clip_label: t('trial_counter', { n: idx + 1 }),
+          lookback_s: config.presentation.lookback_window_s,
+          instruction: t('trial_video_instr'),
+          auto_advance: true,
+          data: { phase: 'trial_video', clip_id: clipId, legacy_id: cd.legacyDir, condition, D_new: clipInfo.D_new, trial_index: idx },
+        });
+
+        // 6b. Prior exposure check (first question for each clip)
+        trials.push({
+          type: jsPsychSurveyMultiChoice,
+          questions: [{ prompt: t('clip_prior_exposure'), name: `prior_exposure_${clipId}`, options: t('clip_prior_opts'), required: true }],
+          data: { phase: 'prior_exposure', clip_id: clipId, condition },
+        });
+
+        // 6c. Comprehension quiz (3 content questions, pre-loaded)
+        if (qData?.comprehension) {
+          const contentQs = qData.comprehension.filter(q => !q.is_dummy);
+          const selected = shuffle(contentQs).slice(0, 3);
+          selected.forEach((q, qi) => {
+            trials.push({
+              type: jsPsychSurveyMultiChoice,
+              preamble: `<p class="question-counter">${t('trial_quiz_title')} — Q${qi + 1}/3</p>`,
+              questions: [{ prompt: q.question, name: q.id, options: shuffle(q.options), required: true }],
+              data: { phase: 'quiz', clip_id: clipId, condition, question_id: q.id, correct_enc: q.correct_enc },
+            });
+          });
+        }
+
+        // 6c. Speaker intent (3 tasks, pre-loaded)
+        if (qData?.speaker_intent) {
+          const si = qData.speaker_intent;
+
+          if (si.emphasis_identification) {
+            const emp = si.emphasis_identification;
+            trials.push({
+              type: jsPsychSurveyMultiChoice,
+              preamble: `<p class="question-counter">${t('trial_intent_title')} — 1/3</p>`,
+              questions: [{ prompt: `"${emp.sentence}"<br><br>${emp.question}`, name: `intent_emphasis_${clipId}`, options: emp.options, required: true }],
+              data: { phase: 'intent', clip_id: clipId, intent_type: 'emphasis', correct_enc: emp.correct_enc },
+            });
+          }
+
+          if (si.attitude_estimation) {
+            const att = si.attitude_estimation;
+            trials.push({
+              type: jsPsychSurveyMultiChoice,
+              preamble: `<p class="question-counter">${t('trial_intent_title')} — 2/3</p>`,
+              questions: [{ prompt: att.question, name: `intent_attitude_${clipId}`, options: att.options, required: true }],
+              data: { phase: 'intent', clip_id: clipId, intent_type: 'attitude', correct_enc: att.correct_enc },
+            });
+          }
+
+          if (si.prosodic_structure) {
+            const pro = si.prosodic_structure;
+            trials.push({
+              type: jsPsychSurveyMultiChoice,
+              preamble: `<p class="question-counter">${t('trial_intent_title')} — 3/3</p>`,
+              questions: [{ prompt: pro.question, name: `intent_prosodic_${clipId}`, options: pro.options, required: true }],
+              data: { phase: 'intent', clip_id: clipId, intent_type: 'prosodic', correct_enc: pro.correct_enc },
+            });
+          }
+        }
+
+        // 6d. Subjective ratings
+        trials.push({
+          type: jsPsychSurveyLikert,
+          preamble: () => `<h2>${t('trial_rating_title')}</h2>`,
+          questions: () => {
+            const labels7 = [t('rating_low'), '', '', '', '', '', t('rating_high')];
+            return [
+              { prompt: t('rating_understanding'), name: 'understanding', labels: labels7, required: true },
+              { prompt: t('rating_readability'), name: 'readability', labels: labels7, required: true },
+              { prompt: t('rating_engagement'), name: 'engagement', labels: labels7, required: true },
+              { prompt: t('rating_prosody'), name: 'prosody_perception', labels: labels7, required: true },
+            ];
+          },
+          data: { phase: 'subjective', clip_id: clipId, condition },
+        });
+
+        // 6e. NASA-TLX (simplified 7-point scale)
+        trials.push({
+          type: jsPsychSurveyLikert,
+          preamble: () => `<h2>${t('nasa_title')}</h2>`,
+          questions: () => {
+            const lN = [t('nasa_low'), '', '', '', '', '', t('nasa_high')];
+            const lP = [t('nasa_perf_low'), '', '', '', '', '', t('nasa_perf_high')];
+            return [
+              { prompt: t('nasa_mental'), name: 'nasa_mental', labels: lN, required: true },
+              { prompt: t('nasa_temporal'), name: 'nasa_temporal', labels: lN, required: true },
+              { prompt: t('nasa_performance'), name: 'nasa_performance', labels: lP, required: true },
+              { prompt: t('nasa_effort'), name: 'nasa_effort', labels: lN, required: true },
+              { prompt: t('nasa_frustration'), name: 'nasa_frustration', labels: lN, required: true },
+            ];
+          },
+          data: { phase: 'nasa_tlx', clip_id: clipId, condition },
+        });
+      });
+
+      return trials;
+    }
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 7: Post-survey
+    // ═══════════════════════════════════════════════════
+    const postSurvey1 = {
+      type: jsPsychSurveyMultiChoice,
+      preamble: () => `<h2>${t('post_title')}</h2>`,
+      questions: () => [
+        { prompt: t('post_notice_diff'), name: 'noticed_diff', options: t('post_notice_opts'), required: true },
+        { prompt: t('post_preference'), name: 'preference', options: t('post_pref_opts'), required: true },
+      ],
+    };
+
+    const postSurvey2 = {
+      type: jsPsychSurveyText,
+      questions: () => [
+        { prompt: t('post_describe'), name: 'diff_description', rows: 3, required: false },
+        { prompt: t('post_impressions'), name: 'impressions', rows: 4, required: false },
+      ],
+    };
+
+    // ═══════════════════════════════════════════════════
+    // PHASE 8: Completion
+    // ═══════════════════════════════════════════════════
+    const completion = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: () => `<div class="phase-card completion-card">
+        <h1>🎉</h1>
+        <h2>${t('complete_title')}</h2>
+        <p>${t('complete_body')}</p>
+        <button class="download-btn" onclick="
+          const blob = new Blob([window._experimentData], {type:'application/json'});
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'experiment_data_' + Date.now() + '.json';
+          a.click();
+        ">${t('complete_download')}</button>
+      </div>`,
+      choices: [],
+    };
+
+    // ═══════════════════════════════════════════════════
+    // Build timeline — main trials use a timeline node
+    // that runs buildMainTrials after PID is entered
+    // ═══════════════════════════════════════════════════
+    const mainTrialNode = {
+      timeline: [{
+        type: jsPsychHtmlButtonResponse,
+        stimulus: () => `<div class="phase-card"><h2>${t('main_trials_heading')}</h2><p>${t('main_trials_ready')}</p></div>`,
+        choices: () => [t('btn_start_main')],
+        on_finish: function() {
+          const num = parseInt(jsPsych.data.get().select('participant_num').values.slice(-1)[0]) || 1;
+          const trials = buildMainTrials(num);
+          trials.forEach(t => jsPsych.addNodeToEndOfTimeline(t));
+          jsPsych.addNodeToEndOfTimeline(postSurvey1);
+          jsPsych.addNodeToEndOfTimeline(postSurvey2);
+          jsPsych.addNodeToEndOfTimeline(completion);
+        }
+      }],
+    };
+
+    const timeline = [
+      langSelect,
+      participantId,
+      consent,
+      demographics,
+      cefrAssessment,
+      cefrTestScore,
+      pretestIntro,
+      ...pretestQuestions,
+      practiceIntro,
+      practiceVideo,
+      ...practiceQuizTrials,
+      mainTrialNode,
+    ];
+
+    jsPsych.run(timeline);
+  </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>実験質問項目一覧 — 韻律駆動型字幕の有効性評価</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans:wght@400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', 'Noto Sans', sans-serif; font-size: 10pt; line-height: 1.5; color: #222; max-width: 210mm; margin: 0 auto; padding: 12mm 15mm; }
+  @media print {
+    body { padding: 8mm 12mm; font-size: 9pt; }
+    .page-break { page-break-before: always; }
+    h2 { page-break-after: avoid; }
+    table { page-break-inside: auto; }
+    tr { page-break-inside: avoid; }
+  }
+  h1 { font-size: 15pt; border-bottom: 2px solid #333; padding-bottom: 6px; margin-bottom: 14px; }
+  h2 { font-size: 12pt; color: #1a5276; border-left: 4px solid #1a5276; padding-left: 8px; margin: 18px 0 8px; }
+  h3 { font-size: 10pt; color: #444; margin: 12px 0 6px; }
+  .meta { color: #666; font-size: 8.5pt; margin-bottom: 16px; }
+  .section { margin-bottom: 14px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 3px; }
+  .note { font-size: 8.5pt; color: #666; font-style: italic; margin: 3px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 9pt; }
+  th, td { border: 1px solid #ccc; padding: 3px 6px; text-align: left; vertical-align: top; }
+  th { background: #e8edf2; font-weight: 700; white-space: nowrap; }
+  .q-table th:nth-child(1) { width: 7%; }
+  .q-table th:nth-child(2) { width: 7%; }
+  .q-table th:nth-child(3) { width: 38%; }
+  .q-table th:nth-child(4) { width: 48%; }
+  .dummy { background: #fff3cd; }
+  .si-table th:nth-child(1) { width: 8%; }
+  .si-table th:nth-child(2) { width: 15%; }
+  .si-table th:nth-child(3) { width: 35%; }
+  .si-table th:nth-child(4) { width: 42%; }
+  .likert { display: flex; gap: 3px; align-items: center; margin-top: 3px; font-size: 8.5pt; }
+  .likert-point { width: 12px; height: 12px; border: 1px solid #999; border-radius: 50%; display: inline-block; }
+  .likert-label { color: #666; }
+  .question { margin: 6px 0; padding: 5px 8px; background: #fff; border: 1px solid #e0e0e0; border-radius: 2px; }
+  .question-prompt { font-weight: 700; margin-bottom: 3px; font-size: 9.5pt; }
+  .options { padding-left: 16px; margin: 2px 0; }
+  .options li { margin: 1px 0; }
+  .toc { margin: 8px 0 16px; padding: 8px 12px; background: #eef6ff; border: 1px solid #b3d4fc; border-radius: 3px; font-size: 9pt; }
+  .toc ol { padding-left: 18px; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 10px 0; }
+  .clip-header { background: #1a5276; color: #fff; padding: 4px 8px; font-weight: 700; font-size: 10pt; margin: 10px 0 4px; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<h1>添付資料: 実験で使用する質問項目一覧</h1>
+<p class="meta">
+  研究課題名: 韻律駆動型字幕の有効性評価 —— 字幕提示方法の違いが非母語話者の内容理解および話者意図の知覚に与える影響<br>
+  本資料は、実験参加者に提示される全画面の質問項目を日英二言語で示したものである。実験はjsPsych 7.xで制御するWebアプリケーション上で実施する。
+</p>
+
+<div class="toc">
+  <strong>目次</strong>
+  <ol>
+    <li>言語選択・参加者情報・インフォームドコンセント</li>
+    <li>デモグラフィック質問紙</li>
+    <li>英語熟達度自己評価（CEFR）</li>
+    <li>事前テスト：リスニング理解度（10問）</li>
+    <li>練習試行クイズ</li>
+    <li>本試行 — 理解度クイズ（6クリップ × 10問プール）</li>
+    <li>本試行 — 話者意図推定課題（6クリップ × 3問）</li>
+    <li>本試行 — 主観評価（4項目）＋ NASA-TLX（5項目）</li>
+    <li>事後アンケート</li>
+  </ol>
+</div>
+
+<!-- ===== 1. Initial screens ===== -->
+<h2>1. 言語選択・参加者情報・インフォームドコンセント</h2>
+<div class="section">
+  <table>
+    <tr><th>画面</th><th>内容（日本語）</th><th>内容（English）</th></tr>
+    <tr><td>言語選択</td><td>言語を選択</td><td>Select Language</td></tr>
+    <tr><td>参加者番号</td><td>参加者番号（1〜52）を入力 / 参加者ID（学生番号）を入力</td><td>Enter participant number (1–52) / participant ID</td></tr>
+    <tr><td>同意確認</td><td>上記の説明事項を読み、内容を理解した上で、本研究に参加することに同意します。☐</td><td>I have read and understood the above information, and I voluntarily agree to participate in this study. ☐</td></tr>
+  </table>
+</div>
+
+<!-- ===== 2. Demographics ===== -->
+<h2>2. デモグラフィック質問紙（基本情報）</h2>
+<div class="section">
+  <table>
+    <tr><th>項目</th><th>質問（JA）</th><th>質問（EN）</th><th>選択肢</th></tr>
+    <tr><td>年齢</td><td>年齢</td><td>Age</td><td>18〜24 / 25〜34 / 35〜44 / 45〜54 / 55以上</td></tr>
+    <tr><td>性別</td><td>性別</td><td>Gender</td><td>男性 / 女性 / その他 / 回答しない</td></tr>
+    <tr><td>母語</td><td>第一言語（母語）</td><td>First language</td><td>日本語 / 中国語 / 韓国語 / ベトナム語 / インドネシア語 / タイ語 / その他</td></tr>
+    <tr><td>字幕利用</td><td>映像視聴時に字幕をどの程度利用しますか？</td><td>How often do you use subtitles?</td><td>全く利用しない / ほとんど利用しない / 時々 / よく / 常に</td></tr>
+  </table>
+</div>
+
+<!-- ===== 3. CEFR ===== -->
+<h2>3. 英語熟達度自己評価（CEFR）</h2>
+<div class="section">
+  <table>
+    <tr><th>項目</th><th>質問</th><th>選択肢</th></tr>
+    <tr><td>総合</td><td>英語の総合的な熟達度 / Overall English proficiency</td><td>A1（英検3級/TOEIC~300） / A2（準2級/300-400） / B1（2級/400-600/TOEFL42-71） / B2（準1級/600-800/TOEFL72-94） / C1（1級/800+/TOEFL95-120） / C2 / 母語話者</td></tr>
+    <tr><td>リスニング</td><td>英語リスニングの熟達度 / Listening comprehension</td><td>A1–A2 / B1 / B2 / C1 / C2 / 母語話者</td></tr>
+    <tr><td>テストスコア</td><td>英語テストスコア（任意） / Test score (optional)</td><td>[自由記述]</td></tr>
+  </table>
+</div>
+
+<!-- ===== 4. Pretest ===== -->
+<h2>4. 事前テスト：リスニング理解度</h2>
+<div class="section">
+  <p class="note">音声クリップを聴取後、以下の10問に回答（4択）。問題はpretest_questions.enc.jsonから復号して表示。</p>
+  <p class="note">※ 正答情報はXOR + Caesar + Base64の三層暗号化。この資料では暗号化前の原文を掲載。</p>
+</div>
+
+<!-- ===== 5. Practice ===== -->
+<h2>5. 練習試行クイズ（Practice）</h2>
+<div class="section">
+  <p class="note">練習映像: Simon Sinek "How Great Leaders Inspire Action" (2009)（Normal条件の字幕）視聴後に出題</p>
+  <table class="q-table">
+    <tr><th>ID</th><th>種別</th><th>問題文</th><th>選択肢</th></tr>
+    <tr><td>P_C01</td><td>理解</td><td>According to the speaker, what do great leaders have in common?</td><td>A) They all have large budgets / B) They all think, act, and communicate the same way / C) They all focus on features / D) They have the best technology</td></tr>
+    <tr><td>P_C02</td><td>理解</td><td>What concept does the speaker introduce to explain his idea?</td><td>A) The Diamond Model / B) The Golden Circle / C) The Triangle Method / D) The Success Pyramid</td></tr>
+  </table>
+  <table class="si-table" style="margin-top:6px">
+    <tr><th>ID</th><th>種別</th><th>問題文</th><th>選択肢</th></tr>
+    <tr><td>P_SI1</td><td>強調同定</td><td>"People don't buy what you do, they buy why you do it." — Which word does the speaker emphasize most?</td><td>buy / what / <b>why</b> / do</td></tr>
+    <tr><td>P_SI2</td><td>態度推定</td><td>What is the speaker's overall tone in this segment?</td><td>Academic and detached / <b>Passionate and persuasive</b> / Humorous and light / Critical and skeptical</td></tr>
+  </table>
+</div>
+
+<!-- ===== 6. Main Trial Comprehension ===== -->
+<div class="page-break"></div>
+<h2>6. 本試行 — 理解度クイズ（全問一覧）</h2>
+<p class="note">各クリップにつき10問プール（内容7問＋ダミー3問）から3問を抽出して出題。ダミー問題（黄色）は注意確認用。<br>
+<strong>※ 各クリップの視聴直後、最初の質問として「この動画を以前に見たことがあるか」を確認する（3択: 初見 / 見たが覚えていない / 見て覚えている）。</strong></p>
+
+<!-- H1 -->
+<div class="clip-header">Clip H1 — Ken Robinson: "Do Schools Kill Creativity?"</div>
+<table class="q-table">
+  <tr><th>ID</th><th>種別</th><th>問題文</th><th>選択肢</th></tr>
+  <tr><td>H1_C01</td><td>内容</td><td>What was the little girl drawing in the lesson?</td><td>A picture of her family / A picture of God / A self-portrait / A picture of her school</td></tr>
+  <tr><td>H1_C02</td><td>内容</td><td>How did the teacher react when she saw the girl was paying attention?</td><td>She was annoyed / She was fascinated / She was confused / She ignored it</td></tr>
+  <tr><td>H1_C03</td><td>内容</td><td>How old was the speaker's son James during the Nativity play?</td><td>Three / Four / Five / Six</td></tr>
+  <tr><td>H1_C04</td><td>内容</td><td>What role did James get in the Nativity play?</td><td>A shepherd / One of the wise men / Joseph / An angel</td></tr>
+  <tr><td>H1_C05</td><td>内容</td><td>What joke did the speaker make about Mel Gibson?</td><td>Mel Gibson was in the audience / Mel Gibson directed the sequel / Mel Gibson played Joseph / Mel Gibson funded the play</td></tr>
+  <tr><td>H1_C06</td><td>内容</td><td>What did the girl say when the teacher told her nobody knows what God looks like?</td><td>She stopped drawing / She said they will in a minute / She started crying / She drew something else</td></tr>
+  <tr><td>H1_C07</td><td>内容</td><td>What did the speaker say was packed full at the Nativity play?</td><td>The parking lot / The classroom / The place was crammed full of agents / The church</td></tr>
+  <tr class="dummy"><td>H1_D01</td><td>ダミー</td><td>What university did the speaker attend?</td><td>Oxford / Cambridge / Harvard / The speaker did not mention a university</td></tr>
+  <tr class="dummy"><td>H1_D02</td><td>ダミー</td><td>What country was the drawing lesson in?</td><td>United States / France / England / The speaker did not specify</td></tr>
+  <tr class="dummy"><td>H1_D03</td><td>ダミー</td><td>How many children does the speaker have?</td><td>One / Two / Three / The speaker did not mention</td></tr>
+</table>
+
+<!-- H2 -->
+<div class="clip-header">Clip H2 — Brené Brown: "The Power of Vulnerability"</div>
+<table class="q-table">
+  <tr><th>ID</th><th>種別</th><th>問題文</th><th>選択肢</th></tr>
+  <tr><td>H2_C01</td><td>内容</td><td>What did the speaker find the 'wholehearted' people had in common?</td><td>Intelligence / A sense of courage / Financial success / Large social networks</td></tr>
+  <tr><td>H2_C02</td><td>内容</td><td>What is the original Latin meaning of the word 'courage'?</td><td>Strength / Bravery / Heart / Mind</td></tr>
+  <tr><td>H2_C03</td><td>内容</td><td>What did the original definition of courage mean?</td><td>To fight without fear / To tell the story of who you are with your whole heart / To overcome physical challenges / To stand up for others</td></tr>
+  <tr><td>H2_C04</td><td>内容</td><td>What was the third quality wholehearted people shared?</td><td>Resilience / Gratitude / Connection / Creativity</td></tr>
+  <tr><td>H2_C05</td><td>内容</td><td>Why can we not practice compassion with others?</td><td>Because we lack time / If we can't treat ourselves kindly / Because society discourages it / If we don't have enough resources</td></tr>
+  <tr><td>H2_C06</td><td>内容</td><td>What were wholehearted people willing to let go of?</td><td>Their possessions / Their past mistakes / Who they thought they should be / Their social status</td></tr>
+  <tr><td>H2_C07</td><td>内容</td><td>How did the speaker describe her data analysis process?</td><td>Calm and methodical / Like a Jackson Pollock crazy thing / Quick and efficient / Collaborative with colleagues</td></tr>
+  <tr class="dummy"><td>H2_D01</td><td>ダミー</td><td>How many years of research did the speaker conduct?</td><td>Five / Ten / Fifteen / The speaker did not specify in this segment</td></tr>
+  <tr class="dummy"><td>H2_D02</td><td>ダミー</td><td>What university does the speaker work at?</td><td>Stanford / University of Houston / Rice University / Not mentioned in this segment</td></tr>
+  <tr class="dummy"><td>H2_D03</td><td>ダミー</td><td>What specific research method did the speaker use?</td><td>Surveys only / Brain imaging / Statistical modeling / Not specified in this segment</td></tr>
+</table>
+
+<!-- H3 -->
+<div class="page-break"></div>
+<div class="clip-header">Clip H3 — Kelly McGonigal: "How to Make Stress Your Friend"</div>
+<table class="q-table">
+  <tr><th>ID</th><th>種別</th><th>問題文</th><th>選択肢</th></tr>
+  <tr><td>H3_C01</td><td>内容</td><td>What is the speaker's profession?</td><td>Medical doctor / Health psychologist / Neuroscientist / Fitness trainer</td></tr>
+  <tr><td>H3_C02</td><td>内容</td><td>What has the speaker been teaching for the last 10 years?</td><td>Exercise techniques / That stress makes you sick / Meditation practices / Time management</td></tr>
+  <tr><td>H3_C03</td><td>内容</td><td>How many adults were tracked in the study?</td><td>10,000 / 20,000 / 30,000 / 50,000</td></tr>
+  <tr><td>H3_C04</td><td>内容</td><td>For how many years were the adults tracked?</td><td>Five / Eight / Ten / Twelve</td></tr>
+  <tr><td>H3_C05</td><td>内容</td><td>What increased risk did people with a lot of stress have?</td><td>23% / 33% / 43% / 53%</td></tr>
+  <tr><td>H3_C06</td><td>内容</td><td>The increased risk was only true for which group?</td><td>People over 50 / People who also believed stress is harmful / People who exercised less / People with chronic diseases</td></tr>
+  <tr><td>H3_C07</td><td>内容</td><td>What did the speaker say she had turned stress into?</td><td>A motivator / A friend / The enemy / A tool</td></tr>
+  <tr class="dummy"><td>H3_D01</td><td>ダミー</td><td>What specific disease did the speaker study?</td><td>Heart disease / Diabetes / Cancer / No specific disease was mentioned</td></tr>
+  <tr class="dummy"><td>H3_D02</td><td>ダミー</td><td>Where was the study conducted?</td><td>Europe / Asia / United States / The speaker did not specify</td></tr>
+  <tr class="dummy"><td>H3_D03</td><td>ダミー</td><td>What meditation technique did the speaker recommend?</td><td>Mindfulness / Yoga / Deep breathing / No technique was recommended in this segment</td></tr>
+</table>
+
+<!-- L1 -->
+<div class="clip-header">Clip L1 — Hans Rosling: "The Best Stats You've Ever Seen"</div>
+<table class="q-table">
+  <tr><th>ID</th><th>種別</th><th>問題文</th><th>選択肢</th></tr>
+  <tr><td>L1_C01</td><td>内容</td><td>Which region was moving towards smaller families?</td><td>African countries / Latin American countries / Arab countries / All of the above</td></tr>
+  <tr><td>L1_C02</td><td>内容</td><td>What color represented the Arabic countries on the chart?</td><td>Green / Blue / Yellow / Red</td></tr>
+  <tr><td>L1_C03</td><td>内容</td><td>What 'miracle' happened in Bangladesh in the 1980s?</td><td>Economic boom / Imams promoted family planning / Medical breakthrough / Education reform</td></tr>
+  <tr><td>L1_C04</td><td>内容</td><td>What major health crisis affected African countries in the 1990s?</td><td>Malaria epidemic / HIV epidemic / Cholera outbreak / Ebola outbreak</td></tr>
+  <tr><td>L1_C05</td><td>内容</td><td>Which two countries did the speaker compare directly?</td><td>China and India / US and Vietnam / Brazil and Nigeria / Japan and Germany</td></tr>
+  <tr><td>L1_C06</td><td>内容</td><td>What happened in Vietnam in the 1980s regarding economics?</td><td>Adopted communist planning / Went for market economy / Started a war / Joined the UN</td></tr>
+  <tr><td>L1_C07</td><td>内容</td><td>What color represented African countries on the chart?</td><td>Yellow / Blue / Green / Red</td></tr>
+  <tr class="dummy"><td>L1_D01</td><td>ダミー</td><td>What software did the speaker use for the visualization?</td><td>PowerPoint / Gapminder / Excel / Not mentioned in this segment</td></tr>
+  <tr class="dummy"><td>L1_D02</td><td>ダミー</td><td>What year was this TED talk originally given?</td><td>2004 / 2006 / 2008 / Not stated in this segment</td></tr>
+  <tr class="dummy"><td>L1_D03</td><td>ダミー</td><td>How many countries were included in the dataset?</td><td>50 / 100 / 200 / Not specified in this segment</td></tr>
+</table>
+
+<!-- L2 -->
+<div class="clip-header">Clip L2 — David Christian: "The History of Our World in 18 Minutes"</div>
+<table class="q-table">
+  <tr><th>ID</th><th>種別</th><th>問題文</th><th>選択肢</th></tr>
+  <tr><td>L2_C01</td><td>内容</td><td>What law of thermodynamics does the speaker reference?</td><td>First / Second / Third / Zeroth</td></tr>
+  <tr><td>L2_C02</td><td>内容</td><td>What term did the speaker's colleague Fred Spear use?</td><td>Sweet spot conditions / Goldilocks conditions / Perfect storm / Equilibrium conditions</td></tr>
+  <tr><td>L2_C03</td><td>内容</td><td>What does 'Goldilocks conditions' mean in this context?</td><td>Extremely hot / Not too hot, not too cold, just right / Constantly changing / Very cold</td></tr>
+  <tr><td>L2_C04</td><td>内容</td><td>What term does 'big history' use for moments when complexity increases?</td><td>Turning points / Threshold moments / Breaking points / Milestone events</td></tr>
+  <tr><td>L2_C05</td><td>内容</td><td>What happens as things get more complex?</td><td>They become more stable / They become more fragile and vulnerable / They become simpler / Less interesting</td></tr>
+  <tr><td>L2_C06</td><td>内容</td><td>What does complexity create the impression of?</td><td>Something predictable / Something utterly new appearing out of nowhere / Something familiar / Something dangerous</td></tr>
+  <tr><td>L2_C07</td><td>内容</td><td>What happens at each threshold?</td><td>The going gets easier / Nothing changes / The going gets tougher / Progress stops</td></tr>
+  <tr class="dummy"><td>L2_D01</td><td>ダミー</td><td>What specific example of complexity did the speaker describe in detail?</td><td>The human brain / DNA molecules / Stars forming / No specific example given</td></tr>
+  <tr class="dummy"><td>L2_D02</td><td>ダミー</td><td>How many threshold moments did the speaker identify?</td><td>Four / Eight / Twelve / Not specified</td></tr>
+  <tr class="dummy"><td>L2_D03</td><td>ダミー</td><td>What book did the speaker recommend?</td><td>A Brief History of Time / Maps of Time / The Origin of Species / No book was mentioned</td></tr>
+</table>
+
+<!-- L3 -->
+<div class="page-break"></div>
+<div class="clip-header">Clip L3 — Al Gore: "Averting the Climate Crisis"</div>
+<table class="q-table">
+  <tr><th>ID</th><th>種別</th><th>問題文</th><th>選択肢</th></tr>
+  <tr><td>L3_C01</td><td>内容</td><td>What costume was the speaker wearing in the photo?</td><td>A tuxedo / A big white chef's hat / A cowboy outfit / A lab coat</td></tr>
+  <tr><td>L3_C02</td><td>内容</td><td>Who sent the speaker a handwritten letter?</td><td>George Bush / Barack Obama / Bill Clinton / John Kerry</td></tr>
+  <tr><td>L3_C03</td><td>内容</td><td>What did Bill Clinton's letter congratulate the speaker on?</td><td>Winning an award / The new restaurant / A new book / A political victory</td></tr>
+  <tr><td>L3_C04</td><td>内容</td><td>What topic was the speaker originally going to discuss?</td><td>Global warming / Information ecology / Renewable energy / Ocean conservation</td></tr>
+  <tr><td>L3_C05</td><td>内容</td><td>What did the speaker decide to focus on instead?</td><td>His personal life / What people asked him to elaborate on / His new book / Technology solutions</td></tr>
+  <tr><td>L3_C06</td><td>内容</td><td>What does the speaker compare updating his slideshow to?</td><td>Painting a picture / Beach combing / Cooking a meal / Building a house</td></tr>
+  <tr><td>L3_C07</td><td>内容</td><td>What did the speaker say about coming back to TED?</td><td>It was his first time / He planned to make it a lifelong habit / He was never coming back / He was unsure about returning</td></tr>
+  <tr class="dummy"><td>L3_D01</td><td>ダミー</td><td>What specific policy did the speaker propose?</td><td>Carbon tax / Cap and trade / Solar subsidies / No specific policy was proposed</td></tr>
+  <tr class="dummy"><td>L3_D02</td><td>ダミー</td><td>What scientific data did the speaker present first?</td><td>Temperature records / CO2 levels / Sea level rise / No data was presented</td></tr>
+  <tr class="dummy"><td>L3_D03</td><td>ダミー</td><td>What country did the speaker use as a positive example?</td><td>Germany / Denmark / Sweden / No country was highlighted</td></tr>
+</table>
+
+<!-- ===== 7. Speaker Intent ===== -->
+<h2>7. 本試行 — 話者意図推定課題（全クリップ）</h2>
+<p class="note">各クリップにつき3問: 強調語同定 / 話者態度推定 / 韻律構造知覚</p>
+<table class="si-table">
+  <tr><th>Clip</th><th>タスク</th><th>問題文・提示文</th><th>選択肢</th></tr>
+  <tr><td>H1</td><td>強調同定</td><td>"And the girl said, they will in a minute." — Which word emphasized most?</td><td>girl / said / <b>will</b> / minute</td></tr>
+  <tr><td>H1</td><td>態度推定</td><td>What was the speaker's overall tone?</td><td>Serious / <b>Humorous</b> / Sarcastic / Neutral</td></tr>
+  <tr><td>H1</td><td>韻律構造</td><td>After telling the joke about Mel Gibson, the speaker...</td><td><b>Took a long pause for laughter</b> / Continued immediately / Raised his voice / Slowed down</td></tr>
+  <tr style="border-top:2px solid #999"><td>H2</td><td>強調同定</td><td>"And the original definition was to tell the story of who you are with your whole heart." — Which word?</td><td>original / story / whole / <b>heart</b></td></tr>
+  <tr><td>H2</td><td>態度推定</td><td>What was the speaker's tone while describing the wholehearted people?</td><td>Serious / Humorous / Sarcastic / <b>Reverent and earnest</b></td></tr>
+  <tr><td>H2</td><td>韻律構造</td><td>When the speaker mentioned 'the courage to be imperfect,' she...</td><td><b>Paused after the phrase</b> / Spoke rapidly / Lowered voice to whisper / Repeated twice</td></tr>
+  <tr style="border-top:2px solid #999"><td>H3</td><td>強調同定</td><td>"But I've changed my mind about stress, and today, I want to change yours." — Which word?</td><td>changed / mind / stress / <b>yours</b></td></tr>
+  <tr><td>H3</td><td>態度推定</td><td>What was the speaker's tone when making her 'confession'?</td><td>Serious and apologetic / <b>Light and confessional</b> / Angry / Neutral</td></tr>
+  <tr><td>H3</td><td>韻律構造</td><td>After saying '43% increased risk of dying,' the speaker...</td><td><b>Paused dramatically before the qualifier</b> / Continued without pause / Laughed / Repeated</td></tr>
+  <tr style="border-top:2px solid #999"><td>L1</td><td>強調同定</td><td>"And we have a completely new world." — Which word?</td><td>we / completely / <b>new</b> / world</td></tr>
+  <tr><td>L1</td><td>態度推定</td><td>What was the speaker's general tone?</td><td>Passionate / Solemn / Humorous / <b>Neutral and explanatory</b></td></tr>
+  <tr><td>L1</td><td>韻律構造</td><td>When presenting data comparisons, the speaker typically...</td><td>Used dramatic pauses / <b>Spoke at a steady pace</b> / Whispered / Shouted</td></tr>
+  <tr style="border-top:2px solid #999"><td>L2</td><td>強調同定</td><td>"And why complexity means vulnerability and fragility." — Which word?</td><td>complexity / means / <b>vulnerability</b> / fragility</td></tr>
+  <tr><td>L2</td><td>態度推定</td><td>What was the speaker's tone?</td><td>Alarming / Humorous / <b>Explanatory and measured</b> / Emotional</td></tr>
+  <tr><td>L2</td><td>韻律構造</td><td>When describing 'Goldilocks conditions,' the speaker...</td><td><b>Paused before explaining</b> / Rushed through / Used dramatic voice / Repeated several times</td></tr>
+  <tr style="border-top:2px solid #999"><td>L3</td><td>強調同定</td><td>"What can you do about the climate crisis?" — Which word?</td><td>What / <b>you</b> / do / crisis</td></tr>
+  <tr><td>L3</td><td>態度推定</td><td>What was the speaker's tone in the opening anecdote?</td><td>Serious and urgent / <b>Light and humorous</b> / Sarcastic / Nervous</td></tr>
+  <tr><td>L3</td><td>韻律構造</td><td>When transitioning from the anecdote to the climate topic...</td><td>Made an abrupt shift / <b>Used a conversational, gradual transition</b> / Stopped and asked / Played a video</td></tr>
+</table>
+
+<!-- ===== 8. Subjective + NASA-TLX ===== -->
+<div class="page-break"></div>
+<h2>8. 本試行 — 主観評価（4項目）＋ NASA-TLX（5項目）</h2>
+<p class="note">以下を各クリップ（6本）の映像視聴後に毎回実施。7段階リッカートスケール。</p>
+<div class="section">
+  <h3>主観評価（Your Impressions）</h3>
+  <table>
+    <tr><th>項目</th><th>質問（JA）</th><th>質問（EN）</th><th>スケール</th></tr>
+    <tr><td>理解度</td><td>内容をどの程度理解できましたか？</td><td>How well did you understand the content?</td><td rowspan="4">1 = 全くそう思わない ← → 7 = 非常にそう思う<br>(Not at all ← → Very much)</td></tr>
+    <tr><td>可読性</td><td>字幕はどの程度読みやすかったですか？</td><td>How readable was the subtitle?</td></tr>
+    <tr><td>集中度</td><td>どの程度集中できましたか？</td><td>How engaged were you?</td></tr>
+    <tr><td>韻律知覚</td><td>字幕は話者の強調に気づく助けになりましたか？</td><td>Did the subtitle help you notice the speaker's emphasis?</td></tr>
+  </table>
+  <h3 style="margin-top:12px">NASA-TLX（Workload Assessment）</h3>
+  <table>
+    <tr><th>項目</th><th>質問（JA）</th><th>質問（EN）</th><th>スケール</th></tr>
+    <tr><td>精神的要求</td><td>精神的にどの程度大変でしたか？</td><td>Mental Demand — How mentally demanding?</td><td>1=低い ← → 7=高い</td></tr>
+    <tr><td>時間的圧迫</td><td>どの程度急かされましたか？</td><td>Temporal Demand — How hurried?</td><td>1=低い ← → 7=高い</td></tr>
+    <tr><td>パフォーマンス</td><td>どの程度うまく達成できましたか？</td><td>Performance — How successful?</td><td>1=完璧 ← → 7=失敗</td></tr>
+    <tr><td>努力</td><td>どの程度努力しましたか？</td><td>Effort — How hard did you work?</td><td>1=低い ← → 7=高い</td></tr>
+    <tr><td>不満</td><td>どの程度ストレスを感じましたか？</td><td>Frustration — How frustrated were you?</td><td>1=低い ← → 7=高い</td></tr>
+  </table>
+</div>
+
+<!-- ===== 9. Post-survey ===== -->
+<h2>9. 事後アンケート</h2>
+<div class="section">
+  <table>
+    <tr><th>項目</th><th>質問（JA）</th><th>質問（EN）</th><th>形式</th></tr>
+    <tr><td>気づき</td><td>字幕スタイルの違いに気づきましたか？</td><td>Did you notice any differences between subtitle styles?</td><td>はい / いいえ</td></tr>
+    <tr><td>記述</td><td>「はい」の場合、気づいた違いを記述してください。</td><td>If yes, please describe what differences you noticed.</td><td>自由記述（3行）</td></tr>
+    <tr><td>好み</td><td>どの字幕スタイルが最も好ましかったですか？</td><td>Which subtitle style did you prefer the most?</td><td>全単語同一サイズ / 文法ベースの大小 / 強調ベースの大小 / 両方の組み合わせ</td></tr>
+    <tr><td>感想</td><td>実験の感想やコメントがあればお書きください。</td><td>Please share any impressions or comments.</td><td>自由記述（4行）</td></tr>
+  </table>
+</div>
+
+<!-- ===== Appendix: Clip Transcripts ===== -->
+<div class="page-break"></div>
+<h2>付録: 使用クリップの文字起こし（Transcript）</h2>
+<p class="note">以下は各映像クリップの音声トランスクリプトである。字幕として画面に表示される全テキストを収録。</p>
+
+<div class="clip-header">Practice — Simon Sinek: "How Great Leaders Inspire Action" (200語)</div>
+<div class="section" style="font-size:9pt; line-height:1.6">
+<p>How do you explain when things don't go as we assume? Or better, how do you explain when others are able to achieve things that seem to defy all of the assumptions? For example, why is Apple so innovative? Year after year after year after year, they're more innovative than all their competition. And yet, they're just a computer company. They're just like everyone else. They have the same access to the same talent, the same agencies, the same consultants, the same media. Then why is it that they seem to have something different? Why is it that Martin Luther King led the civil rights movement? He wasn't the only man who suffered in a pre-civil rights America, and he certainly wasn't the only great orator of the day. Why him? And why is it that the Wright brothers were able to figure out controlled, powered man flight when there were certainly other teams who were better qualified, better funded, and they didn't achieve powered man flight, and the Wright brothers beat them to it? There's something else at play here. About three and a half years ago, I made a discovery, and this discovery profoundly changed my view.</p>
+</div>
+
+<div class="clip-header">Clip H1 — Ken Robinson: "Do Schools Kill Creativity?" (210語)</div>
+<div class="section" style="font-size:9pt; line-height:1.6">
+<p>treated with the same status. Thank you. That was it. Thank you very much. So 15 minutes left. Well, I was born. No, the I had a great story recently. I love telling it of a little girl who was in a drawing lesson. She was six and she was at the back drawing and the teacher said this little girl hardly ever paid attention. And in this drawing lesson, she did. And the teacher was fascinated. She went over to him and she said, what are you drawing? And the girl said, I'm drawing a picture of God. And the teacher said, but nobody knows what God looks like. And the girl said, they will in a minute. When my son was four in England, actually, he was four everywhere, to be honest. I mean, we're being strict about it wherever he went. He was four that year, but he was in the Nativity play. Do you remember the story? No, it's big. It's a big story. Mel Gibson did the sequel. You may have seen it. Nativity 2. But James got the part of Joseph, which we were thrilled about. We consider this to be one of the lead parts. We had the place crammed full of agents</p>
+</div>
+
+<div class="clip-header">Clip H2 — Brené Brown: "The Power of Vulnerability" (256語)</div>
+<div class="section" style="font-size:9pt; line-height:1.6">
+<p>These are kind of wholehearted people living from this deep sense of worthiness. So I wrote at the top of the Manila folder, and I started looking at the data. In fact, I did it first in a four-day, very intensive data analysis where I went back, pulled these interviews, pulled the stories, pulled the incidents. What's the theme? What's the pattern? My husband left town with the kids because I always go into this kind of Jackson Pollock crazy thing where I'm just like writing and going in kind of just in my researcher mode. And so here's what I found. What they had in common was a sense of courage. And I want to separate courage and bravery for you for a minute. Courage, the original definition of courage when it first came into the English language, it's from the Latin word cur, meaning heart, and the original definition was to tell the story of who you are with your whole heart. And so these folks had very simply the courage to be imperfect. They had the compassion to be kind to themselves first and then to others because as it turns out we can't practice compassion with other people if we can't treat ourselves kindly. And the last was they had connection, and this was the hard part, as a result of authenticity. They were willing to let go of who they thought they should be in order to be who they were, which is you have to absolutely do that for connection.</p>
+</div>
+
+<div class="clip-header">Clip H3 — Kelly McGonigal: "How to Make Stress Your Friend" (208語)</div>
+<div class="section" style="font-size:9pt; line-height:1.6">
+<p>Um, me too. But that is not my confession. My confession is this. I am a health psychologist, and my mission is to help people be happier and healthier. But I fear that something I've been teaching for the last 10 years is doing more harm than good, and it has to do with stress. For years, I've been telling people stress makes you sick. It increases the risk of everything, from the common cold to cardiovascular disease. Basically, I've turned stress into the enemy. But I've changed my mind about stress, and today, I want to change yours. Let me start with the study that made me rethink my whole approach to stress. This study tracked 30,000 adults in the United States for eight years, and they started by asking people, how much stress have you experienced in the last year? They also asked, do you believe that stress is harmful for your health? And then they used public death records to find out who died. Okay. Some bad news first. People who experienced a lot of stress in the previous year had a 43% increased risk of dying. But that was only true for the people who also believed that stress is harmful for your health.</p>
+</div>
+
+<div class="page-break"></div>
+<div class="clip-header">Clip L1 — Hans Rosling: "The Best Stats You've Ever Seen" (269語)</div>
+<div class="section" style="font-size:9pt; line-height:1.6">
+<p>Latin American countries, they are moving towards smaller families. The yellow ones here are the Arabic countries, and they get larger families. But they, no, longer life, but not larger families. The Africans are the green down here, they still remain here. This is India, Indonesia is moving on pretty fast. And in the 80s here, you have Bangladesh still among the African countries there. But now Bangladesh, it's a miracle that happens in the 80s. The imams start to promote family planning, and they move up into that corner. And in 90s, we have the terrible HIV epidemic that takes down the life expectancy of the African countries. And all the rest of the world moves up into the corner where we have long lives and small family. And we have a completely new world. Let me make a comparison directly between United States of America and Vietnam, 1964. America had small families and long life. Vietnam had large families and short lives. And this is what happens. The data during the war indicate that the African countries are moving towards larger families. And the African countries are moving towards smaller families. And this is what happens. The data during the war indicate that even with all the death, there was an improvement of life expectancy. By the end of the year, the family planning started in Vietnam and they went for smaller families. And the United States up there is getting for longer life, keeping family size. And in the 80s now, they give up communist planning and they go for market economy and it moves fast.</p>
+</div>
+
+<div class="clip-header">Clip L2 — David Christian: "The History of Our World in 18 Minutes" (196語)</div>
+<div class="section" style="font-size:9pt; line-height:1.6">
+<p>ruled by the second law of thermodynamics, how is it possible to generate the sort of complexity I've described, the sort of complexity represented by you and me and the convention center? Well, the answer seems to be the universe can create complexity, but with great difficulty. In pockets, there appear what my colleague Fred Spear calls goldilocks conditions, not too hot, not too cold, just right for the creation of complexity. And slightly more complex things appear. And where you have slightly more complex things, you can get slightly more complex things. And in this way, complexity builds stage by stage. Each stage is magical because it creates the impression of something utterly new, appearing almost out of nowhere in the universe. We refer in big history to these moments as threshold moments. And at each threshold, the going gets tougher. The complex things get more fragile, more vulnerable. The goldilocks conditions get more stringent. And it's more difficult to create complexity. Now, we as extremely complex creatures desperately need to know this story of how the universe creates complexity despite the second law, and why complexity means vulnerability and fragility. And that's the story.</p>
+</div>
+
+<div class="clip-header">Clip L3 — Al Gore: "Averting the Climate Crisis" (193語)</div>
+<div class="section" style="font-size:9pt; line-height:1.6">
+<p>a big white chef's hat. Tipper was saying, one more burger with fries. Three days later, I got a nice, long, handwritten letter from my friend and partner and colleague Bill Clinton saying, congratulations on the new restaurant out. We like to celebrate each other's successes in life. I was going to talk about information ecology, but I was thinking that since I planned to make a lifelong habit of coming back to TED, that maybe I could talk about that another time. It's a deal. I want to focus on what many of you have said you would like me to elaborate on. What can you do about the climate crisis? I want to start with a couple of... I'm going to show some new images and I'm going to recapitulate just four or five. Now, oh, the slideshow. I update the slideshow. Every time I give it, I add new images because I learn more about it every time I give it. It's like beach combing, you know? Every time the tide comes in and out, you find some more shells. Just in the last two days, we got the new...</p>
+</div>
+
+<hr>
+<p class="note">
+  以上。練習試行を含む全質問項目: デモグラフィック4問 + CEFR 3問 + 事前テスト10問 + 練習4問 + 本試行（理解度3問 + 話者意図3問 + 主観4項目 + NASA-TLX 5項目）×6クリップ + 事後4問 = 合計115項目。<br>
+  ダミー問題（注意確認）は各クリップの10問プールに3問含まれ、抽出時にランダムに含まれる可能性がある。<br>
+  正答情報（太字表示）は暗号化されてWebアプリに格納されており、参加者が直接閲覧することはできない。<br>
+  付録にはTEDトーク映像7クリップ分の音声トランスクリプト（合計約1,532語）を掲載。
+</p>
+
+</body>
+</html>

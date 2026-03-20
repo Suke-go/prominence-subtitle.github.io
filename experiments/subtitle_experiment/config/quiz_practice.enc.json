@@ -1,0 +1,53 @@
+{
+  "comprehension": [
+    {
+      "id": "P_C01",
+      "type": "content",
+      "question": "According to the speaker, what do great leaders have in common?",
+      "options": [
+        "They all have large budgets",
+        "They all think, act, and communicate the same way",
+        "They all focus on features",
+        "They have the best technology"
+      ],
+      "is_dummy": false,
+      "correct_enc": "SA=="
+    },
+    {
+      "id": "P_C02",
+      "type": "content",
+      "question": "What concept does the speaker introduce to explain his idea?",
+      "options": [
+        "The Diamond Model",
+        "The Golden Circle",
+        "The Triangle Method",
+        "The Success Pyramid"
+      ],
+      "is_dummy": false,
+      "correct_enc": "SA=="
+    }
+  ],
+  "speaker_intent": {
+    "emphasis_identification": {
+      "sentence": "People don't buy what you do, they buy why you do it.",
+      "question": "Which word does the speaker emphasize most in this sentence?",
+      "options": [
+        "buy",
+        "what",
+        "why",
+        "do"
+      ],
+      "correct_enc": "SQ=="
+    },
+    "attitude_estimation": {
+      "question": "What is the speaker's overall tone in this segment?",
+      "options": [
+        "Academic and detached",
+        "Passionate and persuasive",
+        "Humorous and light",
+        "Critical and skeptical"
+      ],
+      "correct_enc": "SA=="
+    }
+  }
+}
