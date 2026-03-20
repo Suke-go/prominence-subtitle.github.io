@@ -11,6 +11,7 @@
         "Zeroth law"
       ],
       "is_dummy": false,
+      "hint_ja": "話者が言及する熱力学（thermodynamics）の法則は？",
       "correct_enc": "SA=="
     },
     {
@@ -24,6 +25,7 @@
         "Equilibrium conditions"
       ],
       "is_dummy": false,
+      "hint_ja": "同僚のフレッド・スピアが使った用語は？",
       "correct_enc": "SA=="
     },
     {
@@ -37,6 +39,7 @@
         "Very cold"
       ],
       "is_dummy": false,
+      "hint_ja": "Goldilocks conditions（ちょうどいい条件）とはこの文脈で何を意味しますか？",
       "correct_enc": "SA=="
     },
     {
@@ -50,6 +53,7 @@
         "Milestone events"
       ],
       "is_dummy": false,
+      "hint_ja": "big history で複雑さが増す瞬間を何と呼びますか？",
       "correct_enc": "SA=="
     },
     {
@@ -63,6 +67,7 @@
         "They become less interesting"
       ],
       "is_dummy": false,
+      "hint_ja": "物事がより複雑になるとどうなりますか？",
       "correct_enc": "SA=="
     },
     {
@@ -76,6 +81,7 @@
         "Something dangerous"
       ],
       "is_dummy": false,
+      "hint_ja": "複雑さはどのような印象を生み出しますか？",
       "correct_enc": "SA=="
     },
     {
@@ -89,6 +95,7 @@
         "Progress stops"
       ],
       "is_dummy": false,
+      "hint_ja": "各 threshold（転換点）で何が起こると話者は言いますか？",
       "correct_enc": "SQ=="
     },
     {
@@ -141,6 +148,7 @@
         "vulnerability",
         "fragility"
       ],
+      "hint_ja": "この文で話者が最も強調した語はどれですか？",
       "correct_enc": "SQ=="
     },
     "attitude_estimation": {
@@ -151,6 +159,7 @@
         "Explanatory and measured",
         "Emotional"
       ],
+      "hint_ja": "この区間での話者のトーンは？",
       "correct_enc": "SQ=="
     },
     "prosodic_structure": {
@@ -161,6 +170,7 @@
         "Used a dramatically different voice",
         "Repeated it several times"
       ],
+      "hint_ja": "Goldilocks conditions を説明するとき、話者は…",
       "correct_enc": "Rw=="
     }
   }

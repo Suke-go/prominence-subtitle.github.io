@@ -11,6 +11,7 @@
         "All of the above"
       ],
       "is_dummy": false,
+      "hint_ja": "より小さな家族に向かっている地域は？",
       "correct_enc": "SA=="
     },
     {
@@ -24,6 +25,7 @@
         "Red"
       ],
       "is_dummy": false,
+      "hint_ja": "チャートでアラブ諸国を表す色は？",
       "correct_enc": "SQ=="
     },
     {
@@ -37,6 +39,7 @@
         "Education reform"
       ],
       "is_dummy": false,
+      "hint_ja": "1980年代にバングラデシュで起きた「奇跡」とは？",
       "correct_enc": "SA=="
     },
     {
@@ -50,6 +53,7 @@
         "Ebola outbreak"
       ],
       "is_dummy": false,
+      "hint_ja": "1990年代にアフリカ諸国に影響した健康危機は？",
       "correct_enc": "SA=="
     },
     {
@@ -63,6 +67,7 @@
         "Japan and Germany"
       ],
       "is_dummy": false,
+      "hint_ja": "話者が直接比較した2カ国は？",
       "correct_enc": "SA=="
     },
     {
@@ -76,6 +81,7 @@
         "They joined the UN"
       ],
       "is_dummy": false,
+      "hint_ja": "1980年代にベトナムの経済で何が起きましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -89,6 +95,7 @@
         "Red"
       ],
       "is_dummy": false,
+      "hint_ja": "チャートでアフリカ諸国を表す色は？",
       "correct_enc": "SQ=="
     },
     {
@@ -141,6 +148,7 @@
         "new",
         "world"
       ],
+      "hint_ja": "この文で話者が最も強調した語はどれですか？",
       "correct_enc": "SQ=="
     },
     "attitude_estimation": {
@@ -151,6 +159,7 @@
         "Humorous",
         "Neutral and explanatory"
       ],
+      "hint_ja": "この区間での話者の全般的なトーンは？",
       "correct_enc": "Sg=="
     },
     "prosodic_structure": {
@@ -161,6 +170,7 @@
         "Whispered the statistics",
         "Shouted country names"
       ],
+      "hint_ja": "データの比較を提示するとき、話者は通常…",
       "correct_enc": "SA=="
     }
   }

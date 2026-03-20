@@ -457,3 +457,12 @@ audio {
     padding: 1rem !important;
   }
 }
+
+/* ═══ Japanese vocabulary hints ═══ */
+.hint-ja {
+  display: inline-block;
+  margin-top: 0.4em;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  font-style: italic;
+}

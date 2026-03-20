@@ -138,7 +138,7 @@ const STRINGS = {
 
   // Pre-test
   pretest_title: { en: "Pre-test: Listening Comprehension", ja: "事前テスト：リスニング" },
-  pretest_instr: { en: "Please listen to the following audio clip carefully. After listening, answer the 10 comprehension questions that follow. You may replay the audio if needed.", ja: "以下の音声を注意深く聞いてください。聴き終わりましたら、10問の理解度問題にお答えください。必要に応じて音声を繰り返し再生できます。" },
+  pretest_instr: { en: "Please listen to the following audio clip carefully. After listening, answer the 5 comprehension questions that follow. You may replay the audio if needed.", ja: "以下の音声を注意深く聞いてください。聴き終わりましたら、5問の理解度問題にお答えください。必要に応じて音声を繰り返し再生できます。" },
 
   // Practice
   practice_title: { en: "Practice Trial", ja: "練習試行" },
@@ -166,7 +166,8 @@ const STRINGS = {
   rating_high: { en: "Very much", ja: "非常にそう思う" },
 
   // NASA-TLX
-  nasa_title: { en: "Workload Assessment (NASA-TLX)", ja: "作業負荷評価（NASA-TLX）" },
+  nasa_title: { en: "Workload Assessment", ja: "作業負荷の評価" },
+  nasa_preamble: { en: "Please rate your experience for the video you just watched. There are no right or wrong answers — just answer based on how you felt.", ja: "今視聴した映像についての印象を評価してください。正解・不正解はありません。感じたままにお答えください。" },
   nasa_mental: { en: "Mental Demand — How mentally demanding was the task?", ja: "精神的要求 — 精神的にどの程度大変でしたか？" },
   nasa_physical: { en: "Physical Demand — How physically demanding was the task?", ja: "身体的要求 — 身体的にどの程度大変でしたか？" },
   nasa_temporal: { en: "Temporal Demand — How hurried or rushed was the pace?", ja: "時間的圧迫 — どの程度急かされましたか？" },

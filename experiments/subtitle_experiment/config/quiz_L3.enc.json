@@ -11,6 +11,7 @@
         "A lab coat"
       ],
       "is_dummy": false,
+      "hint_ja": "写真で話者が身につけていたコスチュームは？",
       "correct_enc": "SA=="
     },
     {
@@ -24,6 +25,7 @@
         "John Kerry"
       ],
       "is_dummy": false,
+      "hint_ja": "話者に手書きの手紙を送った人は？",
       "correct_enc": "SQ=="
     },
     {
@@ -37,6 +39,7 @@
         "A political victory"
       ],
       "is_dummy": false,
+      "hint_ja": "ビル・クリントンの手紙は何を祝っていましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -50,6 +53,7 @@
         "Ocean conservation"
       ],
       "is_dummy": false,
+      "hint_ja": "話者が元々話そうとしていたトピックは？",
       "correct_enc": "SA=="
     },
     {
@@ -63,6 +67,7 @@
         "Technology solutions"
       ],
       "is_dummy": false,
+      "hint_ja": "代わりに何に焦点を当てることにしましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -76,6 +81,7 @@
         "Building a house"
       ],
       "is_dummy": false,
+      "hint_ja": "話者はスライドショーの更新を何に例えましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -89,6 +95,7 @@
         "He was unsure about returning"
       ],
       "is_dummy": false,
+      "hint_ja": "TEDに戻ることについて話者は何と言いましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -141,6 +148,7 @@
         "do",
         "crisis"
       ],
+      "hint_ja": "この文で話者が最も強調した語はどれですか？",
       "correct_enc": "SA=="
     },
     "attitude_estimation": {
@@ -151,6 +159,7 @@
         "Sarcastic",
         "Nervous"
       ],
+      "hint_ja": "冒頭のエピソード（anecdote）での話者のトーンは？",
       "correct_enc": "SA=="
     },
     "prosodic_structure": {
@@ -161,6 +170,7 @@
         "Stopped and asked the audience a question",
         "Played a video"
       ],
+      "hint_ja": "エピソードから気候変動の話題に移るとき、話者は…",
       "correct_enc": "SA=="
     }
   }

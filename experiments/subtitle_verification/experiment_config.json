@@ -1,0 +1,52 @@
+{
+  "experiment": "Prosodic Captioning Experiment A",
+  "version": "1.0",
+
+  "clips": {
+    "H1": {"speaker":"Ken Robinson","title":"Do Schools Kill Creativity?","year":2006,"group":"high","note":"ユーモア・皮肉の交替、対比構文"},
+    "H2": {"speaker":"Brené Brown","title":"The Power of Vulnerability","year":2010,"group":"high","note":"感情的語り、引用会話、自己言及強調"},
+    "H3": {"speaker":"Kelly McGonigal","title":"How to Make Stress Your Friend","year":2013,"group":"high","note":"修辞的問いかけ、対比強勢"},
+    "L1": {"speaker":"Hans Rosling","title":"The Best Stats You've Ever Seen","year":2006,"group":"low","note":"数値・国名の列挙、平坦"},
+    "L2": {"speaker":"David Christian","title":"History of Our World in 18 Minutes","year":2011,"group":"low","note":"叙述的歴史説明"},
+    "L3": {"speaker":"Al Gore","title":"Averting the Climate Crisis","year":2006,"group":"low","note":"政策説明調、グラフ解説"}
+  },
+
+  "conditions": ["normal","syntactic","prosody","syn_prosody"],
+
+  "condition_labels": {
+    "normal": "Normal",
+    "syntactic": "Syntactic (Dynamik)",
+    "prosody": "Prosody (ACN)",
+    "syn_prosody": "Syntax × Prosody"
+  },
+
+  "latin_square": {
+    "A": {"H1":"normal","H2":"syntactic","H3":"prosody","L1":"syn_prosody","L2":"normal","L3":"syntactic"},
+    "B": {"H1":"syntactic","H2":"prosody","H3":"syn_prosody","L1":"normal","L2":"syntactic","L3":"prosody"},
+    "C": {"H1":"prosody","H2":"syn_prosody","H3":"normal","L1":"syntactic","L2":"prosody","L3":"syn_prosody"},
+    "D": {"H1":"syn_prosody","H2":"normal","H3":"syntactic","L1":"prosody","L2":"syn_prosody","L3":"normal"}
+  },
+
+  "presentation": {
+    "constraint": "high_low_alternating",
+    "clips_per_participant": 6,
+    "max_subtitle_lines": 2,
+    "subtitle_update_interval_ms": 500,
+    "font_family": "Noto Sans",
+    "subtitle_color": "#FFFFFF",
+    "subtitle_bg": "rgba(0,0,0,0.75)"
+  },
+
+  "subjective_items": [
+    {"id":"understanding","label":"How well did you understand the content?","label_ja":"内容をどの程度理解できましたか？","scale":[1,7],"anchors":["Not at all","Very well"]},
+    {"id":"readability","label":"How readable was the subtitle?","label_ja":"字幕はどの程度読みやすかったですか？","scale":[1,7],"anchors":["Very hard","Very easy"]},
+    {"id":"engagement","label":"How engaged were you?","label_ja":"どの程度集中できましたか？","scale":[1,7],"anchors":["Not at all","Completely"]},
+    {"id":"prosody_perception","label":"Did the subtitle help you notice the speaker's emphasis?","label_ja":"字幕が話者の強調に気づく助けになりましたか？","scale":[1,7],"anchors":["Not at all","Very much"]},
+    {"id":"nasa_mental","label":"Mental Demand","label_ja":"精神的要求","scale":[1,21],"anchors":["Low","High"]},
+    {"id":"nasa_physical","label":"Physical Demand","label_ja":"身体的要求","scale":[1,21],"anchors":["Low","High"]},
+    {"id":"nasa_temporal","label":"Temporal Demand","label_ja":"時間的圧迫","scale":[1,21],"anchors":["Low","High"]},
+    {"id":"nasa_performance","label":"Performance","label_ja":"パフォーマンス","scale":[1,21],"anchors":["Perfect","Failure"]},
+    {"id":"nasa_effort","label":"Effort","label_ja":"努力","scale":[1,21],"anchors":["Low","High"]},
+    {"id":"nasa_frustration","label":"Frustration","label_ja":"不満","scale":[1,21],"anchors":["Low","High"]}
+  ]
+}

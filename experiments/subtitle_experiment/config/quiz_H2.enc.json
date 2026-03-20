@@ -11,6 +11,7 @@
         "Large social networks"
       ],
       "is_dummy": false,
+      "hint_ja": "wholehearted（心から生きる）な人々の共通点は？",
       "correct_enc": "SA=="
     },
     {
@@ -24,6 +25,7 @@
         "Mind"
       ],
       "is_dummy": false,
+      "hint_ja": "courage（勇気）のラテン語の本来の意味は？",
       "correct_enc": "SQ=="
     },
     {
@@ -37,6 +39,7 @@
         "To stand up for others"
       ],
       "is_dummy": false,
+      "hint_ja": "courage の本来の定義はどのような意味ですか？",
       "correct_enc": "SA=="
     },
     {
@@ -50,6 +53,7 @@
         "Creativity"
       ],
       "is_dummy": false,
+      "hint_ja": "courage と compassion（思いやり）に続く3番目の特質は？",
       "correct_enc": "SQ=="
     },
     {
@@ -63,6 +67,7 @@
         "If we don't have enough resources"
       ],
       "is_dummy": false,
+      "hint_ja": "なぜ他者に compassion を実践できないのですか？",
       "correct_enc": "SA=="
     },
     {
@@ -76,6 +81,7 @@
         "Their social status"
       ],
       "is_dummy": false,
+      "hint_ja": "wholehearted な人々が手放せたものは？",
       "correct_enc": "SQ=="
     },
     {
@@ -89,6 +95,7 @@
         "Collaborative with colleagues"
       ],
       "is_dummy": false,
+      "hint_ja": "話者はデータ分析の過程をどう表現しましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -141,6 +148,7 @@
         "whole",
         "heart"
       ],
+      "hint_ja": "この文で話者が最も強調した語はどれですか？",
       "correct_enc": "Sg=="
     },
     "attitude_estimation": {
@@ -151,6 +159,7 @@
         "Sarcastic",
         "Reverent and earnest"
       ],
+      "hint_ja": "wholehearted な人々を描写するときの話者のトーンは？",
       "correct_enc": "Sg=="
     },
     "prosodic_structure": {
@@ -161,6 +170,7 @@
         "Lowered her voice to a whisper",
         "Repeated the phrase twice"
       ],
+      "hint_ja": "「不完全である勇気」に言及したとき、話者は…",
       "correct_enc": "Rw=="
     }
   }

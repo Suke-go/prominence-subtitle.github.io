@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prosodic Captioning — Experiment</title>
+<meta name="description" content="Prosodic captioning experiment: evaluating dynamic subtitle rendering based on speech prominence">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ═══ Phase: Consent ═══ -->
+  <section class="phase" id="phaseConsent">
+    <div class="phase-card">
+      <h1>📝 Prosodic Captioning Study</h1>
+      <p class="phase-desc">Thank you for participating in this study. You will watch short video clips with subtitles and answer questions about each clip.</p>
+      <div class="consent-box">
+        <h3>Informed Consent</h3>
+        <ul>
+          <li>This study takes approximately <strong>40 minutes</strong>.</li>
+          <li>You will watch 6 short TED Talk clips (~90s each) with subtitles.</li>
+          <li>After each clip, you will answer comprehension questions and rate your experience.</li>
+          <li>All data is anonymized and stored securely.</li>
+          <li>You may withdraw at any time without penalty.</li>
+        </ul>
+        <label class="checkbox-label">
+          <input type="checkbox" id="consentCheck">
+          I have read and agree to participate in this study.
+        </label>
+      </div>
+      <div class="fg" style="margin-top:12px">
+        <label class="fg__l" for="inputParticipantId">Participant ID (Prolific ID)</label>
+        <input class="fg__i" type="text" id="inputParticipantId" placeholder="e.g. 5f3a2b1c...">
+      </div>
+      <button class="btn btn--primary btn--lg" id="btnConsent" disabled>Begin →</button>
+    </div>
+  </section>
+
+  <!-- ═══ Phase: Demographics ═══ -->
+  <section class="phase hidden" id="phaseDemographics">
+    <div class="phase-card">
+      <h2>👤 About You</h2>
+      <div class="form-grid">
+        <div class="fg"><label class="fg__l">Age Range</label>
+          <select class="fg__i" id="demoAge"><option value="">--</option><option value="18-24">18–24</option><option value="25-34">25–34</option><option value="35-44">35–44</option><option value="45-54">45–54</option><option value="55+">55+</option></select>
+        </div>
+        <div class="fg"><label class="fg__l">Gender</label><select class="fg__i" id="demoGender"><option value="">--</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
+        <div class="fg"><label class="fg__l">Native Language</label>
+          <select class="fg__i" id="demoNativeLang"><option value="">--</option><option>Japanese</option><option>Chinese</option><option>Korean</option><option>Spanish</option><option>Portuguese</option><option>French</option><option>German</option><option>Arabic</option><option>Hindi</option><option>Other</option></select>
+        </div>
+        <div class="fg"><label class="fg__l">How often do you use subtitles?</label>
+          <select class="fg__i" id="demoSubFreq"><option value="">--</option><option value="1">Never</option><option value="2">Rarely</option><option value="3">Sometimes</option><option value="4">Often</option><option value="5">Always</option></select>
+        </div>
+      </div>
+      <button class="btn btn--primary btn--lg" id="btnDemographics">Continue →</button>
+    </div>
+  </section>
+
+  <!-- ═══ Phase: Practice ═══ -->
+  <section class="phase hidden" id="phasePractice">
+    <div class="phase-card">
+      <h2>🎯 Practice Trial</h2>
+      <p>Watch this short clip to get familiar with the task. Subtitles will appear at the bottom.</p>
+      <div class="video-wrapper" id="practiceVideoWrapper">
+        <video id="practiceVideo" preload="auto"></video>
+        <div class="subtitle-overlay"><div class="subtitle-text" id="practiceSubtitleText"></div></div>
+        <div class="clip-indicator">Practice</div>
+      </div>
+      <button class="btn btn--primary" id="btnStartPractice">▶ Play Practice Clip</button>
+      <button class="btn btn--primary btn--lg hidden" id="btnEndPractice">Continue to Main Trials →</button>
+    </div>
+  </section>
+
+  <!-- ═══ Phase: Trial (Video + Questions) ═══ -->
+  <section class="phase hidden" id="phaseTrial">
+    <!-- Sub-phase: Video playback -->
+    <div class="trial-sub" id="trialVideo">
+      <div class="video-wrapper" id="trialVideoWrapper">
+        <video id="trialVideoEl" preload="auto"></video>
+        <div class="subtitle-overlay"><div class="subtitle-text" id="trialSubtitleText"></div></div>
+        <div class="clip-indicator" id="clipIndicator">Clip 1 of 6</div>
+      </div>
+      <!-- Debug: condition switcher (hidden in production) -->
+      <div class="debug-bar hidden" id="debugBar">
+        <span class="debug-label">Condition:</span>
+        <select id="debugCondition"></select>
+        <label><input type="checkbox" id="debugSubOff"> Subtitles OFF</label>
+      </div>
+    </div>
+
+    <!-- Sub-phase: Comprehension quiz -->
+    <div class="trial-sub hidden" id="trialQuiz">
+      <div class="phase-card">
+        <h3 id="quizTitle">Comprehension Quiz</h3>
+        <div id="quizContainer"></div>
+        <button class="btn btn--primary" id="btnSubmitQuiz">Submit Answers →</button>
+      </div>
+    </div>
+
+    <!-- Sub-phase: Speaker intent -->
+    <div class="trial-sub hidden" id="trialIntent">
+      <div class="phase-card">
+        <h3>Speaker Intent</h3>
+        <div id="intentContainer"></div>
+        <button class="btn btn--primary" id="btnSubmitIntent">Submit →</button>
+      </div>
+    </div>
+
+    <!-- Sub-phase: Subjective rating -->
+    <div class="trial-sub hidden" id="trialSubjective">
+      <div class="phase-card">
+        <h3>Your Experience</h3>
+        <div id="subjectiveContainer"></div>
+        <button class="btn btn--primary" id="btnSubmitSubjective">Next Clip →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Phase: Post-Survey ═══ -->
+  <section class="phase hidden" id="phasePostSurvey">
+    <div class="phase-card">
+      <h2>📋 Post-Survey</h2>
+      <div class="fg">
+        <label class="fg__l">Did you notice differences between subtitle styles?</label>
+        <select class="fg__i" id="postNoticeDiff"><option value="">--</option><option value="yes">Yes</option><option value="no">No</option></select>
+      </div>
+      <div class="fg" id="postNoticeDiffDetail" style="display:none">
+        <label class="fg__l">Please describe what differences you noticed:</label>
+        <textarea class="fg__i fg__textarea" id="postDiffText"></textarea>
+      </div>
+      <div class="fg">
+        <label class="fg__l">Which subtitle style did you prefer?</label>
+        <select class="fg__i" id="postPreferred">
+          <option value="">--</option>
+          <option value="normal">All words same size</option>
+          <option value="syntactic">Grammar-based sizing</option>
+          <option value="prosody">Emphasis-based sizing</option>
+          <option value="syn_prosody">Combined</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fg__l">Did you use headphones?</label>
+        <select class="fg__i" id="postHeadphones"><option value="">--</option><option value="yes">Yes</option><option value="no">No</option></select>
+      </div>
+      <div class="fg">
+        <label class="fg__l">Any technical issues?</label>
+        <textarea class="fg__i fg__textarea" id="postTechIssues" placeholder="Describe any problems..."></textarea>
+      </div>
+      <button class="btn btn--primary btn--lg" id="btnPostSurvey">Finish →</button>
+    </div>
+  </section>
+
+  <!-- ═══ Phase: Complete ═══ -->
+  <section class="phase hidden" id="phaseComplete">
+    <div class="phase-card" style="text-align:center">
+      <h2>✅ Thank You!</h2>
+      <p>Your data has been recorded. Please use the code below to complete on Prolific.</p>
+      <div class="completion-code" id="completionCode">------</div>
+      <button class="btn btn--secondary" id="btnDownloadData">📥 Download Data (JSON)</button>
+    </div>
+  </section>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

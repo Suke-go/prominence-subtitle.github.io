@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prominence EMS Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a14;--sf:#12122a;--sf2:#1a1a3a;--bd:#2a2a4a;
+  --tx:#e0e0f0;--tm:#888;--ac:#64b5f6;--ac2:#90caf9;
+  --ems:#f87171;--emsg:rgba(248,113,113,.4);--gn:#4ade80;
+}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.app{max-width:1200px;margin:0 auto;padding:16px}
+
+/* Header */
+.hdr{text-align:center;padding:16px 0 10px;border-bottom:1px solid var(--bd);margin-bottom:12px}
+.hdr h1{font-size:1.2rem;color:var(--ac2);font-weight:600}
+.hdr p{font-size:.75rem;color:var(--tm);margin-top:2px}
+
+/* Safety */
+.safe{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:8px;padding:8px 12px;font-size:.7rem;color:var(--ems);margin-bottom:12px;display:flex;gap:8px;align-items:center}
+
+/* Mode Tabs */
+.mode-tabs{display:flex;gap:4px;margin-bottom:12px}
+.mtab{flex:1;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;font-size:.85rem;color:var(--tm);cursor:pointer;text-align:center;transition:.15s;font-family:inherit}
+.mtab:hover{border-color:var(--ac)}
+.mtab.active{background:var(--sf);color:var(--ac);border-color:var(--ac);font-weight:600}
+.mtab span{display:block;font-size:1.1rem;margin-bottom:2px}
+.mode-sec{display:none}
+.mode-sec.visible{display:block}
+
+/* Config row */
+.cfg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.cfg2{grid-template-columns:1fr 1fr}
+.cc{background:var(--sf);border-radius:8px;padding:8px 10px;border:1px solid var(--bd)}
+.cc__l{font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--tm);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.cc select,.cc input[type="file"]{width:100%;background:var(--sf2);color:var(--tx);border:1px solid var(--bd);border-radius:4px;padding:5px 6px;font-size:.78rem;font-family:inherit;outline:none}
+.cc select:focus{border-color:var(--ac)}
+.cc__h{font-size:.6rem;color:var(--tm);margin-top:3px}
+
+/* Transport */
+.tp{background:var(--sf);border-radius:8px;padding:10px 14px;border:1px solid var(--bd);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.tp-btns{display:flex;gap:4px}
+.tb{background:var(--sf2);border:1px solid var(--bd);border-radius:6px;color:var(--tx);width:34px;height:34px;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.tb:hover{border-color:var(--ac);background:rgba(100,181,246,.1)}
+.sk{flex:1;-webkit-appearance:none;background:var(--bd);height:3px;border-radius:2px;cursor:pointer}
+.sk::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:var(--ac);border-radius:50%;cursor:pointer}
+.tt{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--ac);min-width:85px;text-align:right}
+
+/* Realtime power */
+.pwr-row{display:flex;align-items:center;gap:16px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px 18px;margin-bottom:10px}
+.pwr-btn{width:56px;height:56px;border-radius:50%;border:2px solid var(--bd);background:var(--sf2);color:var(--tm);font-size:1.6rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center}
+.pwr-btn.on{border-color:var(--gn);color:var(--gn);box-shadow:0 0 16px rgba(74,222,128,.3)}
+.pwr-label{font-size:.8rem;color:var(--tm);font-weight:600}
+.pwr-label.on{color:var(--gn)}
+.pwr-meter{flex:1}
+.pwr-meter__bar-wrap{background:var(--sf2);border-radius:4px;height:18px;overflow:hidden;position:relative}
+.pwr-meter__bar{height:100%;background:linear-gradient(90deg,var(--ac),var(--gn));width:0%;transition:width .1s;border-radius:4px}
+.pwr-meter__thresh{position:absolute;top:0;height:100%;width:2px;background:var(--ems);z-index:1}
+.pwr-meter__val{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--ac);text-align:right;margin-top:2px}
+.vad-chip{font-size:.7rem;padding:3px 8px;border-radius:10px;background:var(--sf2);border:1px solid var(--bd);color:var(--tm)}
+.vad-chip.speech{border-color:var(--gn);color:var(--gn)}
+
+/* EMS bar */
+.ems-bar{display:flex;align-items:center;gap:12px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;margin-bottom:10px}
+.ems-dot{width:9px;height:9px;border-radius:50%;background:#555;transition:.1s}
+.ems-dot.firing{background:var(--ems);box-shadow:0 0 12px var(--emsg)}
+.ems-lbl{font-size:.7rem;color:var(--tm)}
+.ems-cnt{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--ems)}
+.ems-st{font-size:.65rem;color:var(--tm);margin-left:auto}
+
+/* Condition tabs */
+.ctabs{display:flex;gap:3px;margin-bottom:8px}
+.ctab{background:var(--sf2);border:1px solid var(--bd);border-radius:6px 6px 0 0;padding:5px 12px;font-size:.7rem;color:var(--tm);cursor:pointer;transition:.15s}
+.ctab.active{background:var(--sf);color:var(--ac);border-bottom-color:var(--sf);font-weight:600}
+
+/* Subtitle box */
+.subbox{background:var(--sf);border:1px solid var(--bd);border-radius:0 8px 8px 8px;padding:16px 18px;min-height:100px;line-height:1.8}
+.subbox .w{display:inline;transition:color .1s,opacity .1s,text-shadow .1s;opacity:.3;cursor:default}
+.subbox .w.active{opacity:1;color:#fff}
+.subbox .w.past{opacity:.55;color:#bbb}
+.subbox .w.pulse{text-shadow:0 0 8px var(--emsg);color:var(--ems)!important}
+
+/* Controls grid */
+.ctrls{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:10px}
+.ct{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+.ct.full{grid-column:1/-1}
+.ct__h{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.ct__l{font-size:.65rem;color:var(--tm)}
+.ct__v{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--ac)}
+.ct input[type="range"]{width:100%;-webkit-appearance:none;background:var(--bd);height:3px;border-radius:2px}
+.ct input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;background:var(--ac);border-radius:50%}
+.ct .lb{display:flex;justify-content:space-between;font-size:.55rem;color:#555;margin-top:2px}
+.ct select{width:100%;background:var(--sf2);color:var(--tx);border:1px solid var(--bd);border-radius:4px;padding:3px 6px;font-size:.72rem;font-family:inherit}
+
+/* File drop */
+.fdrop{background:var(--sf2);border:2px dashed var(--bd);border-radius:8px;padding:8px;text-align:center;font-size:.7rem;color:var(--tm);cursor:pointer;transition:.15s;margin-top:6px}
+.fdrop:hover{border-color:var(--ac)}
+
+@media(max-width:800px){.cfg{grid-template-columns:1fr}.ctrls{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <h1>⚡ Prominence EMS Demo</h1>
+    <p>Speech Prominence → Subtitle Sync + Electrical Muscle Stimulation</p>
+  </div>
+
+  <div class="safe">
+    <span style="font-size:1.1rem">⚠️</span>
+    <div><strong>Safety</strong> EMS amplitude starts at 0%. Increase gradually. Never use near chest. Escape = emergency stop.</div>
+  </div>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs">
+    <div class="mtab active" data-mode="playback">
+      <span>🎬</span> Playback / 鑑賞モード
+    </div>
+    <div class="mtab" data-mode="realtime">
+      <span>🎙️</span> Realtime / リアルタイム
+    </div>
+  </div>
+
+  <!-- ════════ PLAYBACK MODE ════════ -->
+  <div class="mode-sec visible" id="secPlayback">
+    <div class="cfg">
+      <div class="cc">
+        <div class="cc__l">📁 Clip</div>
+        <select id="clipSel"><option value="">Loading...</option></select>
+        <div class="cc__h" id="clipInfo">--</div>
+      </div>
+      <div class="cc">
+        <div class="cc__l">🔊 Audio Port</div>
+        <select id="audioPort"><option value="default">Default</option></select>
+        <div class="cc__h">Headphone / Speaker</div>
+      </div>
+      <div class="cc">
+        <div class="cc__l">⚡ EMS Port</div>
+        <select id="emsPort"><option value="default">Default</option></select>
+        <div class="cc__h">USB-C Audio -> Electrode</div>
+      </div>
+    </div>
+
+    <div class="tp">
+      <div class="tp-btns">
+        <button class="tb" id="btnPlay">▶</button>
+        <button class="tb" id="btnPause">⏸</button>
+        <button class="tb" id="btnStop">⏹</button>
+      </div>
+      <input type="range" class="sk" id="seekBar" min="0" max="1000" value="0">
+      <span class="tt" id="timeDisp">0:00 / 0:00</span>
+    </div>
+
+    <div class="fdrop" id="fileDrop">
+      📂 Drop WAV + subtitle JSON, or click to select
+      <input type="file" id="fileIn" accept=".wav,.json" multiple style="display:none">
+    </div>
+  </div>
+
+  <!-- ════════ REALTIME MODE ════════ -->
+  <div class="mode-sec" id="secRealtime">
+    <div class="cfg cfg2">
+      <div class="cc">
+        <div class="cc__l">🔊 Audio Port</div>
+        <select id="audioPortRT"><option value="default">Default</option></select>
+      </div>
+      <div class="cc">
+        <div class="cc__l">⚡ EMS Port</div>
+        <select id="emsPortRT"><option value="default">Default</option></select>
+      </div>
+    </div>
+
+    <div class="pwr-row">
+      <button class="pwr-btn" id="pwrBtn">⏻</button>
+      <div>
+        <div class="pwr-label" id="pwrLabel">OFF</div>
+        <div class="vad-chip" id="vadChip">VAD: --</div>
+      </div>
+      <div class="pwr-meter">
+        <div class="pwr-meter__bar-wrap">
+          <div class="pwr-meter__bar" id="promBar"></div>
+          <div class="pwr-meter__thresh" id="promThresh" style="left:52%"></div>
+        </div>
+        <div class="pwr-meter__val" id="promVal">0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SHARED: EMS Bar + Subtitles + Controls ════════ -->
+  <div class="ems-bar">
+    <span class="ems-dot" id="emsDot"></span>
+    <span class="ems-lbl">EMS</span>
+    <span class="ems-cnt" id="emsCnt">0 pulses</span>
+    <span class="ems-lbl" id="trigInfo">--</span>
+    <span class="ems-st" id="emsSt">Standby</span>
+  </div>
+
+  <div class="ctabs" id="condTabs"></div>
+  <div class="subbox" id="subBox"><em style="opacity:.3">Select a clip or start realtime mode.</em></div>
+
+  <div class="ctrls">
+    <div class="ct full">
+      <div class="ct__h"><span class="ct__l">🎯 Prominence Threshold</span><span class="ct__v" id="thV">0.52</span></div>
+      <input type="range" id="thS" min="30" max="80" value="52" step="1">
+      <div class="lb"><span>0.30</span><span>0.52</span><span>0.80</span></div>
+    </div>
+    <div class="ct">
+      <div class="ct__h"><span class="ct__l">🔊 EMS Amplitude</span><span class="ct__v" id="ampV">0%</span></div>
+      <input type="range" id="ampS" min="0" max="100" value="0" step="1">
+      <div class="lb"><span>0%</span><span>100%</span></div>
+    </div>
+    <div class="ct">
+      <div class="ct__h"><span class="ct__l">〰️ Carrier Freq</span><span class="ct__v" id="frqV">4000 Hz</span></div>
+      <input type="range" id="frqS" min="1000" max="10000" value="4000" step="100">
+      <div class="lb"><span>1kHz</span><span>10kHz</span></div>
+    </div>
+    <div class="ct">
+      <div class="ct__h"><span class="ct__l">⏱️ Pulse Duration</span><span class="ct__v" id="plsV">100 ms</span></div>
+      <input type="range" id="plsS" min="20" max="500" value="100" step="10">
+      <div class="lb"><span>20ms</span><span>500ms</span></div>
+    </div>
+    <div class="ct">
+      <div class="ct__h"><span class="ct__l">📊 Waveform</span></div>
+      <select id="wfSel"><option value="0">Sine</option><option value="1">Square</option><option value="2" selected>Biphasic</option></select>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ WASM & ACN Scripts (for realtime mode) ════════ -->
+<script src="../../wasm/syllable.js"></script>
+<script src="../../js/acn-model-acoustic-v1.js"></script>
+<script src="../../js/acn-features.js"></script>
+<script src="../../js/acn-runtime.js"></script>
+<script src="../../js/acn-wasm-runtime.js"></script>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════════════
+
+const S = {
+  mode: 'playback',   // 'playback' | 'realtime'
+  clips: [], currentClip: null,
+  subtitleData: null, words: [],
+  condition: 'prosody',
+  threshold: 0.52,
+  amplitude: 0,
+  carrierFreq: 4000,
+  pulseDurationMs: 100,
+  waveform: 2,
+  pulseCount: 0, triggerCount: 0,
+  isPlaying: false,
+  // Realtime
+  rtRunning: false,
+};
+
+let audioEl = null;
+let emsCtx = null, emsWorklet = null, emsReady = false;
+let lastPulseTime = 0, scheduledPulses = [], animId = null;
+
+// Realtime
+let rtDetector = null, rtAcnRuntime = null, rtAcnExtractor = null;
+let rtEnableAcn = false, rtCueBuffer = [];
+
+const $ = id => document.getElementById(id);
+const dom = {};
+
+// ═══════════════════════════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════════════════════════
+
+async function init() {
+  cacheDom();
+  await loadManifest();
+  await refreshDevices();
+  bindControls();
+  buildCondTabs();
+}
+
+function cacheDom() {
+  ['clipSel','clipInfo','audioPort','emsPort','btnPlay','btnPause','btnStop',
+   'seekBar','timeDisp','emsDot','emsCnt','trigInfo','emsSt','condTabs','subBox',
+   'thS','thV','ampS','ampV','frqS','frqV','plsS','plsV','wfSel',
+   'fileDrop','fileIn',
+   'audioPortRT','emsPortRT','pwrBtn','pwrLabel','vadChip',
+   'promBar','promThresh','promVal',
+   'secPlayback','secRealtime'].forEach(id => dom[id] = $(id));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Mode Switching
+// ═══════════════════════════════════════════════════════════════
+
+function switchMode(mode) {
+  S.mode = mode;
+  document.querySelectorAll('.mtab').forEach(t =>
+    t.classList.toggle('active', t.dataset.mode === mode));
+  dom.secPlayback.classList.toggle('visible', mode === 'playback');
+  dom.secRealtime.classList.toggle('visible', mode === 'realtime');
+
+  if (mode === 'realtime') {
+    pbStop();
+    dom.subBox.innerHTML = '<em style="opacity:.3">Press START to begin realtime prominence detection.</em>';
+    dom.trigInfo.textContent = 'realtime';
+  } else {
+    if (S.rtRunning) rtStop();
+    if (S.currentClip) renderSubs(S.condition);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Manifest + Clip Loading (Playback)
+// ═══════════════════════════════════════════════════════════════
+
+async function loadManifest() {
+  try {
+    const r = await fetch('demo_data/manifest.json');
+    if (!r.ok) { dom.clipSel.innerHTML = '<option>No clips found</option>'; return; }
+    S.clips = await r.json();
+    dom.clipSel.innerHTML = '<option value="">-- Select --</option>';
+    S.clips.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.name;
+      o.textContent = c.speaker ? `${c.name}: ${c.speaker} - ${c.title}` : c.name;
+      dom.clipSel.appendChild(o);
+    });
+  } catch(e) { dom.clipSel.innerHTML = '<option>Load failed</option>'; }
+}
+
+async function loadClip(name) {
+  if (!name) return;
+  pbStop();
+  dom.emsSt.textContent = 'Loading...';
+  try {
+    const subR = await fetch(`demo_data/${name}/subtitle.json`);
+    if (!subR.ok) throw new Error('subtitle.json not found');
+    S.subtitleData = await subR.json();
+
+    const promR = await fetch(`demo_data/${name}/prominence.json`);
+    if (promR.ok) {
+      const pd = await promR.json();
+      for (const c of Object.keys(S.subtitleData.conditions))
+        S.subtitleData.conditions[c].forEach((w,i) => { if (i<pd.length) w.prominence=pd[i].prominence; });
+    }
+
+    const meta = S.clips.find(c=>c.name===name)||{};
+    dom.clipInfo.textContent = meta.speaker
+      ? `${meta.speaker} | ${meta.duration||'--'}s | ${meta.words||'--'} words`
+      : `${meta.duration||'--'}s`;
+
+    S.currentClip = name;
+    if (audioEl) { audioEl.pause(); audioEl.src=''; }
+    audioEl = new Audio(`demo_data/${name}/audio.wav`);
+    audioEl.preload = 'auto';
+    await applyPorts();
+    await new Promise((res,rej) => {
+      audioEl.addEventListener('canplay',res,{once:true});
+      audioEl.addEventListener('error',rej,{once:true});
+    });
+    renderSubs(S.condition);
+    updateTrigCnt();
+    await initEMS();
+    dom.emsSt.textContent = 'Ready';
+  } catch(e) {
+    dom.emsSt.textContent = 'Load failed';
+    dom.subBox.innerHTML = `<em style="opacity:.3">Error: ${e.message}</em>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Device Enumeration
+// ═══════════════════════════════════════════════════════════════
+
+async function refreshDevices() {
+  try {
+    const tmp = await navigator.mediaDevices.getUserMedia({audio:true});
+    tmp.getTracks().forEach(t=>t.stop());
+    const devs = await navigator.mediaDevices.enumerateDevices();
+    const outs = devs.filter(d=>d.kind==='audiooutput');
+    [dom.audioPort, dom.emsPort, dom.audioPortRT, dom.emsPortRT].forEach(sel => {
+      if (!sel) return;
+      const prev = sel.value;
+      sel.innerHTML = '';
+      outs.forEach(d => {
+        const o = document.createElement('option');
+        o.value = d.deviceId;
+        o.textContent = d.label || `Device ${d.deviceId.slice(0,8)}`;
+        sel.appendChild(o);
+      });
+      if ([...sel.options].some(o=>o.value===prev)) sel.value=prev;
+    });
+  } catch(e) { console.warn('Device enum failed',e); }
+}
+
+async function applyPorts() {
+  if (!audioEl) return;
+  try {
+    const port = S.mode==='realtime' ? dom.audioPortRT : dom.audioPort;
+    if (audioEl.setSinkId) await audioEl.setSinkId(port?.value||'default');
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EMS Engine (AudioWorklet)
+// ═══════════════════════════════════════════════════════════════
+
+async function initEMS() {
+  if (emsCtx) { await emsCtx.close(); emsCtx=null; emsWorklet=null; emsReady=false; }
+  emsCtx = new (window.AudioContext||window.webkitAudioContext)({sampleRate:48000,latencyHint:'interactive'});
+  try {
+    await emsCtx.audioWorklet.addModule('ems-processor.js');
+    emsWorklet = new AudioWorkletNode(emsCtx,'ems-processor',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[1]});
+    emsWorklet.connect(emsCtx.destination);
+    sendEmsParams();
+    const port = S.mode==='realtime' ? dom.emsPortRT : dom.emsPort;
+    if (emsCtx.setSinkId) await emsCtx.setSinkId(port?.value||'default');
+    emsReady = true;
+  } catch(e) { console.warn('EMS init failed',e); emsReady=false; }
+}
+
+function sendEmsParams() {
+  if (!emsWorklet) return;
+  emsWorklet.port.postMessage({type:'params',carrierFreq:S.carrierFreq,waveform:S.waveform,maxAmplitude:S.amplitude/100});
+}
+
+function triggerPulse(intensity) {
+  if (!emsWorklet||!emsReady||S.amplitude<=0) return;
+  const now = performance.now();
+  if (now-lastPulseTime<80) return;
+  lastPulseTime=now; S.pulseCount++;
+  dom.emsCnt.textContent = `${S.pulseCount} pulses`;
+  emsWorklet.port.postMessage({type:'pulse',durationMs:S.pulseDurationMs,intensity:Math.min(1,intensity),attackMs:5,decayMs:Math.min(30,S.pulseDurationMs*.3)});
+  dom.emsDot.classList.add('firing');
+  setTimeout(()=>dom.emsDot.classList.remove('firing'),150);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Subtitle Rendering
+// ═══════════════════════════════════════════════════════════════
+
+const COND_NAMES = {normal:'Normal',syntactic:'Syntactic',prosody:'Prosody (ACN)',syn_prosody:'Syntax x Prosody'};
+
+function buildCondTabs() {
+  dom.condTabs.innerHTML = '';
+  Object.entries(COND_NAMES).forEach(([k,v]) => {
+    const t = document.createElement('div');
+    t.className = `ctab ${k===S.condition?'active':''}`;
+    t.textContent = v; t.dataset.cond = k;
+    t.addEventListener('click', () => {
+      S.condition = k;
+      document.querySelectorAll('.ctab').forEach(x=>x.classList.toggle('active',x.dataset.cond===k));
+      renderSubs(k); updateTrigCnt();
+    });
+    dom.condTabs.appendChild(t);
+  });
+}
+
+function renderSubs(cond) {
+  if (!S.subtitleData) return;
+  const ws = S.subtitleData.conditions[cond]||[];
+  S.words = ws;
+  const f = document.createDocumentFragment();
+  ws.forEach((w,i) => {
+    const s = document.createElement('span');
+    s.className='w'; s.id=`w${i}`;
+    s.textContent = w.text+' ';
+    s.style.fontSize = `${w.font_size}px`;
+    s.style.fontWeight = w.font_weight;
+    s.title = `${w.pos||''} p=${(w.prominence||0).toFixed(2)}`;
+    f.appendChild(s);
+  });
+  dom.subBox.innerHTML=''; dom.subBox.appendChild(f);
+}
+
+function updateTrigCnt() {
+  const n = S.words.filter(w=>(w.prominence||0)>=S.threshold).length;
+  S.triggerCount = n;
+  dom.trigInfo.textContent = `${n}/${S.words.length} triggers`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Playback Mode
+// ═══════════════════════════════════════════════════════════════
+
+function pbPlay() {
+  if (!audioEl||!audioEl.src) return;
+  if (emsCtx?.state==='suspended') emsCtx.resume();
+  if (emsWorklet) { emsWorklet.port.postMessage({type:'enable',value:true}); sendEmsParams(); }
+  if (audioEl.duration&&audioEl.currentTime>=audioEl.duration-.1) audioEl.currentTime=0;
+  audioEl.play().catch(()=>{});
+  S.isPlaying=true; S.pulseCount=0;
+  dom.emsCnt.textContent='0 pulses'; dom.emsSt.textContent='Playing';
+  schedulePulses(); startSync();
+}
+
+function pbPause() {
+  if (!audioEl) return; audioEl.pause(); S.isPlaying=false;
+  dom.emsSt.textContent='Paused'; stopSync();
+}
+
+function pbStop() {
+  if (!audioEl) return; audioEl.pause(); audioEl.currentTime=0; S.isPlaying=false;
+  dom.seekBar.value=0; dom.timeDisp.textContent='0:00 / 0:00';
+  dom.emsSt.textContent='Stopped';
+  if (emsWorklet) emsWorklet.port.postMessage({type:'stop'});
+  stopSync();
+  document.querySelectorAll('.w').forEach(el=>el.className='w');
+}
+
+function schedulePulses() {
+  scheduledPulses = [];
+  S.words.forEach((w,i) => {
+    if ((w.prominence||0)>=S.threshold) {
+      scheduledPulses.push({time:(w.start+w.end)/2,intensity:Math.min(1,((w.prominence-S.threshold)/(1-S.threshold))*.7+.3),idx:i,fired:false});
+    }
+  });
+}
+
+function startSync() {
+  stopSync();
+  const tick = () => {
+    if (!audioEl) return;
+    const t=audioEl.currentTime, d=audioEl.duration||1;
+    dom.timeDisp.textContent=`${fmtT(t)} / ${fmtT(d)}`;
+    dom.seekBar.value=(t/d*1000)|0;
+    for (let i=0;i<S.words.length;i++){
+      const el=$((`w${i}`)),w=S.words[i]; if(!el) continue;
+      el.className = t>=w.start&&t<=w.end?'w active':t>w.end?'w past':'w';
+    }
+    for (const p of scheduledPulses) {
+      if (!p.fired&&t>=p.time-.03&&t<=p.time+.2) {
+        p.fired=true; triggerPulse(p.intensity);
+        const el=$(`w${p.idx}`);
+        if(el){el.classList.add('pulse');setTimeout(()=>el.classList.remove('pulse'),300);}
+      }
+    }
+    if (audioEl.ended) { S.isPlaying=false; dom.emsSt.textContent='Finished'; if(emsWorklet)emsWorklet.port.postMessage({type:'stop'}); stopSync(); return; }
+    animId = requestAnimationFrame(tick);
+  };
+  animId = requestAnimationFrame(tick);
+}
+
+function stopSync() { if(animId){cancelAnimationFrame(animId);animId=null;} }
+function fmtT(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
+
+// ═══════════════════════════════════════════════════════════════
+// Realtime Mode (Mic → syllable.wasm → ACN → EMS)
+// ═══════════════════════════════════════════════════════════════
+
+async function rtStart() {
+  if (S.rtRunning) return;
+  if (typeof SyllableModule === 'undefined') {
+    dom.emsSt.textContent = 'syllable.wasm not found';
+    return;
+  }
+
+  dom.emsSt.textContent = 'Starting...';
+  dom.pwrLabel.textContent = 'Starting...';
+
+  try {
+    // Init WASM detector
+    const wasmMod = await SyllableModule();
+    const _create = wasmMod.cwrap('syllable_create','number',['number']);
+    const _process = wasmMod.cwrap('syllable_process','number',['number','number','number','number','number']);
+    const _destroy = wasmMod.cwrap('syllable_destroy',null,['number']);
+    const _setRT = wasmMod.cwrap('syllable_set_realtime_mode',null,['number','number']);
+    const _setSnr = wasmMod.cwrap('syllable_set_snr_threshold',null,['number','number']);
+    const _recal = wasmMod.cwrap('syllable_recalibrate',null,['number']);
+    const _isCal = wasmMod.cwrap('syllable_is_calibrating','number',['number']);
+
+    const det = _create(0);
+    _setSnr(det, 6.0);
+    _setRT(det, 1);
+    if (!det) throw new Error('WASM detector create failed');
+
+    // ACN runtime
+    let acnRuntime = null;
+    if (typeof ACNRuntime!=='undefined'&&window.ACN_MODEL_WEIGHTS) {
+      acnRuntime = new ACNRuntime({normalizationMode:'session'});
+      acnRuntime.loadModel(window.ACN_MODEL_WEIGHTS);
+      rtEnableAcn = true;
+      rtCueBuffer = [];
+    }
+
+    // Mic
+    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,sampleRate:48000}});
+    const actx = new (window.AudioContext||window.webkitAudioContext)({sampleRate:48000});
+    if (actx.state==='suspended') await actx.resume();
+    const src = actx.createMediaStreamSource(stream);
+
+    // ScriptProcessor (simple approach)
+    const sp = actx.createScriptProcessor(1024,1,1);
+    const sink = actx.createGain(); sink.gain.value=0;
+    src.connect(sp); sp.connect(sink); sink.connect(actx.destination);
+
+    let totalSamples = 0, lastPromSample = -1;
+    const minDist = Math.round(150*48);
+    let noiseFloor = 0, noiseInit = false;
+
+    // Subtitle display in realtime: accumulate words
+    const rtWords = [];
+    S.subtitleData = {conditions:{prosody:[]}};
+    S.words = []; renderSubs('prosody');
+
+    sp.onaudioprocess = (e) => {
+      const input = e.inputBuffer.getChannelData(0);
+      const n = input.length;
+
+      // VAD
+      let sumSq = 0;
+      for (let i=0;i<n;i++) sumSq += input[i]*input[i];
+      const rms = Math.sqrt(sumSq/n);
+      if (!noiseInit) { noiseFloor=rms; noiseInit=true; }
+      const isSpeech = rms > noiseFloor*3;
+      if (!isSpeech) { noiseFloor += 0.02*(rms-noiseFloor); }
+
+      dom.vadChip.textContent = isSpeech?'VAD: Speech':'VAD: Silence';
+      dom.vadChip.className = isSpeech?'vad-chip speech':'vad-chip';
+
+      if (!isSpeech) { totalSamples+=n; return; }
+
+      // WASM process
+      const buf = wasmMod._malloc(n*4);
+      for (let i=0;i<n;i++) wasmMod.setValue(buf+i*4,input[i],'float');
+      const maxEv = 8, evSize = 72;
+      const evBuf = wasmMod._malloc(maxEv*evSize);
+      const nEv = _process(det,buf,n,evBuf,maxEv);
+
+      if (nEv > 0) {
+        for (let i=0;i<nEv;i++) {
+          const base = evBuf+i*evSize;
+          const fusion = wasmMod.getValue(base+56,'float');
+          const energy = wasmMod.getValue(base+24,'float');
+          const lo = wasmMod.HEAPU32[base>>2]>>>0;
+          const hi = wasmMod.HEAPU32[(base+4)>>2]>>>0;
+          const sIdx = hi*4294967296+lo;
+          const dist = lastPromSample<0?Infinity:sIdx-lastPromSample;
+
+          let score = fusion;
+          // ACN scoring
+          if (rtEnableAcn && acnRuntime) {
+            const dur = wasmMod.getValue(base+36,'float');
+            const sf = wasmMod.getValue(base+40,'float');
+            const eps = 1e-6;
+            const cues = [Math.log(Math.max(dur,eps)),Math.log(Math.max(energy,eps)),Math.log(Math.max(sf,eps))];
+            rtCueBuffer.push({cues,fusion});
+            if (rtCueBuffer.length>50) rtCueBuffer.shift();
+            const nc = rtCueBuffer.length;
+            if (nc>=2) {
+              const pi=Math.max(0,nc-3),ci=nc-2,ni=nc-1;
+              try {
+                const as = acnRuntime.scoreTriplet({prevCues:rtCueBuffer[pi].cues,currCues:rtCueBuffer[ci].cues,nextCues:rtCueBuffer[ni].cues,hasPrev:ci>0,hasNext:true});
+                if (Number.isFinite(as)) score = as;
+              } catch(e){}
+            }
+          }
+
+          // Update prominence meter
+          dom.promBar.style.width = `${Math.min(100,score*100)}%`;
+          dom.promVal.textContent = score.toFixed(2);
+
+          if (score>=S.threshold && dist>minDist && energy>0.001) {
+            lastPromSample = sIdx;
+            const intensity = Math.min(1,(score-S.threshold)/(1-S.threshold)*.8+.2);
+            triggerPulse(intensity);
+
+            // Add word to subtitle display
+            const t = sIdx/48000;
+            const wObj = {text:`[${score.toFixed(2)}]`,start:t,end:t+0.3,font_size:Math.round(12+score*10),font_weight:score>=0.6?700:400,prominence:score,pos:'',is_content:true};
+            rtWords.push(wObj);
+            S.subtitleData.conditions.prosody = rtWords;
+            S.words = rtWords;
+
+            // Append to subtitle box
+            const span = document.createElement('span');
+            span.className = 'w active pulse';
+            span.textContent = wObj.text+' ';
+            span.style.fontSize = `${wObj.font_size}px`;
+            span.style.fontWeight = wObj.font_weight;
+            dom.subBox.appendChild(span);
+            setTimeout(()=>{span.classList.remove('pulse');span.classList.replace('active','past');},500);
+
+            // Auto-scroll
+            dom.subBox.scrollTop = dom.subBox.scrollHeight;
+          }
+        }
+      }
+
+      wasmMod._free(evBuf);
+      wasmMod._free(buf);
+      totalSamples += n;
+    };
+
+    // Calibration
+    _recal(det);
+    dom.emsSt.textContent = 'Calibrating...';
+    const calCheck = setInterval(()=>{
+      if (!_isCal(det)) {
+        clearInterval(calCheck);
+        dom.emsSt.textContent = 'Listening...';
+      }
+    },100);
+
+    // Init EMS output
+    await initEMS();
+
+    S.rtRunning = true;
+    dom.pwrBtn.classList.add('on');
+    dom.pwrLabel.textContent = 'ON'; dom.pwrLabel.classList.add('on');
+
+    // Store references for cleanup
+    rtDetector = {det, wasmMod, _destroy, stream, actx, sp, src, sink, calCheck};
+
+  } catch(e) {
+    console.error('RT start failed:', e);
+    dom.emsSt.textContent = `Error: ${e.message}`;
+    dom.pwrLabel.textContent = 'OFF';
+  }
+}
+
+function rtStop() {
+  if (!S.rtRunning) return;
+  S.rtRunning = false;
+  if (rtDetector) {
+    clearInterval(rtDetector.calCheck);
+    rtDetector.sp.disconnect();
+    rtDetector.src.disconnect();
+    rtDetector.sink.disconnect();
+    rtDetector.stream.getTracks().forEach(t=>t.stop());
+    rtDetector.actx.close();
+    rtDetector._destroy(rtDetector.det);
+    rtDetector = null;
+  }
+  if (emsWorklet) emsWorklet.port.postMessage({type:'stop'});
+  dom.pwrBtn.classList.remove('on');
+  dom.pwrLabel.textContent = 'OFF'; dom.pwrLabel.classList.remove('on');
+  dom.vadChip.textContent = 'VAD: --'; dom.vadChip.className = 'vad-chip';
+  dom.promBar.style.width = '0%'; dom.promVal.textContent = '0.00';
+  dom.emsSt.textContent = 'Stopped';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Controls Binding
+// ═══════════════════════════════════════════════════════════════
+
+function bindControls() {
+  // Mode tabs
+  document.querySelectorAll('.mtab').forEach(t =>
+    t.addEventListener('click', () => switchMode(t.dataset.mode)));
+
+  // Playback
+  dom.clipSel.addEventListener('change', e => loadClip(e.target.value));
+  dom.btnPlay.addEventListener('click', pbPlay);
+  dom.btnPause.addEventListener('click', pbPause);
+  dom.btnStop.addEventListener('click', pbStop);
+  dom.seekBar.addEventListener('input', e => {
+    if (!audioEl) return;
+    audioEl.currentTime = (parseInt(e.target.value)/1000)*(audioEl.duration||0);
+    scheduledPulses.forEach(p=>{p.fired=audioEl.currentTime<p.time;});
+  });
+
+  // Realtime
+  dom.pwrBtn.addEventListener('click', () => S.rtRunning ? rtStop() : rtStart());
+
+  // Ports
+  dom.audioPort.addEventListener('change', applyPorts);
+  dom.emsPort.addEventListener('change', async()=>{if(emsCtx?.setSinkId)try{await emsCtx.setSinkId(dom.emsPort.value)}catch(e){}});
+  dom.audioPortRT.addEventListener('change', applyPorts);
+  dom.emsPortRT.addEventListener('change', async()=>{if(emsCtx?.setSinkId)try{await emsCtx.setSinkId(dom.emsPortRT.value)}catch(e){}});
+
+  // Threshold
+  dom.thS.addEventListener('input', e => {
+    S.threshold = parseInt(e.target.value)/100;
+    dom.thV.textContent = S.threshold.toFixed(2);
+    dom.promThresh.style.left = `${S.threshold*100}%`;
+    updateTrigCnt();
+    if (S.isPlaying) schedulePulses();
+  });
+  dom.promThresh.style.left = `${S.threshold*100}%`;
+
+  // Amplitude
+  dom.ampS.addEventListener('input', e => { S.amplitude=parseInt(e.target.value); dom.ampV.textContent=`${S.amplitude}%`; sendEmsParams(); });
+  // Carrier
+  dom.frqS.addEventListener('input', e => { S.carrierFreq=parseInt(e.target.value); dom.frqV.textContent=`${S.carrierFreq} Hz`; sendEmsParams(); });
+  // Pulse
+  dom.plsS.addEventListener('input', e => { S.pulseDurationMs=parseInt(e.target.value); dom.plsV.textContent=`${S.pulseDurationMs} ms`; });
+  // Waveform
+  dom.wfSel.addEventListener('change', e => { S.waveform=parseInt(e.target.value); sendEmsParams(); });
+
+  // File drop
+  dom.fileDrop.addEventListener('click', ()=>dom.fileIn.click());
+  dom.fileDrop.addEventListener('dragover', e=>{e.preventDefault();dom.fileDrop.classList.add('dragover');});
+  dom.fileDrop.addEventListener('dragleave', ()=>dom.fileDrop.classList.remove('dragover'));
+  dom.fileDrop.addEventListener('drop', e=>{e.preventDefault();dom.fileDrop.classList.remove('dragover');handleFiles(e.dataTransfer.files);});
+  dom.fileIn.addEventListener('change', e=>handleFiles(e.target.files));
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName==='SELECT'||e.target.tagName==='INPUT') return;
+    if (e.code==='Space') {
+      e.preventDefault();
+      if (S.mode==='realtime') S.rtRunning?rtStop():rtStart();
+      else S.isPlaying?pbPause():pbPlay();
+    }
+    if (e.code==='Escape') {
+      S.amplitude=0; dom.ampS.value=0; dom.ampV.textContent='0%'; sendEmsParams();
+      if (S.mode==='realtime') rtStop(); else pbStop();
+    }
+  });
+}
+
+async function handleFiles(fl) {
+  let wav=null, json=null;
+  for (const f of fl) { if(f.name.endsWith('.wav'))wav=f; if(f.name.endsWith('.json'))json=f; }
+  if (!wav) { alert('WAV file required'); return; }
+  pbStop();
+  if(audioEl){audioEl.pause();audioEl.src='';}
+  audioEl = new Audio(URL.createObjectURL(wav));
+  audioEl.preload='auto';
+  await applyPorts();
+  await new Promise(r=>audioEl.addEventListener('canplay',r,{once:true}));
+  if (json) {
+    S.subtitleData = JSON.parse(await json.text());
+    renderSubs(S.condition); updateTrigCnt();
+  } else {
+    S.subtitleData=null; S.words=[];
+    dom.subBox.innerHTML='<em style="opacity:.3">No subtitle JSON. EMS will not trigger.</em>';
+  }
+  await initEMS();
+  const o=document.createElement('option'); o.value=`custom:${wav.name}`; o.textContent=`[Custom] ${wav.name}`;
+  dom.clipSel.appendChild(o); dom.clipSel.value=o.value;
+  dom.clipInfo.textContent=`Custom | ${audioEl.duration?.toFixed(1)||'?'}s`;
+  dom.emsSt.textContent='Ready';
+}
+
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

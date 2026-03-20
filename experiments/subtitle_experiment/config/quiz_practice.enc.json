@@ -11,20 +11,22 @@
         "They have the best technology"
       ],
       "is_dummy": false,
+      "hint_ja": "話者によると、偉大なリーダーの共通点は何ですか？",
       "correct_enc": "SA=="
     },
     {
       "id": "P_C02",
       "type": "content",
-      "question": "What concept does the speaker introduce to explain his idea?",
+      "question": "According to the speaker, why is Apple more innovative than its competition?",
       "options": [
-        "The Diamond Model",
-        "The Golden Circle",
-        "The Triangle Method",
-        "The Success Pyramid"
+        "Because they have the biggest budget",
+        "Because they hire the best talent",
+        "There is something else at play beyond resources and talent",
+        "Because they use the most advanced technology"
       ],
       "is_dummy": false,
-      "correct_enc": "SA=="
+      "hint_ja": "話者によると、なぜAppleは競合他社より革新的なのですか？",
+      "correct_enc": "SQ=="
     }
   ],
   "speaker_intent": {
@@ -37,6 +39,7 @@
         "why",
         "do"
       ],
+      "hint_ja": "この文で話者が最も強調した語はどれですか？",
       "correct_enc": "SQ=="
     },
     "attitude_estimation": {
@@ -47,6 +50,7 @@
         "Humorous and light",
         "Critical and skeptical"
       ],
+      "hint_ja": "この区間での話者の全体的なトーン（tone＝語調）は？",
       "correct_enc": "SA=="
     }
   }

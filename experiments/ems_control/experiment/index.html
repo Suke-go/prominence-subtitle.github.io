@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMS Experiment — Playback + Condition Management</title>
+<meta name="description" content="EMS experiment environment with condition management, data logging, and questionnaire extensibility">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ════════ Header ════════ -->
+  <header class="hdr">
+    <h1>⚡ EMS Experiment</h1>
+    <p>Playback-Based EMS Experiment Environment</p>
+  </header>
+
+  <!-- ════════ Session Info ════════ -->
+  <section class="panel" id="sessionPanel">
+    <div class="panel__h">📋 Session</div>
+    <div class="session-grid">
+      <div class="fg">
+        <label class="fg__l" for="participantId">参加者 ID</label>
+        <input class="fg__i" type="text" id="participantId" placeholder="P001">
+      </div>
+      <div class="fg">
+        <label class="fg__l" for="conditionId">条件 ID</label>
+        <select class="fg__i" id="conditionId">
+          <option value="ems_on">EMS あり</option>
+          <option value="ems_off">EMS なし</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fg__l">Trial</label>
+        <div class="trial-counter">
+          <span class="trial-counter__n" id="trialCurrent">1</span>
+          <span class="trial-counter__sep">/</span>
+          <input class="trial-counter__total" type="number" id="trialTotal" value="4" min="1" max="99">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fg__l">Status</label>
+        <div class="status-chip" id="sessionStatus">
+          <span class="status-chip__dot"></span>
+          <span class="status-chip__text">待機中</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ Audio Port ════════ -->
+  <section class="panel">
+    <div class="panel__h">🔊 Output Routing</div>
+    <div class="port-grid">
+      <div class="fg">
+        <label class="fg__l" for="audioPort">Audio (L ch)</label>
+        <select class="fg__i" id="audioPort"><option value="default">Default</option></select>
+      </div>
+      <div class="fg">
+        <label class="fg__l" for="emsPort">EMS (R ch)</label>
+        <select class="fg__i" id="emsPort"><option value="default">Default</option></select>
+      </div>
+      <button class="btn btn--sm" id="refreshDevices">🔄 Refresh</button>
+    </div>
+  </section>
+
+  <!-- ════════ Media Library ════════ -->
+  <section class="panel">
+    <div class="panel__h">📂 Media Library</div>
+    <div class="media-lib" id="mediaLibrary">
+      <div class="media-lib__loading">Loading...</div>
+    </div>
+    <div class="drop-zone" id="dropZone">
+      📁 Drop stereo WAV (L=Audio, R=EMS)
+      <input type="file" id="fileInput" accept=".wav" style="display:none">
+    </div>
+  </section>
+
+  <!-- ════════ Transport ════════ -->
+  <section class="panel" id="transportPanel">
+    <div class="panel__h">🎵 Playback</div>
+    <div class="tp">
+      <div class="tp__name" id="fileName">--</div>
+      <div class="tp__btns">
+        <button class="tb" id="btnPlay">▶</button>
+        <button class="tb" id="btnPause">⏸</button>
+        <button class="tb" id="btnStop">⏹</button>
+      </div>
+      <input type="range" class="sk" id="seekBar" min="0" max="1000" value="0">
+      <span class="tt" id="timeDisp">0:00 / 0:00</span>
+    </div>
+  </section>
+
+  <!-- ════════ Questionnaire Slot ════════ -->
+  <section class="panel questionnaire-slot" id="questionnaireSlot">
+    <div class="panel__h">📝 Questionnaire</div>
+    <div id="questionnaireContainer">
+      <!-- Extensible: questionnaire plugins inject here -->
+      <div class="q-placeholder" id="qPlaceholder">
+        <p>アンケートフォームはここに挿入されます。</p>
+        <p class="q-hint">questionnaire-plugins/ にフォームを追加可能</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ Actions ════════ -->
+  <section class="panel">
+    <div class="action-bar">
+      <button class="btn btn--primary" id="btnNextTrial">次の試行 ▶</button>
+      <button class="btn btn--secondary" id="btnExport">📤 ログ出力 (JSON)</button>
+      <button class="btn btn--danger" id="btnReset">🗑️ リセット</button>
+    </div>
+  </section>
+
+  <!-- ════════ Event Log ════════ -->
+  <section class="panel collapsible" id="logPanel">
+    <div class="panel__h panel__h--toggle" id="logToggle">📊 Event Log <span class="toggle-icon">▶</span></div>
+    <div class="log-body" id="logBody" style="display:none">
+      <div class="log-stats">
+        <span>Events: <strong id="statEvents">0</strong></span>
+        <span>Duration: <strong id="statDuration">0:00</strong></span>
+      </div>
+      <div class="log-entries" id="logEntries">
+        <div class="log-placeholder">待機中...</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

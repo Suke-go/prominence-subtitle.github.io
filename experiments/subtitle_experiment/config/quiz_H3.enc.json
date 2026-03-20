@@ -11,6 +11,7 @@
         "Fitness trainer"
       ],
       "is_dummy": false,
+      "hint_ja": "話者の職業は何ですか？",
       "correct_enc": "SA=="
     },
     {
@@ -24,6 +25,7 @@
         "Time management"
       ],
       "is_dummy": false,
+      "hint_ja": "話者は過去10年間何を教えてきましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -37,6 +39,7 @@
         "50,000"
       ],
       "is_dummy": false,
+      "hint_ja": "研究で追跡された成人の数は？",
       "correct_enc": "SQ=="
     },
     {
@@ -50,6 +53,7 @@
         "Twelve"
       ],
       "is_dummy": false,
+      "hint_ja": "何年間追跡されましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -63,6 +67,7 @@
         "53% increased risk of dying"
       ],
       "is_dummy": false,
+      "hint_ja": "強いストレスを受けた人の死亡リスクの増加率は？",
       "correct_enc": "SQ=="
     },
     {
@@ -76,6 +81,7 @@
         "People with chronic diseases"
       ],
       "is_dummy": false,
+      "hint_ja": "死亡リスクの増加が当てはまったのはどのグループだけですか？",
       "correct_enc": "SA=="
     },
     {
@@ -89,6 +95,7 @@
         "A tool"
       ],
       "is_dummy": false,
+      "hint_ja": "話者はストレスを何に変えたと言いましたか？",
       "correct_enc": "SQ=="
     },
     {
@@ -141,6 +148,7 @@
         "stress",
         "yours"
       ],
+      "hint_ja": "この文で話者が最も強調した語はどれですか？",
       "correct_enc": "Sg=="
     },
     "attitude_estimation": {
@@ -151,6 +159,7 @@
         "Angry and defensive",
         "Neutral and detached"
       ],
+      "hint_ja": "話者が「告白（confession）」をするときのトーンは？",
       "correct_enc": "SA=="
     },
     "prosodic_structure": {
@@ -161,6 +170,7 @@
         "Laughed nervously",
         "Repeated the statistic"
       ],
+      "hint_ja": "「43%の死亡リスク増加」の後、話者は…",
       "correct_enc": "Rw=="
     }
   }

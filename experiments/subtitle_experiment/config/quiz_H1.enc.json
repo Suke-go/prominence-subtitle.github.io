@@ -11,6 +11,7 @@
         "A picture of her school"
       ],
       "is_dummy": false,
+      "hint_ja": "授業で女の子は何を描いていましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -24,6 +25,7 @@
         "She ignored it"
       ],
       "is_dummy": false,
+      "hint_ja": "女の子が集中しているのを見て先生はどう反応しましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -37,6 +39,7 @@
         "Six"
       ],
       "is_dummy": false,
+      "hint_ja": "息子のJamesはキリスト降誕劇のとき何歳でしたか？",
       "correct_enc": "SA=="
     },
     {
@@ -50,6 +53,7 @@
         "An angel"
       ],
       "is_dummy": false,
+      "hint_ja": "Jamesはキリスト降誕劇（Nativity play）で何の役をもらいましたか？",
       "correct_enc": "SQ=="
     },
     {
@@ -63,6 +67,7 @@
         "Mel Gibson funded the play"
       ],
       "is_dummy": false,
+      "hint_ja": "話者はメル・ギブソンについてどんな冗談を言いましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -76,6 +81,7 @@
         "She drew something else"
       ],
       "is_dummy": false,
+      "hint_ja": "「誰も神様の顔を知らない」と言われて女の子は何と答えましたか？",
       "correct_enc": "SA=="
     },
     {
@@ -89,6 +95,7 @@
         "The church"
       ],
       "is_dummy": false,
+      "hint_ja": "キリスト降誕劇の会場は何でいっぱいだったと話者は言いましたか？",
       "correct_enc": "SQ=="
     },
     {
@@ -141,6 +148,7 @@
         "will",
         "minute"
       ],
+      "hint_ja": "この文で話者が最も強調した語はどれですか？",
       "correct_enc": "SQ=="
     },
     "attitude_estimation": {
@@ -151,6 +159,7 @@
         "Sarcastic",
         "Neutral"
       ],
+      "hint_ja": "この区間での話者の全体的なトーンは？",
       "correct_enc": "SA=="
     },
     "prosodic_structure": {
@@ -161,6 +170,7 @@
         "Raised his voice dramatically",
         "Slowed down significantly"
       ],
+      "hint_ja": "メル・ギブソンの冗談のあと、話者は…",
       "correct_enc": "Rw=="
     }
   }

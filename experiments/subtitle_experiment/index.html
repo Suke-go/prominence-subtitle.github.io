@@ -320,10 +320,11 @@
           const contentQs = qData.comprehension.filter(q => !q.is_dummy);
           const selected = shuffle(contentQs).slice(0, 3);
           selected.forEach((q, qi) => {
+            const hint = (getLang() === 'ja' && q.hint_ja) ? `<br><span class="hint-ja">${q.hint_ja}</span>` : '';
             trials.push({
               type: jsPsychSurveyMultiChoice,
               preamble: `<p class="question-counter">${t('trial_quiz_title')} — Q${qi + 1}/3</p>`,
-              questions: [{ prompt: q.question, name: q.id, options: shuffle(q.options), required: true }],
+              questions: [{ prompt: q.question + hint, name: q.id, options: shuffle(q.options), required: true }],
               data: { phase: 'quiz', clip_id: clipId, condition, question_id: q.id, correct_enc: q.correct_enc },
             });
           });
@@ -335,30 +336,33 @@
 
           if (si.emphasis_identification) {
             const emp = si.emphasis_identification;
+            const empHint = (getLang() === 'ja' && emp.hint_ja) ? `<br><span class="hint-ja">${emp.hint_ja}</span>` : '';
             trials.push({
               type: jsPsychSurveyMultiChoice,
               preamble: `<p class="question-counter">${t('trial_intent_title')} — 1/3</p>`,
-              questions: [{ prompt: `"${emp.sentence}"<br><br>${emp.question}`, name: `intent_emphasis_${clipId}`, options: emp.options, required: true }],
+              questions: [{ prompt: `"${emp.sentence}"<br><br>${emp.question}${empHint}`, name: `intent_emphasis_${clipId}`, options: emp.options, required: true }],
               data: { phase: 'intent', clip_id: clipId, intent_type: 'emphasis', correct_enc: emp.correct_enc },
             });
           }
 
           if (si.attitude_estimation) {
             const att = si.attitude_estimation;
+            const attHint = (getLang() === 'ja' && att.hint_ja) ? `<br><span class="hint-ja">${att.hint_ja}</span>` : '';
             trials.push({
               type: jsPsychSurveyMultiChoice,
               preamble: `<p class="question-counter">${t('trial_intent_title')} — 2/3</p>`,
-              questions: [{ prompt: att.question, name: `intent_attitude_${clipId}`, options: att.options, required: true }],
+              questions: [{ prompt: att.question + attHint, name: `intent_attitude_${clipId}`, options: att.options, required: true }],
               data: { phase: 'intent', clip_id: clipId, intent_type: 'attitude', correct_enc: att.correct_enc },
             });
           }
 
           if (si.prosodic_structure) {
             const pro = si.prosodic_structure;
+            const proHint = (getLang() === 'ja' && pro.hint_ja) ? `<br><span class="hint-ja">${pro.hint_ja}</span>` : '';
             trials.push({
               type: jsPsychSurveyMultiChoice,
               preamble: `<p class="question-counter">${t('trial_intent_title')} — 3/3</p>`,
-              questions: [{ prompt: pro.question, name: `intent_prosodic_${clipId}`, options: pro.options, required: true }],
+              questions: [{ prompt: pro.question + proHint, name: `intent_prosodic_${clipId}`, options: pro.options, required: true }],
               data: { phase: 'intent', clip_id: clipId, intent_type: 'prosodic', correct_enc: pro.correct_enc },
             });
           }
@@ -380,10 +384,10 @@
           data: { phase: 'subjective', clip_id: clipId, condition },
         });
 
-        // 6e. NASA-TLX (simplified 7-point scale)
+        // 6f. NASA-TLX (simplified 7-point scale)
         trials.push({
           type: jsPsychSurveyLikert,
-          preamble: () => `<h2>${t('nasa_title')}</h2>`,
+          preamble: () => `<h2>${t('nasa_title')}</h2><p style="color:#666;font-size:0.9em">${t('nasa_preamble')}</p>`,
           questions: () => {
             const lN = [t('nasa_low'), '', '', '', '', '', t('nasa_high')];
             const lP = [t('nasa_perf_low'), '', '', '', '', '', t('nasa_perf_high')];
