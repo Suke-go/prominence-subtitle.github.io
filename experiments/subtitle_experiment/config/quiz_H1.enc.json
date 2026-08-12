@@ -132,22 +132,22 @@
     {
       "id": "H1_C07",
       "type": "content",
-      "question": "What did the speaker say was packed full at the Nativity play?",
+      "question": "The speaker joked that the Nativity play venue was crammed full of... what?",
       "options": [
-        "The parking lot",
-        "The classroom",
-        "The place was crammed full of agents",
-        "The church"
+        "Proud parents",
+        "Talent agents",
+        "Teachers",
+        "TV cameras"
       ],
       "is_dummy": false,
-      "hint_ja": "キリスト降誕劇の会場は何でいっぱいだったと話者は言いましたか？",
-      "correct_enc": "SQ==",
-      "question_ja": "降誕劇の会場は何でいっぱいだったと話者は言いましたか？",
+      "hint_ja": "降誕劇の会場は何でぎっしりだった、と話者は冗談を言いましたか？",
+      "correct_enc": "SA==",
+      "question_ja": "降誕劇の会場は何でぎっしりだった、と話者は冗談を言いましたか？",
       "options_ja": [
-        "駐車場",
-        "教室",
-        "会場は芸能エージェントでいっぱいだった",
-        "教会"
+        "誇らしげな親たち",
+        "芸能エージェント",
+        "教師たち",
+        "テレビカメラ"
       ]
     },
     {

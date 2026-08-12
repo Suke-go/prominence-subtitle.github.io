@@ -520,11 +520,11 @@
           preamble: () => `<h2>${t('nasa_title')}</h2><p style="color:#666;font-size:0.9em">${t('nasa_preamble')}</p>`,
           questions: () => {
             const lN = [t('nasa_low'), '', '', '', '', '', t('nasa_high')];
-            const lP = [t('nasa_perf_low'), '', '', '', '', '', t('nasa_perf_high')];
+            // Abbreviated Raw TLX: the 3 subscales most relevant to caption
+            // reading load (temporal demand ~ fixed video pace; performance
+            // overlaps the quiz and its reversed scale confuses raters)
             return [
               { prompt: t('nasa_mental'), name: 'nasa_mental', labels: lN, required: true },
-              { prompt: t('nasa_temporal'), name: 'nasa_temporal', labels: lN, required: true },
-              { prompt: t('nasa_performance'), name: 'nasa_performance', labels: lP, required: true },
               { prompt: t('nasa_effort'), name: 'nasa_effort', labels: lN, required: true },
               { prompt: t('nasa_frustration'), name: 'nasa_frustration', labels: lN, required: true },
             ];
