@@ -25,7 +25,7 @@
 
   <script type="module">
     import { t, setLang, getLang } from './js/i18n.js';
-    import { pushToSheet } from './js/jsPsychSheet.js';
+    import { pushToSheet, uploadFileToDrive } from './js/jsPsychSheet.js';
     import { decrypt } from './js/crypto.js';
     window._t = t; window._setLang = setLang; window._getLang = getLang;
 
@@ -238,6 +238,60 @@
     };
 
     // ═══════════════════════════════════════════════════
+    // PHASE 2b: Consent form download + signed scan upload
+    // ═══════════════════════════════════════════════════
+    let _consentFile = null; // { name, mime, base64 }
+    const consentUpload = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: () => `<div class="phase-card">
+        <h2>${t('cupload_title')}</h2>
+        <p>${t('cupload_body')}</p>
+        <p style="margin:1rem 0">
+          <a class="download-btn" href="docs/consent_form.docx" download>${t('cupload_dl_consent')}</a>
+          <a class="download-btn" href="docs/consent_withdrawal_form.docx" download style="margin-left:0.5rem">${t('cupload_dl_withdrawal')}</a>
+        </p>
+        <hr style="margin:1.25rem 0">
+        <p>${t('cupload_upload_prompt')}</p>
+        <input type="file" id="consent-file" accept="image/*,application/pdf">
+        <p id="consent-file-status" style="color:#666;font-size:0.9rem;margin-top:0.5rem"></p>
+      </div>`,
+      choices: () => [t('btn_next')],
+      on_load: () => {
+        const btn = document.querySelector('.jspsych-btn');
+        btn.disabled = true; btn.style.opacity = 0.4;
+        const statusEl = document.getElementById('consent-file-status');
+        document.getElementById('consent-file').addEventListener('change', function() {
+          const f = this.files[0];
+          if (!f) return;
+          if (f.size > 10 * 1024 * 1024) {
+            statusEl.textContent = t('cupload_too_large');
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            _consentFile = {
+              name: f.name,
+              mime: f.type || 'application/octet-stream',
+              base64: reader.result.split(',')[1],
+            };
+            statusEl.textContent = t('cupload_selected', { name: f.name });
+            btn.disabled = false; btn.style.opacity = 1;
+          };
+          reader.readAsDataURL(f);
+        });
+      },
+      on_finish: (data) => {
+        data.consent_file_name = _consentFile?.name || null;
+        if (_consentFile) {
+          const pid = jsPsych.data.get().select('participant_id').values.slice(-1)[0] || 'unknown';
+          // Fire-and-forget: upload in background so the experiment continues
+          uploadFileToDrive(_consentFile.name, _consentFile.mime, _consentFile.base64, String(pid));
+        }
+      },
+      data: { phase: 'consent_upload' },
+    };
+
+    // ═══════════════════════════════════════════════════
     // PHASE 3: Demographics (compact)
     // ═══════════════════════════════════════════════════
     const demographics = {
@@ -295,17 +349,8 @@
       data: { phase: 'practice' },
     };
 
-    // Practice quiz (1 comprehension + emphasis click practice, lightweight)
+    // Practice quiz: emphasis-click practice only (the one unfamiliar task)
     const practiceQuizTrials = [];
-    if (practiceQ.comprehension?.length) {
-      const q = practiceQ.comprehension[0];
-      practiceQuizTrials.push({
-        type: jsPsychSurveyMultiChoice,
-        preamble: `<p class="question-counter">${t('practice_title')} — Q1/1</p>`,
-        questions: [{ prompt: q.question, name: q.id, options: q.options, required: true }],
-        data: { phase: 'practice_quiz', question_id: q.id, correct_enc: q.correct_enc },
-      });
-    }
     if (practiceQ.speaker_intent?.emphasis_identification) {
       const emp = practiceQ.speaker_intent.emphasis_identification;
       practiceQuizTrials.push(makeEmphasisClickTrial(
@@ -548,6 +593,7 @@
       langSelect,
       participantId,
       consent,
+      consentUpload,
       demographics,
       cefrAssessment,
       cefrTestScore,

@@ -71,6 +71,15 @@ const STRINGS = {
   consent_agree: { en: "I agree to participate", ja: "上記の説明を理解し、研究への参加に同意します" },
   consent_checkbox: { en: "I have read and understood the above information, and I voluntarily agree to participate in this study.", ja: "上記の説明事項を読み、内容を理解した上で、本研究に参加することに同意します。" },
 
+  // Consent form download + signed scan upload
+  cupload_title: { en: "Consent Form Submission", ja: "同意書の提出" },
+  cupload_body: { en: "Please download the consent form below, sign it, and upload a scan or photo of the signed form. You can also download the withdrawal form for your records.", ja: "以下から同意書をダウンロードして署名し、署名済みの同意書のスキャンまたは写真をアップロードしてください。同意撤回書も併せてダウンロードして保管いただけます。" },
+  cupload_dl_consent: { en: "Download consent form (.docx)", ja: "同意書をダウンロード（.docx）" },
+  cupload_dl_withdrawal: { en: "Download withdrawal form (.docx)", ja: "同意撤回書をダウンロード（.docx）" },
+  cupload_upload_prompt: { en: "Upload the signed consent form (image or PDF, max 10 MB):", ja: "署名済み同意書をアップロードしてください（画像またはPDF、最大10MB）：" },
+  cupload_selected: { en: "Selected: {name}", ja: "選択済み: {name}" },
+  cupload_too_large: { en: "File is too large (max 10 MB). Please choose a smaller file.", ja: "ファイルが大きすぎます（最大10MB）。小さいファイルを選んでください。" },
+
   // Demographics
   demo_title: { en: "Participant Information", ja: "基本情報" },
   demo_age: { en: "Age", ja: "年齢" },

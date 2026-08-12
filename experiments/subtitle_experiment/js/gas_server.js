@@ -29,7 +29,22 @@ function doPost(e) {
       sheet = ss.insertSheet(sheetName);
     }
 
-    if (data.data) {
+    if (data.file) {
+      // File upload mode: save scanned consent form to Drive
+      // data.file = { name, mime, base64 }, data.participantId optional
+      var folderName = 'consent_uploads';
+      var folders = DriveApp.getFoldersByName(folderName);
+      var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
+      var bytes = Utilities.base64Decode(data.file.base64);
+      var blob = Utilities.newBlob(bytes, data.file.mime || 'application/octet-stream',
+        (data.participantId ? data.participantId + '_' : '') + data.file.name);
+      var saved = folder.createFile(blob);
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'ok',
+        fileId: saved.getId()
+      })).setMimeType(ContentService.MimeType.JSON);
+
+    } else if (data.data) {
       // Full data dump mode: data.data is a JSON string of all trials
       var trials = JSON.parse(data.data);
 

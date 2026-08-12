@@ -48,6 +48,37 @@ export async function pushToSheet(jsonData, sheetName = 'responses') {
 }
 
 /**
+ * Upload a file (e.g. scanned consent form) to Drive via GAS Web App
+ * @param {string} name — original filename
+ * @param {string} mime — MIME type
+ * @param {string} base64 — file content, base64 (no data: prefix)
+ * @param {string} participantId — prepended to the stored filename
+ */
+export async function uploadFileToDrive(name, mime, base64, participantId = '') {
+  if (!GAS_WEB_APP_URL) {
+    console.warn('[jsPsychSheet] No GAS Web App URL configured. File not sent.');
+    return false;
+  }
+  try {
+    await fetch(GAS_WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      redirect: 'follow',
+      body: JSON.stringify({
+        participantId,
+        file: { name, mime, base64 },
+      }),
+    });
+    console.log('[jsPsychSheet] File upload sent');
+    return true;
+  } catch (error) {
+    console.error('[jsPsychSheet] File upload failed:', error);
+    return false;
+  }
+}
+
+/**
  * Push a single trial row to Google Sheets
  * @param {Object} trialData — Single trial data object
  * @param {string} sheetName — Target sheet name
