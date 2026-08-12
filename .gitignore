@@ -27,7 +27,6 @@ experiments/subtitle_verification/demo_data/
 __pycache__/
 
 # Subtitle experiment (large binary files)
-experiments/subtitle_experiment/data/*/video.mp4
 experiments/subtitle_experiment/data/*/audio.wav
 experiments/subtitle_experiment/data/*/audio.json
 experiments/subtitle_experiment/data/practice/video_old_robinson.mp4
