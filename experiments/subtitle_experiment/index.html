@@ -228,33 +228,43 @@
     // falls back to manual entry if unreachable.
     const autoPidPromise = getNextParticipantNum();
     autoPidPromise.then(n => { window._autoPid = n; });
+    function registerParticipant(num) {
+      const { pattern, orderIdx } = assignFromNumber(num);
+      jsPsych.data.addProperties({
+        participant_num: num,
+        participant_id: `P${num}`,
+        latin_square_pattern: pattern,
+        presentation_order: orderIdx,
+      });
+      console.log(`Assignment: #${num} → pattern=${pattern}, order=${orderIdx}`);
+    }
+
+    // Auto-assigned: just confirm the number. Manual entry only as fallback
+    // when GAS is unreachable.
     const participantId = {
-      type: jsPsychSurveyText,
-      preamble: () => window._autoPid
-        ? `<p class="phase-subtitle">${t('pid_auto_assigned', { n: window._autoPid })}</p>`
-        : `<p class="phase-subtitle">${t('pid_preamble')}</p>`,
-      questions: () => {
-        const qs = [];
-        if (!window._autoPid) {
-          qs.push({ prompt: t('pid_num_prompt'),
-            name: 'participant_num', required: true, placeholder: '1' });
-        }
-        qs.push({ prompt: t('pid_id_prompt'),
-          name: 'participant_id', required: true, placeholder: 'e.g. s2100001' });
-        return qs;
-      },
-      on_finish: (data) => {
-        const num = window._autoPid || parseInt(data.response.participant_num) || 1;
-        const pid = data.response.participant_id;
-        const { pattern, orderIdx } = assignFromNumber(num);
-        jsPsych.data.addProperties({
-          participant_num: num,
-          participant_id: pid,
-          latin_square_pattern: pattern,
-          presentation_order: orderIdx,
-        });
-        console.log(`Assignment: #${num} → pattern=${pattern}, order=${orderIdx}`);
-      }
+      timeline: [
+        {
+          timeline: [{
+            type: jsPsychHtmlButtonResponse,
+            stimulus: () => `<div class="phase-card" style="text-align:center">
+              <p class="phase-subtitle">${t('pid_auto_assigned', { n: window._autoPid })}</p>
+            </div>`,
+            choices: () => [t('btn_next')],
+            on_finish: () => registerParticipant(window._autoPid),
+          }],
+          conditional_function: () => !!window._autoPid,
+        },
+        {
+          timeline: [{
+            type: jsPsychSurveyText,
+            preamble: () => `<p class="phase-subtitle">${t('pid_preamble')}</p>`,
+            questions: () => [{ prompt: t('pid_num_prompt'),
+              name: 'participant_num', required: true, placeholder: '1' }],
+            on_finish: (data) => registerParticipant(parseInt(data.response.participant_num) || 1),
+          }],
+          conditional_function: () => !window._autoPid,
+        },
+      ],
     };
 
     // ═══════════════════════════════════════════════════
