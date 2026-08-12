@@ -13,7 +13,7 @@
  *   jsPsych.init({ on_finish: () => pushToSheet(jsPsych.data.get().json()) });
  */
 
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxFs2sfnzLPRhvA5DdhtdmMvqaazQAoTDGl_ty2au-pI7UJaau_bKqSMAxdXcCiAetZ/exec';  // ← Set your Google Apps Script Web App URL here
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxmytkFZ_b_qGmOlVfqh3K4X2m3VxPVW09HdJnMGuc7mzLp_9NgfKNfjZPwc0okMPCa/exec';  // ← Set your Google Apps Script Web App URL here
 
 /**
  * Push experiment data to Google Sheets via GAS Web App
