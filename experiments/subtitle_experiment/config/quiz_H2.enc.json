@@ -12,7 +12,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "wholehearted（心から生きる）な人々の共通点は？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "H2_C02",
@@ -40,7 +41,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "courage の本来の定義はどのような意味ですか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "H2_C04",
@@ -54,7 +56,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "courage と compassion（思いやり）に続く3番目の特質は？",
-      "correct_enc": "SQ=="
+      "correct_enc": "SQ==",
+      "focus_critical": true
     },
     {
       "id": "H2_C05",

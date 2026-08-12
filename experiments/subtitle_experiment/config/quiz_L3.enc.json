@@ -12,7 +12,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "写真で話者が身につけていたコスチュームは？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "L3_C02",
@@ -40,7 +41,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "ビル・クリントンの手紙は何を祝っていましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "L3_C04",
@@ -54,7 +56,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者が元々話そうとしていたトピックは？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "L3_C05",

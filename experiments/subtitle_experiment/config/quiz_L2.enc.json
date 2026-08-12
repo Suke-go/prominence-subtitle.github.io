@@ -54,7 +54,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "big history で複雑さが増す瞬間を何と呼びますか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "L2_C05",
@@ -68,7 +69,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "物事がより複雑になるとどうなりますか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "L2_C06",
@@ -82,7 +84,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "複雑さはどのような印象を生み出しますか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "L2_C07",

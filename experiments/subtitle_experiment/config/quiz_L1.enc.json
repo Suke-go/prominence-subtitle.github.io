@@ -12,7 +12,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "より小さな家族に向かっている地域は？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "L1_C02",
@@ -26,7 +27,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者によると、アラブ諸国ではどんな傾向が起きていますか？",
-      "correct_enc": "Rw=="
+      "correct_enc": "Rw==",
+      "focus_critical": true
     },
     {
       "id": "L1_C03",
@@ -68,7 +70,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者が直接比較した2カ国は？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "L1_C06",

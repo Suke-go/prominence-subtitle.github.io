@@ -26,7 +26,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者は過去10年間何を教えてきましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "H3_C03",
@@ -68,7 +69,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "強いストレスを受けた人の死亡リスクの増加率は？",
-      "correct_enc": "SQ=="
+      "correct_enc": "SQ==",
+      "focus_critical": true
     },
     {
       "id": "H3_C06",
@@ -82,7 +84,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "死亡リスクの増加が当てはまったのはどのグループだけですか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "H3_C07",

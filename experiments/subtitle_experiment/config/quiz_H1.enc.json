@@ -12,7 +12,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "授業で女の子は何を描いていましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "H1_C02",
@@ -26,7 +27,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "女の子が集中しているのを見て先生はどう反応しましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "H1_C03",
@@ -40,7 +42,8 @@
       ],
       "is_dummy": false,
       "hint_ja": "息子のJamesはキリスト降誕劇のとき何歳でしたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "focus_critical": true
     },
     {
       "id": "H1_C04",
