@@ -466,3 +466,36 @@ audio {
   color: var(--text-secondary);
   font-style: italic;
 }
+
+/* ═══ Emphasis word-click task ═══ */
+.word-select {
+  max-width: 640px;
+  margin: 1.5rem auto;
+  padding: 1.25rem 1.5rem;
+  background: rgba(0,0,0,0.04);
+  border-radius: 12px;
+  font-size: 1.35rem;
+  line-height: 2.2;
+  text-align: center;
+}
+.ws-word {
+  display: inline-block;
+  padding: 0.1em 0.35em;
+  margin: 0.1em 0.05em;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s, border-color 0.12s;
+}
+.ws-word:hover { background: rgba(74,108,247,0.12); }
+.ws-word.sel {
+  background: rgba(74,108,247,0.18);
+  border-color: #4a6cf7;
+  font-weight: 700;
+}
+.ws-count {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}

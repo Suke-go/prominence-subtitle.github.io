@@ -9,7 +9,7 @@ const STRINGS = {
 
   // Participant ID
   pid_preamble: { en: "The experimenter should enter the participant number. This determines condition assignment.", ja: "実験者が参加者番号を入力してください。条件の割り当てに使用されます。" },
-  pid_num_prompt: { en: "Participant number (1–52)", ja: "参加者番号（1〜52）" },
+  pid_num_prompt: { en: "Participant number (1–36)", ja: "参加者番号（1〜36）" },
   pid_id_prompt: { en: "Participant ID (student number)", ja: "参加者ID（学生番号等）" },
   pid_score_placeholder: { en: "e.g. TOEIC 785 / IELTS 6.5", ja: "例: TOEIC 785 / 英検準1級 / IELTS 6.5" },
 
@@ -28,12 +28,11 @@ const STRINGS = {
 <p>If you agree to participate, you will be asked to:</p>
 <ol>
   <li>Complete a brief questionnaire on your language background and English proficiency (approx. 3 min)</li>
-  <li>Take a short English listening comprehension pre-test (approx. 5 min)</li>
-  <li>Watch 6 short video clips (each approx. 90 seconds) with subtitles and answer questions about each clip (approx. 25 min)</li>
+  <li>Watch 6 short video clips (each approx. 90 seconds) with subtitles and answer questions about each clip (approx. 20 min)</li>
   <li>Complete a brief post-experiment questionnaire (approx. 2 min)</li>
 </ol>
 <h3>3. Duration</h3>
-<p>Total estimated time: approximately 35–40 minutes.</p>
+<p>Total estimated time: approximately 30 minutes.</p>
 <h3>4. Risks and benefits</h3>
 <p>There are no known risks associated with participation. The study does not involve deception. No direct benefits are guaranteed, but your participation contributes to research on accessible subtitle technology.</p>
 <h3>5. Data handling</h3>
@@ -55,12 +54,11 @@ const STRINGS = {
 <p>参加に同意いただける場合、以下の課題を行っていただきます。</p>
 <ol>
   <li>言語背景・英語熟達度に関する簡単な質問紙への回答（約3分）</li>
-  <li>英語リスニング能力の事前テスト（約5分）</li>
-  <li>字幕付きの短い映像クリップ6本（各約90秒）の視聴と、各クリップに関する質問への回答（約25分）</li>
+  <li>字幕付きの短い映像クリップ6本（各約90秒）の視聴と、各クリップに関する質問への回答（約20分）</li>
   <li>事後アンケートへの回答（約2分）</li>
 </ol>
 <h3>3. 所要時間</h3>
-<p>全体で約35〜40分を予定しています。</p>
+<p>全体で約30分を予定しています。</p>
 <h3>4. リスクと利益</h3>
 <p>本研究への参加に伴う既知のリスクはありません。本研究に欺瞞的手法は含まれていません。直接的な利益は保証されませんが、アクセシブルな字幕技術の研究に貢献していただけます。</p>
 <h3>5. データの取り扱い</h3>
@@ -136,9 +134,10 @@ const STRINGS = {
     ja: ["なし", "英検", "TOEIC", "TOEFL iBT", "IELTS", "Cambridge (FCE/CAE/CPE)", "その他"]
   },
 
-  // Pre-test
-  pretest_title: { en: "Pre-test: Listening Comprehension", ja: "事前テスト：リスニング" },
-  pretest_instr: { en: "Please listen to the following audio clip carefully. After listening, answer the 5 comprehension questions that follow. You may replay the audio if needed.", ja: "以下の音声を注意深く聞いてください。聴き終わりましたら、5問の理解度問題にお答えください。必要に応じて音声を繰り返し再生できます。" },
+  // Emphasis word-click task
+  emph_click_title: { en: "Which words were emphasized?", ja: "強調されていた語はどれですか？" },
+  emph_click_instr: { en: "In the sentence below, click the word(s) you felt the speaker emphasized (1 to 3 words). Click again to deselect.", ja: "以下の文の中で、話者が強調していたと感じた語をクリックしてください（1〜3語）。もう一度クリックすると選択を解除できます。" },
+  emph_click_count: { en: "{n} / 3 selected", ja: "選択中: {n} / 3" },
 
   // Practice
   practice_title: { en: "Practice Trial", ja: "練習試行" },
