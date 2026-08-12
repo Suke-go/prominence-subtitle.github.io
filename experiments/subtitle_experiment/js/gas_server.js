@@ -97,6 +97,22 @@ function doPost(e) {
 }
 
 function doGet(e) {
+  // Auto-assign sequential participant numbers (?action=next_pid)
+  if (e && e.parameter && e.parameter.action === 'next_pid') {
+    var lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      var props = PropertiesService.getScriptProperties();
+      var next = parseInt(props.getProperty('next_pid') || '1', 10);
+      props.setProperty('next_pid', String(next + 1));
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'ok',
+        pid: next
+      })).setMimeType(ContentService.MimeType.JSON);
+    } finally {
+      lock.releaseLock();
+    }
+  }
   return ContentService.createTextOutput(JSON.stringify({
     status: 'ok',
     message: 'Prosodic Captioning Experiment — Data endpoint active'

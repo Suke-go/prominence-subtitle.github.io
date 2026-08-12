@@ -79,6 +79,9 @@ const STRINGS = {
   cupload_upload_prompt: { en: "Upload the signed consent form (image or PDF, max 10 MB):", ja: "署名済み同意書をアップロードしてください（画像またはPDF、最大10MB）：" },
   cupload_selected: { en: "Selected: {name}", ja: "選択済み: {name}" },
   cupload_too_large: { en: "File is too large (max 10 MB). Please choose a smaller file.", ja: "ファイルが大きすぎます（最大10MB）。小さいファイルを選んでください。" },
+  cupload_submit: { en: "Upload and continue", ja: "アップロードして次へ" },
+  cupload_later: { en: "Upload later (submit to the experimenter afterwards)", ja: "後でアップロードする（実験後に実験者へ提出）" },
+  pid_auto_assigned: { en: "Your participant number has been assigned automatically: #{n}", ja: "参加者番号は自動で割り当てられました：#{n}" },
 
   // Demographics
   demo_title: { en: "Participant Information", ja: "基本情報" },

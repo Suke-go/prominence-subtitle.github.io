@@ -48,6 +48,25 @@ export async function pushToSheet(jsonData, sheetName = 'responses') {
 }
 
 /**
+ * Fetch the next auto-assigned participant number from GAS.
+ * Returns an integer, or null on failure (caller should fall back to manual entry).
+ */
+export async function getNextParticipantNum(timeoutMs = 5000) {
+  if (!GAS_WEB_APP_URL) return null;
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    const res = await fetch(`${GAS_WEB_APP_URL}?action=next_pid`, { signal: ctrl.signal, redirect: 'follow' });
+    clearTimeout(timer);
+    const json = await res.json();
+    return Number.isInteger(json.pid) ? json.pid : null;
+  } catch (error) {
+    console.warn('[jsPsychSheet] Auto participant number failed:', error);
+    return null;
+  }
+}
+
+/**
  * Upload a file (e.g. scanned consent form) to Drive via GAS Web App
  * @param {string} name — original filename
  * @param {string} mime — MIME type

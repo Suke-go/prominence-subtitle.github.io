@@ -25,7 +25,7 @@
 
   <script type="module">
     import { t, setLang, getLang } from './js/i18n.js';
-    import { pushToSheet, uploadFileToDrive } from './js/jsPsychSheet.js';
+    import { pushToSheet, uploadFileToDrive, getNextParticipantNum } from './js/jsPsychSheet.js';
     import { decrypt } from './js/crypto.js';
     window._t = t; window._setLang = setLang; window._getLang = getLang;
 
@@ -222,19 +222,29 @@
     };
 
     // ═══════════════════════════════════════════════════
-    // PHASE 1b: Participant Number + ID
+    // PHASE 1b: Participant Number (auto-assigned) + ID
     // ═══════════════════════════════════════════════════
+    // Fetch the next sequential number from GAS in the background;
+    // falls back to manual entry if unreachable.
+    const autoPidPromise = getNextParticipantNum();
+    autoPidPromise.then(n => { window._autoPid = n; });
     const participantId = {
       type: jsPsychSurveyText,
-      preamble: () => `<p class="phase-subtitle">${t('pid_preamble')}</p>`,
-      questions: () => [
-        { prompt: t('pid_num_prompt'),
-          name: 'participant_num', required: true, placeholder: '1' },
-        { prompt: t('pid_id_prompt'),
-          name: 'participant_id', required: true, placeholder: 'e.g. s2100001' },
-      ],
+      preamble: () => window._autoPid
+        ? `<p class="phase-subtitle">${t('pid_auto_assigned', { n: window._autoPid })}</p>`
+        : `<p class="phase-subtitle">${t('pid_preamble')}</p>`,
+      questions: () => {
+        const qs = [];
+        if (!window._autoPid) {
+          qs.push({ prompt: t('pid_num_prompt'),
+            name: 'participant_num', required: true, placeholder: '1' });
+        }
+        qs.push({ prompt: t('pid_id_prompt'),
+          name: 'participant_id', required: true, placeholder: 'e.g. s2100001' });
+        return qs;
+      },
       on_finish: (data) => {
-        const num = parseInt(data.response.participant_num) || 1;
+        const num = window._autoPid || parseInt(data.response.participant_num) || 1;
         const pid = data.response.participant_id;
         const { pattern, orderIdx } = assignFromNumber(num);
         jsPsych.data.addProperties({
@@ -282,9 +292,9 @@
         <input type="file" id="consent-file" accept="image/*,application/pdf">
         <p id="consent-file-status" style="color:#666;font-size:0.9rem;margin-top:0.5rem"></p>
       </div>`,
-      choices: () => [t('btn_next')],
+      choices: () => [t('cupload_submit'), t('cupload_later')],
       on_load: () => {
-        const btn = document.querySelector('.jspsych-btn');
+        const btn = document.querySelectorAll('.jspsych-btn')[0];
         btn.disabled = true; btn.style.opacity = 0.4;
         const statusEl = document.getElementById('consent-file-status');
         document.getElementById('consent-file').addEventListener('change', function() {
@@ -308,8 +318,10 @@
         });
       },
       on_finish: (data) => {
-        data.consent_file_name = _consentFile?.name || null;
-        if (_consentFile) {
+        const skipped = data.response === 1;
+        data.consent_file_name = (!skipped && _consentFile) ? _consentFile.name : null;
+        data.consent_upload_deferred = skipped || !_consentFile;
+        if (!skipped && _consentFile) {
           const pid = jsPsych.data.get().select('participant_id').values.slice(-1)[0] || 'unknown';
           // Fire-and-forget: upload in background so the experiment continues
           uploadFileToDrive(_consentFile.name, _consentFile.mime, _consentFile.base64, String(pid));
