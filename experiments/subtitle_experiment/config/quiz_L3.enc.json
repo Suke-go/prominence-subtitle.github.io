@@ -13,7 +13,14 @@
       "is_dummy": false,
       "hint_ja": "写真で話者が身につけていたコスチュームは？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "写真の中で話者が着ていた衣装は何でしたか？",
+      "options_ja": [
+        "タキシード",
+        "大きな白いコック帽",
+        "カウボーイの衣装",
+        "白衣"
+      ]
     },
     {
       "id": "L3_C02",
@@ -27,7 +34,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者に手書きの手紙を送った人は？",
-      "correct_enc": "SQ=="
+      "correct_enc": "SQ==",
+      "question_ja": "話者に手書きの手紙を送ったのは誰ですか？",
+      "options_ja": [
+        "ジョージ・ブッシュ",
+        "バラク・オバマ",
+        "ビル・クリントン",
+        "ジョン・ケリー"
+      ]
     },
     {
       "id": "L3_C03",
@@ -42,7 +56,14 @@
       "is_dummy": false,
       "hint_ja": "ビル・クリントンの手紙は何を祝っていましたか？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "ビル・クリントンの手紙は何を祝っていましたか？",
+      "options_ja": [
+        "受賞",
+        "新しいレストラン",
+        "新しい本",
+        "政治的勝利"
+      ]
     },
     {
       "id": "L3_C04",
@@ -57,7 +78,14 @@
       "is_dummy": false,
       "hint_ja": "話者が元々話そうとしていたトピックは？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "話者が元々話す予定だったテーマは何でしたか？",
+      "options_ja": [
+        "地球温暖化",
+        "情報生態学",
+        "再生可能エネルギー",
+        "海洋保護"
+      ]
     },
     {
       "id": "L3_C05",
@@ -71,7 +99,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "代わりに何に焦点を当てることにしましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "代わりに何に焦点を当てることにしましたか？",
+      "options_ja": [
+        "私生活",
+        "気候について詳しく話してほしいと言われた点",
+        "新しい本",
+        "技術的な解決策"
+      ]
     },
     {
       "id": "L3_C06",
@@ -85,7 +120,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者はスライドショーの更新を何に例えましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "スライドショーの更新を何に例えましたか？",
+      "options_ja": [
+        "絵を描くこと",
+        "浜辺で貝殻を拾うこと",
+        "料理をすること",
+        "家を建てること"
+      ]
     },
     {
       "id": "L3_C07",
@@ -99,7 +141,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "TEDに戻ることについて話者は何と言いましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "TEDに戻ってくることについて話者は何と言いましたか？",
+      "options_ja": [
+        "初めてだった",
+        "一生の習慣にするつもりだ",
+        "二度と来ない",
+        "戻るかどうか迷っている"
+      ]
     },
     {
       "id": "L3_D01",
@@ -163,7 +212,14 @@
         "Nervous"
       ],
       "hint_ja": "冒頭のエピソード（anecdote）での話者のトーンは？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "冒頭のエピソードでの話者のトーンは？",
+      "options_ja": [
+        "真剣で切迫している",
+        "軽くユーモラス",
+        "皮肉っぽい",
+        "緊張している"
+      ]
     },
     "prosodic_structure": {
       "question": "When transitioning from the anecdote to the climate topic, the speaker...",

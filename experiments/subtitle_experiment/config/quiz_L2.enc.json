@@ -12,7 +12,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者が言及する熱力学（thermodynamics）の法則は？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "話者が言及した熱力学の法則はどれですか？",
+      "options_ja": [
+        "第一法則",
+        "第二法則",
+        "第三法則",
+        "第零法則"
+      ]
     },
     {
       "id": "L2_C02",
@@ -26,7 +33,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "同僚のフレッド・スピアが使った用語は？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "話者の同僚フレッド・スピアが使った用語は？",
+      "options_ja": [
+        "スイートスポット条件",
+        "ゴルディロックス条件",
+        "パーフェクトストーム条件",
+        "平衡条件"
+      ]
     },
     {
       "id": "L2_C03",
@@ -40,7 +54,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "Goldilocks conditions（ちょうどいい条件）とはこの文脈で何を意味しますか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "この文脈で「ゴルディロックス条件」とはどういう意味ですか？",
+      "options_ja": [
+        "非常に熱い",
+        "熱すぎず冷たすぎず、ちょうどよい",
+        "絶えず変化する",
+        "非常に冷たい"
+      ]
     },
     {
       "id": "L2_C04",
@@ -55,7 +76,14 @@
       "is_dummy": false,
       "hint_ja": "big history で複雑さが増す瞬間を何と呼びますか？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "「ビッグヒストリー」で複雑性が増す瞬間を指す用語は？",
+      "options_ja": [
+        "転換点",
+        "閾値（しきいち）の瞬間",
+        "限界点",
+        "節目の出来事"
+      ]
     },
     {
       "id": "L2_C05",
@@ -70,7 +98,14 @@
       "is_dummy": false,
       "hint_ja": "物事がより複雑になるとどうなりますか？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "物事が複雑になるとどうなると話者は言いましたか？",
+      "options_ja": [
+        "より安定する",
+        "より壊れやすく脆弱になる",
+        "より単純になる",
+        "より面白くなくなる"
+      ]
     },
     {
       "id": "L2_C06",
@@ -85,7 +120,14 @@
       "is_dummy": false,
       "hint_ja": "複雑さはどのような印象を生み出しますか？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "複雑性は何の印象を生むと話者は言いましたか？",
+      "options_ja": [
+        "予測可能なものの印象",
+        "まったく新しいものがどこからともなく現れる印象",
+        "見慣れたものの印象",
+        "危険なものの印象"
+      ]
     },
     {
       "id": "L2_C07",
@@ -99,7 +141,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "各 threshold（転換点）で何が起こると話者は言いますか？",
-      "correct_enc": "SQ=="
+      "correct_enc": "SQ==",
+      "question_ja": "それぞれの閾値で何が起きると話者は言いましたか？",
+      "options_ja": [
+        "進むのが楽になる",
+        "何も変わらない",
+        "進むのが難しくなる",
+        "進歩が止まる"
+      ]
     },
     {
       "id": "L2_D01",
@@ -163,7 +212,14 @@
         "Emotional"
       ],
       "hint_ja": "この区間での話者のトーンは？",
-      "correct_enc": "SQ=="
+      "correct_enc": "SQ==",
+      "question_ja": "この区間での話者のトーンは？",
+      "options_ja": [
+        "警告的",
+        "ユーモラス",
+        "説明的で落ち着いている",
+        "感情的"
+      ]
     },
     "prosodic_structure": {
       "question": "When describing 'Goldilocks conditions,' the speaker...",

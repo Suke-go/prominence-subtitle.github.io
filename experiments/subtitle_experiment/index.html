@@ -461,14 +461,18 @@
           const pool = qData.comprehension.filter(q => !q.is_dummy);
           const focus = shuffle(pool.filter(q => q.focus_critical));
           const general = shuffle(pool.filter(q => !q.focus_critical));
-          const selected = shuffle([...focus.slice(0, 2), ...general.slice(0, 2)]);
+          const selected = shuffle([...focus.slice(0, 3), ...general.slice(0, 3)]);
           selected.forEach((q, qi) => {
-            const hint = (getLang() === 'ja' && q.hint_ja) ? `<br><span class="hint-ja">${q.hint_ja}</span>` : '';
+            // Ask in the participant's language: comprehension of the CONTENT
+            // is the DV — English reading of the question must not confound it.
+            const useJa = getLang() === 'ja' && q.question_ja && q.options_ja;
+            const optSrc = useJa ? q.options_ja : q.options;
+            const order = shuffle(optSrc.map((_, i) => i));
             trials.push({
               type: jsPsychSurveyMultiChoice,
               preamble: `<p class="question-counter">${t('trial_quiz_title')} — Q${qi + 1}/${selected.length}</p>`,
-              questions: [{ prompt: q.question + hint, name: q.id, options: shuffle(q.options), required: true }],
-              data: { phase: 'quiz', clip_id: clipId, condition, question_id: q.id, question_type: q.type, is_dummy: !!q.is_dummy, focus_critical: !!q.focus_critical, correct_enc: q.correct_enc },
+              questions: [{ prompt: useJa ? q.question_ja : q.question, name: q.id, options: order.map(i => optSrc[i]), required: true }],
+              data: { phase: 'quiz', clip_id: clipId, condition, question_id: q.id, question_type: q.type, is_dummy: !!q.is_dummy, focus_critical: !!q.focus_critical, option_order: order, quiz_lang: useJa ? 'ja' : 'en', correct_enc: q.correct_enc },
             });
           });
         }
@@ -476,12 +480,12 @@
         // 6d. Speaker attitude
         if (qData?.speaker_intent?.attitude_estimation) {
           const att = qData.speaker_intent.attitude_estimation;
-          const attHint = (getLang() === 'ja' && att.hint_ja) ? `<br><span class="hint-ja">${att.hint_ja}</span>` : '';
+          const useJa = getLang() === 'ja' && att.question_ja && att.options_ja;
           trials.push({
             type: jsPsychSurveyMultiChoice,
             preamble: `<p class="question-counter">${t('trial_intent_title')}</p>`,
-            questions: [{ prompt: att.question + attHint, name: `intent_attitude_${clipId}`, options: att.options, required: true }],
-            data: { phase: 'intent', clip_id: clipId, intent_type: 'attitude', correct_enc: att.correct_enc },
+            questions: [{ prompt: useJa ? att.question_ja : att.question, name: `intent_attitude_${clipId}`, options: useJa ? att.options_ja : att.options, required: true }],
+            data: { phase: 'intent', clip_id: clipId, intent_type: 'attitude', quiz_lang: useJa ? 'ja' : 'en', correct_enc: att.correct_enc },
           });
         }
 

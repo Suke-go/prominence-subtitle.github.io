@@ -13,7 +13,14 @@
       "is_dummy": false,
       "hint_ja": "より小さな家族に向かっている地域は？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "小さい家族へ向かっていると話者が言った地域はどこですか？",
+      "options_ja": [
+        "アフリカ諸国",
+        "ラテンアメリカ諸国",
+        "アラブ諸国",
+        "上記すべて"
+      ]
     },
     {
       "id": "L1_C02",
@@ -28,7 +35,14 @@
       "is_dummy": false,
       "hint_ja": "話者によると、アラブ諸国ではどんな傾向が起きていますか？",
       "correct_enc": "Rw==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "アラブ諸国で起きている傾向は何だと話者は言いましたか？",
+      "options_ja": [
+        "家族が小さくなっている",
+        "家族が大きくなっている",
+        "平均寿命が下がっている",
+        "人口が減っている"
+      ]
     },
     {
       "id": "L1_C03",
@@ -42,7 +56,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "1980年代にバングラデシュで起きた「奇跡」とは？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "1980年代のバングラデシュで起きた「奇跡」とは何でしたか？",
+      "options_ja": [
+        "経済ブーム",
+        "イスラム指導者（イマーム）が家族計画を推進した",
+        "医学的躍進",
+        "教育改革"
+      ]
     },
     {
       "id": "L1_C04",
@@ -56,7 +77,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "1990年代にアフリカ諸国に影響した健康危機は？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "1990年代にアフリカ諸国を襲った大きな健康危機は？",
+      "options_ja": [
+        "マラリアの流行",
+        "HIVの流行",
+        "コレラの流行",
+        "エボラの流行"
+      ]
     },
     {
       "id": "L1_C05",
@@ -71,7 +99,14 @@
       "is_dummy": false,
       "hint_ja": "話者が直接比較した2カ国は？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "話者が直接比較した2つの国はどこですか？",
+      "options_ja": [
+        "中国とインド",
+        "アメリカとベトナム",
+        "ブラジルとナイジェリア",
+        "日本とドイツ"
+      ]
     },
     {
       "id": "L1_C06",
@@ -85,7 +120,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "1980年代にベトナムの経済で何が起きましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "1980年代のベトナムで経済に関して何が起きましたか？",
+      "options_ja": [
+        "共産主義の計画経済を採用した",
+        "市場経済へ移行した",
+        "戦争を始めた",
+        "国連に加盟した"
+      ]
     },
     {
       "id": "L1_C07",
@@ -99,7 +141,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者によると、アフリカ諸国の主な特徴は？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "アフリカ諸国についての話者の要点は何でしたか？",
+      "options_ja": [
+        "ヨーロッパに追いついた",
+        "まだ出生率が高く平均寿命が短い",
+        "最も成長の速い経済である",
+        "最高の医療制度を持っている"
+      ]
     },
     {
       "id": "L1_D01",
@@ -163,7 +212,14 @@
         "Neutral and explanatory"
       ],
       "hint_ja": "この区間での話者の全般的なトーンは？",
-      "correct_enc": "Sg=="
+      "correct_enc": "Sg==",
+      "question_ja": "この区間での話者の全般的なトーンは？",
+      "options_ja": [
+        "情熱的で熱意にあふれる",
+        "厳粛で警告的",
+        "ユーモラス",
+        "中立的で説明的"
+      ]
     },
     "prosodic_structure": {
       "question": "When presenting data comparisons, the speaker typically...",

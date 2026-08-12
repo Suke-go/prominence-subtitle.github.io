@@ -13,7 +13,14 @@
       "is_dummy": false,
       "hint_ja": "wholehearted（心から生きる）な人々の共通点は？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "「wholehearted（全身全霊）」な人々に共通していたものは何でしたか？",
+      "options_ja": [
+        "知性",
+        "勇気",
+        "経済的成功",
+        "広い人脈"
+      ]
     },
     {
       "id": "H2_C02",
@@ -27,7 +34,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "courage（勇気）のラテン語の本来の意味は？",
-      "correct_enc": "SQ=="
+      "correct_enc": "SQ==",
+      "question_ja": "「courage（勇気）」という語のラテン語での元の意味は？",
+      "options_ja": [
+        "力",
+        "勇敢さ",
+        "心臓（心）",
+        "精神"
+      ]
     },
     {
       "id": "H2_C03",
@@ -42,7 +56,14 @@
       "is_dummy": false,
       "hint_ja": "courage の本来の定義はどのような意味ですか？",
       "correct_enc": "SA==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "courage の元々の定義はどういう意味だったと話者は言いましたか？",
+      "options_ja": [
+        "恐れずに戦うこと",
+        "自分が何者であるかの物語を心から語ること",
+        "身体的な困難を乗り越えること",
+        "他人のために立ち上がること"
+      ]
     },
     {
       "id": "H2_C04",
@@ -57,7 +78,14 @@
       "is_dummy": false,
       "hint_ja": "courage と compassion（思いやり）に続く3番目の特質は？",
       "correct_enc": "SQ==",
-      "focus_critical": true
+      "focus_critical": true,
+      "question_ja": "勇気と思いやりに続く、wholehearted な人々の3つ目の特質は？",
+      "options_ja": [
+        "回復力",
+        "感謝",
+        "つながり",
+        "創造性"
+      ]
     },
     {
       "id": "H2_C05",
@@ -71,7 +99,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "なぜ他者に compassion を実践できないのですか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "どんな場合に他人への思いやりを実践できないと話者は言いましたか？",
+      "options_ja": [
+        "時間が足りない場合",
+        "自分自身に優しくできない場合",
+        "社会がそれを妨げる場合",
+        "資源が足りない場合"
+      ]
     },
     {
       "id": "H2_C06",
@@ -85,7 +120,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "wholehearted な人々が手放せたものは？",
-      "correct_enc": "SQ=="
+      "correct_enc": "SQ==",
+      "question_ja": "wholehearted な人々が手放していたものは？",
+      "options_ja": [
+        "持ち物",
+        "過去の失敗",
+        "「こうあるべき」と思っていた自分",
+        "社会的地位"
+      ]
     },
     {
       "id": "H2_C07",
@@ -99,7 +141,14 @@
       ],
       "is_dummy": false,
       "hint_ja": "話者はデータ分析の過程をどう表現しましたか？",
-      "correct_enc": "SA=="
+      "correct_enc": "SA==",
+      "question_ja": "話者は自身のデータ分析の過程をどう表現しましたか？",
+      "options_ja": [
+        "冷静で秩序立っている",
+        "ジャクソン・ポロックの絵のように滅茶苦茶",
+        "素早く効率的",
+        "同僚と協力的"
+      ]
     },
     {
       "id": "H2_D01",
@@ -163,7 +212,14 @@
         "Reverent and earnest"
       ],
       "hint_ja": "wholehearted な人々を描写するときの話者のトーンは？",
-      "correct_enc": "Sg=="
+      "correct_enc": "Sg==",
+      "question_ja": "wholehearted な人々を描写するときの話者のトーンは？",
+      "options_ja": [
+        "真剣",
+        "ユーモラス",
+        "皮肉っぽい",
+        "敬意がこもって真摯"
+      ]
     },
     "prosodic_structure": {
       "question": "When the speaker mentioned 'the courage to be imperfect,' she...",
