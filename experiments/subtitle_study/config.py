@@ -66,9 +66,9 @@ TALKS = {
         "speaker": "Hans Rosling",
         "title": "The Best Stats You've Ever Seen",
         "year": 2006,
-        "start": 240.0,    # ~4:00
-        "end": 330.0,      # ~5:30
-        "note": "数値・国名の列挙、平坦",
+        "start": 592.0,    # ~9:52 "There's a huge difference between Africa..."
+        "end": 651.6,      # ~10:52 "...weakness of the data." (60s curated window)
+        "note": "地域内格差の主張(アフリカ/南アジア/アラブ諸国)、語彙密度統一60秒窓",
     },
     "L2": {
         "url": "https://www.ted.com/talks/david_christian_the_history_of_our_world_in_18_minutes",
@@ -84,9 +84,9 @@ TALKS = {
         "speaker": "Al Gore",
         "title": "Averting the Climate Crisis",
         "year": 2006,
-        "start": 300.0,    # ~5:00
-        "end": 390.0,      # ~6:30
-        "note": "政策説明調、グラフ解説",
+        "start": 255.9,    # ~4:16 "my staff was extremely upset..."
+        "end": 316.3,      # ~5:16 "...congratulations on the new restaurant now." (60s curated window)
+        "note": "Shoney'sレストラン逸話(誤報→Letterman/Leno→Clinton書簡)、語彙密度統一60秒窓",
     },
 }
 

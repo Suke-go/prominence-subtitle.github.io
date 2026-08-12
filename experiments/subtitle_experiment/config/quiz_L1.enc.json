@@ -1,236 +1,164 @@
 {
   "comprehension": [
     {
-      "id": "L1_C01",
-      "type": "content",
-      "question": "Which region did the speaker say was moving towards smaller families?",
+      "id": "L1_N01",
+      "type": "main_idea",
+      "question": "What is the speaker's main point in this segment?",
       "options": [
-        "African countries",
-        "Latin American countries",
-        "Arab countries",
-        "All of the above"
+        "Regions that look alike hide huge internal differences",
+        "African countries all face identical challenges",
+        "Health statistics cannot be trusted for comparisons",
+        "Rich countries should send much more foreign aid"
       ],
       "is_dummy": false,
-      "hint_ja": "より小さな家族に向かっている地域は？",
-      "correct_enc": "SA==",
-      "focus_critical": true,
-      "question_ja": "小さい家族へ向かっていると話者が言った地域はどこですか？",
-      "options_ja": [
-        "アフリカ諸国",
-        "ラテンアメリカ諸国",
-        "アラブ諸国",
-        "上記すべて"
-      ]
-    },
-    {
-      "id": "L1_C02",
-      "type": "content",
-      "question": "According to the speaker, what trend is happening in Arabic countries?",
-      "options": [
-        "Families are getting smaller",
-        "Families are getting larger",
-        "Life expectancy is decreasing",
-        "Population is declining"
-      ],
-      "is_dummy": false,
-      "hint_ja": "話者によると、アラブ諸国ではどんな傾向が起きていますか？",
+      "hint_ja": "この区間の主な主張は何ですか？",
       "correct_enc": "Rw==",
-      "focus_critical": true,
-      "question_ja": "アラブ諸国で起きている傾向は何だと話者は言いましたか？",
+      "question_ja": "この区間での話者の主な主張は何ですか？",
       "options_ja": [
-        "家族が小さくなっている",
-        "家族が大きくなっている",
-        "平均寿命が下がっている",
-        "人口が減っている"
+        "似て見える地域の内部には大きな差が隠れている",
+        "アフリカ諸国はみな同じ課題を抱えている",
+        "健康統計は国際比較には信頼できない",
+        "先進国はもっと多くの援助を送るべきだ"
       ]
     },
     {
-      "id": "L1_C03",
+      "id": "L1_N02",
       "type": "content",
-      "question": "What 'miracle' happened in Bangladesh in the 1980s?",
+      "question": "Which country did the speaker connect with development aid?",
       "options": [
-        "Economic boom",
-        "Imams promoted family planning",
-        "Medical breakthrough",
-        "Education reform"
+        "Sierra Leone",
+        "Uganda",
+        "Ghana",
+        "Singapore"
       ],
       "is_dummy": false,
-      "hint_ja": "1980年代にバングラデシュで起きた「奇跡」とは？",
+      "hint_ja": "開発援助と結びつけられた国はどこですか？",
       "correct_enc": "SA==",
-      "question_ja": "1980年代のバングラデシュで起きた「奇跡」とは何でしたか？",
+      "question_ja": "話者が「開発援助」の段階だと述べた国はどこですか？",
       "options_ja": [
-        "経済ブーム",
-        "イスラム指導者（イマーム）が家族計画を推進した",
-        "医学的躍進",
-        "教育改革"
+        "シエラレオネ",
+        "ウガンダ",
+        "ガーナ",
+        "シンガポール"
       ]
     },
     {
-      "id": "L1_C04",
+      "id": "L1_N03",
       "type": "content",
-      "question": "What major health crisis affected African countries in the 1990s?",
+      "question": "What contrast did the speaker point out within South Asia?",
       "options": [
-        "Malaria epidemic",
-        "HIV epidemic",
-        "Cholera outbreak",
-        "Ebola outbreak"
+        "Between India and Pakistan",
+        "Between Bangladesh and Nepal",
+        "Between Afghanistan and Sri Lanka",
+        "Between India and China"
       ],
       "is_dummy": false,
-      "hint_ja": "1990年代にアフリカ諸国に影響した健康危機は？",
-      "correct_enc": "SA==",
-      "question_ja": "1990年代にアフリカ諸国を襲った大きな健康危機は？",
+      "hint_ja": "南アジア内の対比としてどの2国が挙げられましたか？",
+      "correct_enc": "SQ==",
+      "question_ja": "南アジアの中の大きな差として、どの2国が対比されましたか？",
       "options_ja": [
-        "マラリアの流行",
-        "HIVの流行",
-        "コレラの流行",
-        "エボラの流行"
+        "インドとパキスタン",
+        "バングラデシュとネパール",
+        "アフガニスタンとスリランカ",
+        "インドと中国"
       ]
     },
     {
-      "id": "L1_C05",
+      "id": "L1_N04",
       "type": "content",
-      "question": "Which two countries did the speaker compare directly?",
+      "question": "What did the speaker say Arab states have in common?",
       "options": [
-        "China and India",
-        "United States and Vietnam",
-        "Brazil and Nigeria",
-        "Japan and Germany"
+        "Language, borders, and history",
+        "Climate, culture, and religion",
+        "Oil wealth and trade routes",
+        "Population size and geography"
       ],
       "is_dummy": false,
-      "hint_ja": "話者が直接比較した2カ国は？",
+      "hint_ja": "アラブ諸国に共通するものとして挙げられたのは？",
       "correct_enc": "SA==",
-      "focus_critical": true,
-      "question_ja": "話者が直接比較した2つの国はどこですか？",
+      "question_ja": "アラブ諸国が共通して持つものとして挙げられたのは何ですか？",
       "options_ja": [
-        "中国とインド",
-        "アメリカとベトナム",
-        "ブラジルとナイジェリア",
-        "日本とドイツ"
-      ]
+        "言語・国境・歴史",
+        "気候・文化・宗教",
+        "石油資源と交易路",
+        "人口規模と地理"
+      ],
+      "focus_critical": true
     },
     {
-      "id": "L1_C06",
+      "id": "L1_N05",
       "type": "content",
-      "question": "What happened in Vietnam in the 1980s regarding economics?",
+      "question": "Which country was mentioned as having a civil war?",
       "options": [
-        "They adopted communist planning",
-        "They went for market economy",
-        "They started a war",
-        "They joined the UN"
+        "Yemen",
+        "Cambodia",
+        "Sri Lanka",
+        "Sierra Leone"
       ],
       "is_dummy": false,
-      "hint_ja": "1980年代にベトナムの経済で何が起きましたか？",
-      "correct_enc": "SA==",
-      "question_ja": "1980年代のベトナムで経済に関して何が起きましたか？",
+      "hint_ja": "内戦があると言及された国はどこですか？",
+      "correct_enc": "Rw==",
+      "question_ja": "内戦があると言及された国はどこですか？",
       "options_ja": [
-        "共産主義の計画経済を採用した",
-        "市場経済へ移行した",
-        "戦争を始めた",
-        "国連に加盟した"
+        "イエメン",
+        "カンボジア",
+        "スリランカ",
+        "シエラレオネ"
       ]
     },
     {
-      "id": "L1_C07",
-      "type": "content",
-      "question": "According to the speaker, what was the main point about African countries?",
+      "id": "L1_N06",
+      "type": "inference",
+      "question": "What was the speaker's conclusion about data quality?",
       "options": [
-        "They have caught up with Europe",
-        "They still have high birth rates and low life expectancy",
-        "They are the fastest growing economies",
-        "They have the best healthcare systems"
+        "Uncertainty makes comparison impossible",
+        "Only wealthy countries collect usable data",
+        "Country differences outweigh the data's weakness",
+        "Data should be replaced by field visits"
       ],
       "is_dummy": false,
-      "hint_ja": "話者によると、アフリカ諸国の主な特徴は？",
-      "correct_enc": "SA==",
-      "question_ja": "アフリカ諸国についての話者の要点は何でしたか？",
+      "hint_ja": "データの質について話者の結論は？",
+      "correct_enc": "SQ==",
+      "question_ja": "データの質について、話者はどう結論づけましたか？",
       "options_ja": [
-        "ヨーロッパに追いついた",
-        "まだ出生率が高く平均寿命が短い",
-        "最も成長の速い経済である",
-        "最高の医療制度を持っている"
-      ]
-    },
-    {
-      "id": "L1_D01",
-      "type": "dummy",
-      "question": "What software did the speaker use for the visualization?",
-      "options": [
-        "PowerPoint",
-        "Gapminder",
-        "Excel",
-        "Not mentioned in this segment"
+        "不確実性のせいで比較は不可能だ",
+        "使えるデータを集められるのは豊かな国だけだ",
+        "国どうしの差はデータの弱点より大きい",
+        "データより現地視察を重視すべきだ"
       ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
-      "id": "L1_D02",
-      "type": "dummy",
-      "question": "What year was this TED talk originally given?",
-      "options": [
-        "2004",
-        "2006",
-        "2008",
-        "Not stated in this segment"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
-      "id": "L1_D03",
-      "type": "dummy",
-      "question": "How many countries were included in the dataset?",
-      "options": [
-        "50",
-        "100",
-        "200",
-        "Not specified in this segment"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
+      "focus_critical": true
     }
   ],
   "speaker_intent": {
     "emphasis_identification": {
-      "sentence": "And we have a completely new world.",
-      "question": "Which word did the speaker emphasize most?",
+      "sentence": "Same climate, same culture, same religion, huge difference even between neighbours.",
+      "question": "Which word did the speaker emphasize most in this sentence?",
       "options": [
-        "we",
-        "completely",
-        "new",
-        "world"
+        "climate",
+        "culture",
+        "religion",
+        "difference"
       ],
       "hint_ja": "この文で話者が最も強調した語はどれですか？",
-      "correct_enc": "SQ=="
+      "correct_enc": "SA=="
     },
     "attitude_estimation": {
-      "question": "What was the speaker's general tone in this segment?",
+      "question": "What was the speaker's overall tone in this segment?",
       "options": [
-        "Passionate and enthusiastic",
-        "Solemn and warning",
-        "Humorous",
-        "Neutral and explanatory"
+        "Enthusiastic",
+        "Solemn",
+        "Sarcastic",
+        "Detached"
       ],
-      "hint_ja": "この区間での話者の全般的なトーンは？",
-      "correct_enc": "Sg==",
-      "question_ja": "この区間での話者の全般的なトーンは？",
+      "hint_ja": "この区間での話者の全体的なトーンは？",
+      "correct_enc": "Rw==",
+      "question_ja": "この区間での話者の全体的なトーンは？",
       "options_ja": [
-        "情熱的で熱意にあふれる",
-        "厳粛で警告的",
-        "ユーモラス",
-        "中立的で説明的"
+        "熱意にあふれている",
+        "厳粛",
+        "皮肉っぽい",
+        "突き放している"
       ]
-    },
-    "prosodic_structure": {
-      "question": "When presenting data comparisons, the speaker typically...",
-      "options": [
-        "Used dramatic pauses between each country",
-        "Spoke at a steady, consistent pace",
-        "Whispered the statistics",
-        "Shouted country names"
-      ],
-      "hint_ja": "データの比較を提示するとき、話者は通常…",
-      "correct_enc": "SA=="
     }
   }
 }
