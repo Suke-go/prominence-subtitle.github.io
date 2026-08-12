@@ -28,11 +28,11 @@ const STRINGS = {
 <p>If you agree to participate, you will be asked to:</p>
 <ol>
   <li>Complete a brief questionnaire on your language background and English proficiency (approx. 3 min)</li>
-  <li>Watch 6 short video clips (each approx. 90 seconds) with subtitles and answer questions about each clip (approx. 20 min)</li>
+  <li>Watch 6 short video clips (each approx. 90 seconds) with subtitles and answer questions about each clip (approx. 35 min)</li>
   <li>Complete a brief post-experiment questionnaire (approx. 2 min)</li>
 </ol>
 <h3>3. Duration</h3>
-<p>Total estimated time: approximately 30 minutes.</p>
+<p>Total estimated time: approximately 45 minutes.</p>
 <h3>4. Risks and benefits</h3>
 <p>There are no known risks associated with participation. The study does not involve deception. No direct benefits are guaranteed, but your participation contributes to research on accessible subtitle technology.</p>
 <h3>5. Data handling</h3>
@@ -54,11 +54,11 @@ const STRINGS = {
 <p>参加に同意いただける場合、以下の課題を行っていただきます。</p>
 <ol>
   <li>言語背景・英語熟達度に関する簡単な質問紙への回答（約3分）</li>
-  <li>字幕付きの短い映像クリップ6本（各約90秒）の視聴と、各クリップに関する質問への回答（約20分）</li>
+  <li>字幕付きの短い映像クリップ6本（各約90秒）の視聴と、各クリップに関する質問への回答（約35分）</li>
   <li>事後アンケートへの回答（約2分）</li>
 </ol>
 <h3>3. 所要時間</h3>
-<p>全体で約30分を予定しています。</p>
+<p>全体で約45分を予定しています。</p>
 <h3>4. リスクと利益</h3>
 <p>本研究への参加に伴う既知のリスクはありません。本研究に欺瞞的手法は含まれていません。直接的な利益は保証されませんが、アクセシブルな字幕技術の研究に貢献していただけます。</p>
 <h3>5. データの取り扱い</h3>
