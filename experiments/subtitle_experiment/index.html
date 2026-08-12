@@ -453,20 +453,20 @@
           data: { phase: 'prior_exposure', clip_id: clipId, condition },
         });
 
-        // 6c. Comprehension quiz — stratified draw: 1 emphasis-aligned
-        // (focus_critical: content overlaps high-prominence words) + 1 general.
+        // 6c. Comprehension quiz — stratified draw: 2 emphasis-aligned
+        // (focus_critical: content overlaps high-prominence words) + 2 general.
         // The condition × question-type interaction is the a-priori test of
         // whether prosodic captions aid comprehension of emphasized content.
         if (qData?.comprehension) {
           const pool = qData.comprehension.filter(q => !q.is_dummy);
           const focus = shuffle(pool.filter(q => q.focus_critical));
           const general = shuffle(pool.filter(q => !q.focus_critical));
-          const selected = shuffle([focus[0], general[0]].filter(Boolean));
+          const selected = shuffle([...focus.slice(0, 2), ...general.slice(0, 2)]);
           selected.forEach((q, qi) => {
             const hint = (getLang() === 'ja' && q.hint_ja) ? `<br><span class="hint-ja">${q.hint_ja}</span>` : '';
             trials.push({
               type: jsPsychSurveyMultiChoice,
-              preamble: `<p class="question-counter">${t('trial_quiz_title')} — Q${qi + 1}/2</p>`,
+              preamble: `<p class="question-counter">${t('trial_quiz_title')} — Q${qi + 1}/${selected.length}</p>`,
               questions: [{ prompt: q.question + hint, name: q.id, options: shuffle(q.options), required: true }],
               data: { phase: 'quiz', clip_id: clipId, condition, question_id: q.id, question_type: q.type, is_dummy: !!q.is_dummy, focus_critical: !!q.focus_critical, correct_enc: q.correct_enc },
             });
