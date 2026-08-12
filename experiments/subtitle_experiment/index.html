@@ -119,6 +119,33 @@
       });
     }
 
+    // Auto-select a second emphasis probe: segment the word stream at pauses
+    // (>0.5s gap), pick the 6–14-word segment with the highest peak prominence
+    // that doesn't overlap the quiz sentence.
+    function pickAutoSentence(subtitleWords, excludeSentence) {
+      if (!subtitleWords?.length) return null;
+      const exclude = new Set((excludeSentence || '').split(/\s+/).map(normTok).filter(Boolean));
+      const segments = [];
+      let seg = [];
+      for (let i = 0; i < subtitleWords.length; i++) {
+        const w = subtitleWords[i];
+        const prev = subtitleWords[i - 1];
+        if (prev && (w.start - prev.end) > 0.5 && seg.length) { segments.push(seg); seg = []; }
+        seg.push(w);
+        if (/[.?!]$/.test(w.text)) { segments.push(seg); seg = []; }
+      }
+      if (seg.length) segments.push(seg);
+      let best = null, bestScore = -1;
+      for (const s of segments) {
+        if (s.length < 6 || s.length > 14) continue;
+        const overlap = s.filter(w => exclude.has(normTok(w.text))).length;
+        if (overlap > s.length * 0.5) continue;
+        const peak = Math.max(...s.map(w => w.prominence ?? 0));
+        if (peak > bestScore) { bestScore = peak; best = s; }
+      }
+      return best ? best.map(w => w.text).join(' ') : null;
+    }
+
     function makeEmphasisClickTrial(sentence, subtitleWords, counterLabel, extraData) {
       const words = sentence.split(/\s+/).filter(Boolean);
       const prominences = alignProminence(sentence, subtitleWords);
@@ -247,8 +274,8 @@
         <h2>${t('cupload_title')}</h2>
         <p>${t('cupload_body')}</p>
         <p style="margin:1rem 0">
-          <a class="download-btn" href="docs/consent_form.docx" download>${t('cupload_dl_consent')}</a>
-          <a class="download-btn" href="docs/consent_withdrawal_form.docx" download style="margin-left:0.5rem">${t('cupload_dl_withdrawal')}</a>
+          <a class="download-btn" href="docs/consent_form.pdf" download>${t('cupload_dl_consent')}</a>
+          <a class="download-btn" href="docs/consent_withdrawal_form.pdf" download style="margin-left:0.5rem">${t('cupload_dl_withdrawal')}</a>
         </p>
         <hr style="margin:1.25rem 0">
         <p>${t('cupload_upload_prompt')}</p>
@@ -388,7 +415,26 @@
           data: { phase: 'trial_video', clip_id: clipId, legacy_id: cd.legacyDir, condition, D_new: clipInfo.D_new, trial_index: idx },
         });
 
-        // 6b. Prior exposure check (first question for each clip)
+        // 6b. Emphasis word-click probes — immediately after the video, while
+        // prosody is still fresh in memory (before other questions interfere)
+        const emp = qData?.speaker_intent?.emphasis_identification;
+        if (emp) {
+          trials.push(makeEmphasisClickTrial(
+            emp.sentence, subtitleWords,
+            () => `${t('trial_intent_title')} — 1/2`,
+            { clip_id: clipId, condition, probe_source: 'quiz', correct_enc: emp.correct_enc }
+          ));
+        }
+        const autoSentence = pickAutoSentence(subtitleWords, emp?.sentence);
+        if (autoSentence) {
+          trials.push(makeEmphasisClickTrial(
+            autoSentence, subtitleWords,
+            () => `${t('trial_intent_title')} — 2/2`,
+            { clip_id: clipId, condition, probe_source: 'auto' }
+          ));
+        }
+
+        // 6c. Prior exposure check
         trials.push({
           type: jsPsychSurveyMultiChoice,
           questions: [{ prompt: t('clip_prior_exposure'), name: `prior_exposure_${clipId}`, options: t('clip_prior_opts'), required: true }],
@@ -409,29 +455,16 @@
           });
         }
 
-        // 6c. Speaker intent: emphasis word-click + attitude (2 tasks)
-        if (qData?.speaker_intent) {
-          const si = qData.speaker_intent;
-
-          if (si.emphasis_identification) {
-            const emp = si.emphasis_identification;
-            trials.push(makeEmphasisClickTrial(
-              emp.sentence, subtitleWords,
-              () => `${t('trial_intent_title')} — 1/2`,
-              { clip_id: clipId, condition, correct_enc: emp.correct_enc }
-            ));
-          }
-
-          if (si.attitude_estimation) {
-            const att = si.attitude_estimation;
-            const attHint = (getLang() === 'ja' && att.hint_ja) ? `<br><span class="hint-ja">${att.hint_ja}</span>` : '';
-            trials.push({
-              type: jsPsychSurveyMultiChoice,
-              preamble: `<p class="question-counter">${t('trial_intent_title')} — 2/2</p>`,
-              questions: [{ prompt: att.question + attHint, name: `intent_attitude_${clipId}`, options: att.options, required: true }],
-              data: { phase: 'intent', clip_id: clipId, intent_type: 'attitude', correct_enc: att.correct_enc },
-            });
-          }
+        // 6d. Speaker attitude
+        if (qData?.speaker_intent?.attitude_estimation) {
+          const att = qData.speaker_intent.attitude_estimation;
+          const attHint = (getLang() === 'ja' && att.hint_ja) ? `<br><span class="hint-ja">${att.hint_ja}</span>` : '';
+          trials.push({
+            type: jsPsychSurveyMultiChoice,
+            preamble: `<p class="question-counter">${t('trial_intent_title')}</p>`,
+            questions: [{ prompt: att.question + attHint, name: `intent_attitude_${clipId}`, options: att.options, required: true }],
+            data: { phase: 'intent', clip_id: clipId, intent_type: 'attitude', correct_enc: att.correct_enc },
+          });
         }
 
         // 6d. Subjective ratings (3 items; understanding is measured by the quiz)
