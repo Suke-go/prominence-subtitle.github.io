@@ -1,27 +1,6 @@
 {
   "comprehension": [
     {
-      "id": "H3_C01",
-      "type": "content",
-      "question": "What is the speaker's profession?",
-      "options": [
-        "Medical doctor",
-        "Health psychologist",
-        "Neuroscientist",
-        "Fitness trainer"
-      ],
-      "is_dummy": false,
-      "hint_ja": "話者の職業は何ですか？",
-      "correct_enc": "SA==",
-      "question_ja": "話者の職業は何ですか？",
-      "options_ja": [
-        "医師",
-        "健康心理学者",
-        "神経科学者",
-        "フィットネストレーナー"
-      ]
-    },
-    {
       "id": "H3_C02",
       "type": "content",
       "question": "What has the speaker been teaching for the last 10 years?",
@@ -34,35 +13,14 @@
       "is_dummy": false,
       "hint_ja": "話者は過去10年間何を教えてきましたか？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "話者がこの10年間教えてきたことは何ですか？",
       "options_ja": [
         "運動の技法",
         "ストレスは体に悪いということ",
         "瞑想法",
         "時間管理"
-      ]
-    },
-    {
-      "id": "H3_C03",
-      "type": "content",
-      "question": "How many adults were tracked in the study the speaker mentioned?",
-      "options": [
-        "10,000",
-        "20,000",
-        "30,000",
-        "50,000"
       ],
-      "is_dummy": false,
-      "hint_ja": "研究で追跡された成人の数は？",
-      "correct_enc": "SQ==",
-      "question_ja": "話者が紹介した研究では何人の成人が追跡されましたか？",
-      "options_ja": [
-        "1万人",
-        "2万人",
-        "3万人",
-        "5万人"
-      ]
+      "focus_critical": true
     },
     {
       "id": "H3_C04",
@@ -98,14 +56,14 @@
       "is_dummy": false,
       "hint_ja": "強いストレスを受けた人の死亡リスクの増加率は？",
       "correct_enc": "SQ==",
-      "focus_critical": true,
       "question_ja": "強いストレスを抱えた人はどれだけ死亡リスクが高かったですか？",
       "options_ja": [
         "23%増",
         "33%増",
         "43%増",
         "53%増"
-      ]
+      ],
+      "focus_critical": true
     },
     {
       "id": "H3_C06",
@@ -120,7 +78,6 @@
       "is_dummy": false,
       "hint_ja": "死亡リスクの増加が当てはまったのはどのグループだけですか？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "ストレスによる死亡リスクの増加は、どの人たちだけに当てはまりましたか？",
       "options_ja": [
         "50歳以上の人",
@@ -151,19 +108,6 @@
       ]
     },
     {
-      "id": "H3_D01",
-      "type": "dummy",
-      "question": "What specific disease did the speaker study?",
-      "options": [
-        "Heart disease",
-        "Diabetes",
-        "Cancer",
-        "No specific disease was mentioned"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
       "id": "H3_D02",
       "type": "dummy",
       "question": "Where was the study conducted?",
@@ -182,19 +126,6 @@
         "アメリカ",
         "話者は特定していない"
       ]
-    },
-    {
-      "id": "H3_D03",
-      "type": "dummy",
-      "question": "What meditation technique did the speaker recommend?",
-      "options": [
-        "Mindfulness",
-        "Yoga",
-        "Deep breathing",
-        "No technique was recommended in this segment"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
     }
   ],
   "speaker_intent": {

@@ -463,14 +463,15 @@
         });
 
         // 6c. Comprehension quiz — stratified draw: 2 emphasis-aligned
-        // (focus_critical: content overlaps high-prominence words) + 2 general.
+        // (focus_critical: content overlaps high-prominence words) + 2 general
+        // (4 items/60s clip, in line with TOEFL iBT listening density).
         // The condition × question-type interaction is the a-priori test of
         // whether prosodic captions aid comprehension of emphasized content.
         if (qData?.comprehension) {
           const pool = qData.comprehension.filter(q => !q.is_dummy);
           const focus = shuffle(pool.filter(q => q.focus_critical));
           const general = shuffle(pool.filter(q => !q.focus_critical));
-          const selected = shuffle([...focus.slice(0, 3), ...general.slice(0, 3)]);
+          const selected = shuffle([...focus.slice(0, 2), ...general.slice(0, 2)]);
           selected.forEach((q, qi) => {
             // Ask in the participant's language: comprehension of the CONTENT
             // is the DV — English reading of the question must not confound it.

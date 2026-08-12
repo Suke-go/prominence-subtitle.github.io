@@ -13,14 +13,14 @@
       "is_dummy": false,
       "hint_ja": "wholehearted（心から生きる）な人々の共通点は？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "「wholehearted（全身全霊）」な人々に共通していたものは何でしたか？",
       "options_ja": [
         "知性",
         "勇気",
         "経済的成功",
         "広い人脈"
-      ]
+      ],
+      "focus_critical": true
     },
     {
       "id": "H2_C02",
@@ -48,44 +48,22 @@
       "type": "content",
       "question": "What did the speaker say the original definition of courage meant?",
       "options": [
-        "To fight without fear",
+        "To fight fearlessly against any enemy",
         "To tell the story of who you are with your whole heart",
-        "To overcome physical challenges",
-        "To stand up for others"
+        "To overcome the hardest physical challenges",
+        "To stand up and protect other people"
       ],
       "is_dummy": false,
       "hint_ja": "courage の本来の定義はどのような意味ですか？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "courage の元々の定義はどういう意味だったと話者は言いましたか？",
       "options_ja": [
-        "恐れずに戦うこと",
-        "自分が何者であるかの物語を心から語ること",
-        "身体的な困難を乗り越えること",
-        "他人のために立ち上がること"
-      ]
-    },
-    {
-      "id": "H2_C04",
-      "type": "content",
-      "question": "What was the third quality wholehearted people shared, after courage and compassion?",
-      "options": [
-        "Resilience",
-        "Gratitude",
-        "Connection",
-        "Creativity"
+        "どんな敵にも恐れず立ち向かうこと",
+        "自分が何者かの物語を心から語ること",
+        "最も過酷な身体的困難を乗り越えること",
+        "立ち上がって他者を守ること"
       ],
-      "is_dummy": false,
-      "hint_ja": "courage と compassion（思いやり）に続く3番目の特質は？",
-      "correct_enc": "SQ==",
-      "focus_critical": true,
-      "question_ja": "勇気と思いやりに続く、wholehearted な人々の3つ目の特質は？",
-      "options_ja": [
-        "回復力",
-        "感謝",
-        "つながり",
-        "創造性"
-      ]
+      "focus_critical": true
     },
     {
       "id": "H2_C05",
@@ -109,27 +87,6 @@
       ]
     },
     {
-      "id": "H2_C06",
-      "type": "content",
-      "question": "What were wholehearted people willing to let go of?",
-      "options": [
-        "Their possessions",
-        "Their past mistakes",
-        "Who they thought they should be",
-        "Their social status"
-      ],
-      "is_dummy": false,
-      "hint_ja": "wholehearted な人々が手放せたものは？",
-      "correct_enc": "SQ==",
-      "question_ja": "wholehearted な人々が手放していたものは？",
-      "options_ja": [
-        "持ち物",
-        "過去の失敗",
-        "「こうあるべき」と思っていた自分",
-        "社会的地位"
-      ]
-    },
-    {
       "id": "H2_C07",
       "type": "content",
       "question": "How did the speaker describe her data analysis process?",
@@ -149,45 +106,6 @@
         "素早く効率的",
         "同僚と協力的"
       ]
-    },
-    {
-      "id": "H2_D01",
-      "type": "dummy",
-      "question": "How many years of research did the speaker conduct?",
-      "options": [
-        "Five",
-        "Ten",
-        "Fifteen",
-        "The speaker did not specify in this segment"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
-      "id": "H2_D02",
-      "type": "dummy",
-      "question": "What university does the speaker work at?",
-      "options": [
-        "Stanford",
-        "University of Houston",
-        "Rice University",
-        "Not mentioned in this segment"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
-      "id": "H2_D03",
-      "type": "dummy",
-      "question": "What specific research method did the speaker use?",
-      "options": [
-        "Surveys only",
-        "Brain imaging",
-        "Statistical modeling",
-        "Not specified in this segment"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
     }
   ],
   "speaker_intent": {

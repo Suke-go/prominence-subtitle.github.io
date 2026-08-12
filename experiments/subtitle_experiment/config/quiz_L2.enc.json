@@ -1,88 +1,24 @@
 {
   "comprehension": [
     {
-      "id": "L2_C01",
-      "type": "content",
-      "question": "What law of thermodynamics does the speaker reference?",
-      "options": [
-        "First law",
-        "Second law",
-        "Third law",
-        "Zeroth law"
-      ],
-      "is_dummy": false,
-      "hint_ja": "話者が言及する熱力学（thermodynamics）の法則は？",
-      "correct_enc": "SA==",
-      "question_ja": "話者が言及した熱力学の法則はどれですか？",
-      "options_ja": [
-        "第一法則",
-        "第二法則",
-        "第三法則",
-        "第零法則"
-      ]
-    },
-    {
-      "id": "L2_C02",
-      "type": "content",
-      "question": "What term did the speaker's colleague Fred Spear use?",
-      "options": [
-        "Sweet spot conditions",
-        "Goldilocks conditions",
-        "Perfect storm conditions",
-        "Equilibrium conditions"
-      ],
-      "is_dummy": false,
-      "hint_ja": "同僚のフレッド・スピアが使った用語は？",
-      "correct_enc": "SA==",
-      "question_ja": "話者の同僚フレッド・スピアが使った用語は？",
-      "options_ja": [
-        "スイートスポット条件",
-        "ゴルディロックス条件",
-        "パーフェクトストーム条件",
-        "平衡条件"
-      ]
-    },
-    {
       "id": "L2_C03",
       "type": "content",
       "question": "What does 'Goldilocks conditions' mean in this context?",
       "options": [
-        "Extremely hot",
-        "Not too hot, not too cold, just right",
-        "Constantly changing",
-        "Very cold"
+        "Conditions that are extremely hot everywhere",
+        "Conditions not too hot, not too cold, just right",
+        "Conditions that keep changing all the time",
+        "Conditions that are permanently frozen cold"
       ],
       "is_dummy": false,
       "hint_ja": "Goldilocks conditions（ちょうどいい条件）とはこの文脈で何を意味しますか？",
       "correct_enc": "SA==",
       "question_ja": "この文脈で「ゴルディロックス条件」とはどういう意味ですか？",
       "options_ja": [
-        "非常に熱い",
-        "熱すぎず冷たすぎず、ちょうどよい",
-        "絶えず変化する",
-        "非常に冷たい"
-      ]
-    },
-    {
-      "id": "L2_C04",
-      "type": "content",
-      "question": "What term does 'big history' use for moments when complexity increases?",
-      "options": [
-        "Turning points",
-        "Threshold moments",
-        "Breaking points",
-        "Milestone events"
-      ],
-      "is_dummy": false,
-      "hint_ja": "big history で複雑さが増す瞬間を何と呼びますか？",
-      "correct_enc": "SA==",
-      "focus_critical": true,
-      "question_ja": "「ビッグヒストリー」で複雑性が増す瞬間を指す用語は？",
-      "options_ja": [
-        "転換点",
-        "閾値（しきいち）の瞬間",
-        "限界点",
-        "節目の出来事"
+        "あらゆる場所が極端に高温な状態",
+        "熱すぎず冷たすぎず、ちょうどよい状態",
+        "常に変化し続けている状態",
+        "恒久的に凍りついた低温の状態"
       ]
     },
     {
@@ -98,36 +34,36 @@
       "is_dummy": false,
       "hint_ja": "物事がより複雑になるとどうなりますか？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "物事が複雑になるとどうなると話者は言いましたか？",
       "options_ja": [
         "より安定する",
         "より壊れやすく脆弱になる",
         "より単純になる",
         "より面白くなくなる"
-      ]
+      ],
+      "focus_critical": true
     },
     {
       "id": "L2_C06",
       "type": "content",
       "question": "What does complexity create the impression of, according to the speaker?",
       "options": [
-        "Something predictable",
+        "Something predictable following known rules",
         "Something utterly new appearing out of nowhere",
-        "Something familiar",
-        "Something dangerous"
+        "Something familiar returning from the past",
+        "Something dangerous threatening its surroundings"
       ],
       "is_dummy": false,
       "hint_ja": "複雑さはどのような印象を生み出しますか？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "複雑性は何の印象を生むと話者は言いましたか？",
       "options_ja": [
-        "予測可能なものの印象",
-        "まったく新しいものがどこからともなく現れる印象",
-        "見慣れたものの印象",
-        "危険なものの印象"
-      ]
+        "既知の法則に従う予測可能な何か",
+        "どこからともなく現れるまったく新しい何か",
+        "過去から戻ってきた見覚えのある何か",
+        "周囲を脅かす危険な何か"
+      ],
+      "focus_critical": true
     },
     {
       "id": "L2_C07",
@@ -149,45 +85,6 @@
         "進むのが難しくなる",
         "進歩が止まる"
       ]
-    },
-    {
-      "id": "L2_D01",
-      "type": "dummy",
-      "question": "What specific example of complexity did the speaker describe in detail?",
-      "options": [
-        "The human brain",
-        "DNA molecules",
-        "Stars forming",
-        "No specific example was given in this segment"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
-      "id": "L2_D02",
-      "type": "dummy",
-      "question": "How many threshold moments did the speaker identify in history?",
-      "options": [
-        "Four",
-        "Eight",
-        "Twelve",
-        "Not specified in this segment"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
-      "id": "L2_D03",
-      "type": "dummy",
-      "question": "What book did the speaker recommend?",
-      "options": [
-        "A Brief History of Time",
-        "Maps of Time",
-        "The Origin of Species",
-        "No book was mentioned"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
     }
   ],
   "speaker_intent": {

@@ -13,7 +13,6 @@
       "is_dummy": false,
       "hint_ja": "授業で女の子は何を描いていましたか？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "授業中、女の子は何の絵を描いていましたか？",
       "options_ja": [
         "家族の絵",
@@ -35,14 +34,14 @@
       "is_dummy": false,
       "hint_ja": "女の子が集中しているのを見て先生はどう反応しましたか？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "女の子が集中しているのを見て、先生はどう反応しましたか？",
       "options_ja": [
         "いらいらした",
         "興味をひかれた",
         "困惑した",
         "無視した"
-      ]
+      ],
+      "focus_critical": true
     },
     {
       "id": "H1_C03",
@@ -57,7 +56,6 @@
       "is_dummy": false,
       "hint_ja": "息子のJamesはキリスト降誕劇のとき何歳でしたか？",
       "correct_enc": "SA==",
-      "focus_critical": true,
       "question_ja": "キリスト降誕劇のとき、話者の息子ジェームズは何歳でしたか？",
       "options_ja": [
         "3歳",
@@ -88,27 +86,6 @@
       ]
     },
     {
-      "id": "H1_C05",
-      "type": "content",
-      "question": "What joke did the speaker make about Mel Gibson?",
-      "options": [
-        "Mel Gibson was in the audience",
-        "Mel Gibson directed the sequel",
-        "Mel Gibson played Joseph",
-        "Mel Gibson funded the play"
-      ],
-      "is_dummy": false,
-      "hint_ja": "話者はメル・ギブソンについてどんな冗談を言いましたか？",
-      "correct_enc": "SA==",
-      "question_ja": "話者はメル・ギブソンについてどんな冗談を言いましたか？",
-      "options_ja": [
-        "メル・ギブソンが観客席にいた",
-        "メル・ギブソンが続編を監督した",
-        "メル・ギブソンがヨセフを演じた",
-        "メル・ギブソンが劇に出資した"
-      ]
-    },
-    {
       "id": "H1_C06",
       "type": "content",
       "question": "What did the girl say when the teacher told her nobody knows what God looks like?",
@@ -127,67 +104,8 @@
         "「もうすぐわかるよ」と言った",
         "泣き出した",
         "別のものを描き始めた"
-      ]
-    },
-    {
-      "id": "H1_C07",
-      "type": "content",
-      "question": "The speaker joked that the Nativity play venue was crammed full of... what?",
-      "options": [
-        "Proud parents",
-        "Talent agents",
-        "Teachers",
-        "TV cameras"
       ],
-      "is_dummy": false,
-      "hint_ja": "降誕劇の会場は何でぎっしりだった、と話者は冗談を言いましたか？",
-      "correct_enc": "SA==",
-      "question_ja": "降誕劇の会場は何でぎっしりだった、と話者は冗談を言いましたか？",
-      "options_ja": [
-        "誇らしげな親たち",
-        "芸能エージェント",
-        "教師たち",
-        "テレビカメラ"
-      ]
-    },
-    {
-      "id": "H1_D01",
-      "type": "dummy",
-      "question": "What university did the speaker attend?",
-      "options": [
-        "Oxford",
-        "Cambridge",
-        "Harvard",
-        "The speaker did not mention a university"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
-      "id": "H1_D02",
-      "type": "dummy",
-      "question": "What country was the drawing lesson in?",
-      "options": [
-        "United States",
-        "France",
-        "England",
-        "The speaker did not specify"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
-    },
-    {
-      "id": "H1_D03",
-      "type": "dummy",
-      "question": "How many children does the speaker have?",
-      "options": [
-        "One",
-        "Two",
-        "Three",
-        "The speaker did not mention"
-      ],
-      "is_dummy": true,
-      "correct_enc": "Sg=="
+      "focus_critical": true
     }
   ],
   "speaker_intent": {

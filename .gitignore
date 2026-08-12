@@ -39,3 +39,7 @@ experiments/ethical_review/application_form.json
 
 # Log files
 *.log
+
+# 60s-crop backups (local only)
+experiments/subtitle_experiment/data/*/*.pre60s
+experiments/subtitle_experiment/config/*.pre60s
