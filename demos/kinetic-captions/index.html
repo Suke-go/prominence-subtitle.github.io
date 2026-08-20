@@ -29,7 +29,8 @@
         transition:opacity .25s, transform .3s}
   .pill.breathe{opacity:.35;transform:scale(.92)}
   .w{display:inline-block;font-weight:400;font-variation-settings:"wght" 400;white-space:pre;
-     pointer-events:auto;cursor:default;position:relative;transform-origin:50% 80%}
+     pointer-events:auto;cursor:default;position:relative;transform-origin:50% 80%;
+     transition:color .18s ease}
   .w.pop{animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
   @keyframes pop{0%{transform:scale(.7);opacity:.2}100%{transform:scale(1);opacity:1}}
   .dots{letter-spacing:.35em;animation:breathe 1.6s ease-in-out infinite;color:#cfd6e4}
@@ -118,7 +119,8 @@
         <button data-p="static">Static (Exp A)<span class="key">2</span></button>
         <button data-p="kinetic" class="active">Kinetic<span class="key">3</span></button>
         <button data-p="melody">Melody<span class="key">4</span></button>
-        <button data-p="full" style="grid-column:1/3">Full Prosody<span class="key">5</span></button>
+        <button data-p="full">Full Prosody<span class="key">5</span></button>
+        <button data-p="hype">Hype 🔥<span class="key">6</span></button>
       </div>
     </div>
 
@@ -196,16 +198,18 @@ const PRESETS={
   kinetic:{wires:{weight:'prom',size:null,glow:null,baseline:null},chunked:true,glide:false,static:false},
   melody:{wires:{weight:null,size:null,glow:null,baseline:'pitch'},chunked:true,glide:true,static:false},
   full:{wires:{weight:'prom',size:null,glow:'prom',baseline:'pitch'},chunked:true,glide:true,static:false},
+  hype:{wires:{weight:'prom',size:'prom',glow:'prom',baseline:null},chunked:true,glide:true,static:false,hype:true},
 };
+let hypeMode=false;
 function applyPreset(name){
   const p=PRESETS[name]; Object.assign(wires,p.wires);
-  chunked=p.chunked; boundaryGlide=p.glide; staticMode=p.static;
+  chunked=p.chunked; boundaryGlide=p.glide; staticMode=p.static; hypeMode=!!p.hype;
   document.querySelectorAll('.presets button').forEach(b=>b.classList.toggle('active',b.dataset.p===name));
   setJacks();
 }
 document.querySelectorAll('.presets button').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.p)));
 document.addEventListener('keydown',e=>{
-  const map={'1':'normal','2':'static','3':'kinetic','4':'melody','5':'full'};
+  const map={'1':'normal','2':'static','3':'kinetic','4':'melody','5':'full','6':'hype'};
   if(map[e.key] && !e.target.matches('input,select')) applyPreset(map[e.key]);
 });
 
@@ -326,6 +330,16 @@ function render(){
           const k=Math.min(1,(t-w.end)/0.35);
           css.base+=-Math.max(-3,Math.min(3,sl*0.4))*4*k;
         }
+      }
+      // Hype (engagement lane): karaoke highlight on the active word +
+      // warm color pulse on prominent words, both prosody-synchronized
+      if(hypeMode){
+        const active=t>=w.start&&t<=w.end+0.12;
+        const promHot=(w.prominence??0)>P.thr;
+        el.style.color=active?'#ffd166':(promHot?'#ffb347':'#fff');
+        if(active){css.size*=1.12;css.base-=2;}
+      }else{
+        el.style.color='';
       }
       el.style.fontVariationSettings=`"wght" ${Math.round(css.wght)}`;
       el.style.fontSize=css.size!==1?css.size.toFixed(3)+'em':'';

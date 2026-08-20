@@ -70,3 +70,22 @@ kinetic typography 研究(Forlizzi & Lee, Kinedit CHI 2003 ほか)の知見は�
 - Forlizzi & Lee (CHI 2003) The Kinedit System
 - Rajendran et al. (2013) Effects of Text Chunking on Subtitling, *Perspectives* 21(1)
 - EmoType-Zero (CHI 2026 EA) — 控えめな幾何モードの受容度が高い(72%採用意向): 「サブトルな変調を既定にする」方針の傍証
+
+---
+
+## 7. モチベーション設計の拡張(2026-08 追記)
+
+機能的忠実性(P1〜P3)とは別軸で、**視聴者のエンゲージメント・学習動機・購買意向を高める「情動的文法」**を第2のデザインレーンとして扱う。サーベイ詳細は [[motivational_design_survey_ja]] 参照。
+
+### 根拠(要点)
+- **Emotional design**(Um, Plass系; Brom+ 2018メタ分析): 暖色・丸み・擬人化で保持 d≈0.39 / 転移 d≈0.33 / 内発的動機 d≈0.26。ただし**中難度タスクでのみ有効**という調整効果あり — L2視聴はまさに中難度帯。
+- **Kinetic typography**(Nature HSS 2023): 学習利益の源泉は動きそのものではなく「音声の時間順序×書記の論理」の融合。**動き密度は30%未満**が推奨(過剰は認知疲労)。
+- **広告・短尺動画**: 動的キャプションでskip率 -55%・視聴時間 +12%等の業界データ。TikTok型 per-word pop / karaoke highlight が事実上の標準文法。
+- **Google Expressive Captions (2024)**: 感情・環境音の明示化が実運用に到達。
+- **Aesthetic-usability**(Hassenzahl): 審美性は知覚ユーザビリティと再利用意図を押し上げる。
+
+### 設計上の帰結
+1. **2レーン構成**: Fidelity lane(P1〜P3、韻律に正確)/ Engagement lane(karaoke highlight・色パルス・強めのpop)。後者も**ランダムではなく韻律に同期**させる — 「演出がでたらめではなく発話構造に根ざすため、派手さと理解が両立する」が中核仮説。
+2. **動き密度の予算**: 視覚変化を受ける語は全語の30%未満に制限(プロミネンス閾値がそのまま予算コントローラになる)。
+3. **測定**: 理解・負荷(実験A系)に加えて、IMI短版(動機)、SAM(情動)、視聴継続/完了率、購買意向3項目、AttrakDiff短版(ヘドニック品質)。
+4. プロトタイプ実装: demos/kinetic-captions の Hype プリセット(karaoke色ハイライト+prominence色パルス)が Engagement lane の最小実装。
