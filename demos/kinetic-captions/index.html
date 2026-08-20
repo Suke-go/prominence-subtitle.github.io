@@ -28,7 +28,8 @@
         transition:opacity .25s, transform .3s}
   .pill.breathe{opacity:.35;transform:scale(.92)}
   .w{display:inline-block;white-space:pre;pointer-events:auto;cursor:default;position:relative}
-  .w.pop{animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
+  .w{opacity:0;transition:opacity .22s ease}
+  .w.shown{opacity:1}
   .syl{display:inline-block;font-variation-settings:"wght" 400;transform-origin:50% 88%;
        transition:color .18s ease;will-change:transform}
   @keyframes pop{0%{transform:scale(.7);opacity:.2}100%{transform:scale(1);opacity:1}}
@@ -113,7 +114,7 @@
       <h2>Onomatope engine</h2>
       <div class="slider-row"><label>bounce</label><input type="range" id="amp" min="0" max="2" step="0.05" value="1"><span class="v" id="amp-v">1</span></div>
       <div class="slider-row"><label>snappiness</label><input type="range" id="snap" min="0.3" max="2.5" step="0.05" value="1"><span class="v" id="snap-v">1</span></div>
-      <div class="slider-row"><label>motion budget</label><input type="range" id="bud" min="0" max="1" step="0.02" value="0.35"><span class="v" id="bud-v">0.35</span></div>
+      <div class="slider-row"><label>movers / chunk</label><input type="range" id="bud" min="0" max="3" step="1" value="2"><span class="v" id="bud-v">2</span></div>
       <div class="slider-row"><label>fig-ground</label><input type="range" id="fg" min="0" max="1" step="0.05" value="0.5"><span class="v" id="fg-v">0.5</span></div>
       <div class="slider-row"><label>threshold</label><input type="range" id="thr" min="0.3" max="0.8" step="0.01" value="0.55"><span class="v" id="thr-v">0.55</span></div>
     </div>
@@ -143,7 +144,7 @@ let currentChunk=-1, rendered=[]; // rendered word records
 
 // ── parameters ──
 const P={thr:.55,attack:120,decay:600,residual:550,peakMax:900,
-         amp:1,snap:1,budget:.35,fig:.5};
+         amp:1,snap:1,budget:2,fig:.5};
 const bindS=(id,key)=>{const el=document.getElementById(id),lab=document.getElementById(id+'-v');
   el.addEventListener('input',()=>{P[key]=parseFloat(el.value);lab.textContent=el.value;});};
 bindS('thr','thr');bindS('amp','amp');bindS('snap','snap');bindS('bud','budget');bindS('fg','fig');
@@ -236,8 +237,13 @@ function showChunk(ci){
     });
     wrap.addEventListener('mouseleave',()=>tip.style.display='none');
     pill.appendChild(wrap);
-    rendered.push({w,gi,wrap,spans,isLast:i===ch.words.length-1,glide:{x:0,v:0},glideFired:false});
+    rendered.push({w,gi,wrap,spans,isLast:i===ch.words.length-1,glide:{x:0,v:0},glideFired:false,mover:false});
   });
+  // Stillness is the default: only the top-K locally-contrastive words
+  // in this chunk are allowed to move at all (K = movers/chunk slider).
+  const ranked=[...rendered].filter(r=>promZ[r.gi]>0.6&&(r.w.prominence??0)>=P.thr*0.8)
+                            .sort((a,b)=>promZ[b.gi]-promZ[a.gi]);
+  ranked.slice(0,P.budget).forEach(r=>r.mover=true);
   pill.classList.remove('breathe');
   pill.style.display='inline-block';
   currentChunk=ci;
@@ -272,7 +278,7 @@ function render(ts){
     rendered.forEach(r=>{
       const {w,gi,wrap,spans}=r;
       const appeared=t>=w.start-0.02;
-      if(appeared&&wrap.style.visibility==='hidden'){wrap.style.visibility='visible';wrap.classList.add('pop');}
+      if(appeared&&wrap.style.visibility==='hidden'){wrap.style.visibility='visible';wrap.classList.add('shown');}
       if(!appeared)return;
       const wz=promZ[gi];                      // word emphasis as local contrast
       const isProm=wz>0.6&&(w.prominence??0)>=P.thr*0.8;
@@ -294,43 +300,46 @@ function render(ts){
         wrap.style.opacity='';return;
       }
 
-      // ── Onomatope / Hype: syllable spring engine ─────────────────
-      wrap.style.opacity=(isProm||P.fig===0)?'':String(1-0.12*P.fig);
+      // ── Onomatope / Hype: sparse syllable spring engine ──────────
+      // Default is stillness. Only chunk-level "movers" (top-K by local
+      // contrast) animate; acoustic qualities shape HOW the emphasized
+      // syllable moves, never WHO moves.
+      wrap.style.opacity=(r.mover||P.fig===0)?'':String(1-0.10*P.fig);
       spans.forEach((sp,i2)=>{
         const s=sp.s;
-        // fire impulse at syllable peak — only if it clears the motion budget
-        if(!sp.fired&&t>=s.peak){
+        const carrier=r.mover&&i2===strongIdx;               // the one syllable that moves
+        if(carrier&&!sp.fired&&t>=s.peak){
           sp.fired=true;
-          const drive=0.55*sig(s.z-0.3)+0.45*sig(wz-0.3);   // syllable × word local contrast
-          if(drive>1-P.budget){
-            const A=P.amp*(0.10+0.35*drive)*(isProm?1.35:1);
-            sp.spring.v-=A*22;                               // squash first, spring rebounds → stretch
+          const drive=0.55*sig(s.z-0.3)+0.45*sig(wz-0.3);
+          const A=P.amp*(0.18+0.42*drive);
+          sp.spring.v-=A*22;                                 // squash first, rebound → stretch
+        }
+        let sx=1,sy=1,jx=0,jy=0,wght=400;
+        if(carrier){
+          const k=(180+s.sharp*900)*P.snap*P.snap;           // plosive-ness → snappier
+          stepSpring(sp.spring,k,2*Math.sqrt(k)*0.32,dt);
+          sy=1+sp.spring.x; sx=1-sp.spring.x*0.55;           // volume-preserving
+          if(s.len>0.30&&t>=s.t0&&t<=s.t1+0.1){              // long nucleus → stretch
+            const g=Math.min(1,(t-s.t0)/0.12);
+            sx*=1+Math.min(0.30,(s.len-0.30)*0.9)*g;
           }
+          if(s.noise>0.13&&t>=s.t0&&t<=s.t1){                // fricative-ness → shiver
+            const a=Math.min(1.6,(s.noise-0.13)*14)*P.amp;
+            jx=(Math.random()-0.5)*a;jy=(Math.random()-0.5)*a;
+          }
+          wght=envelope((t-w.start)*1000,peakWeight(w.prominence));
+        }else if(r.mover){
+          wght=envelope((t-w.start)*1000,Math.min(560,peakWeight(w.prominence))); // rest of the mover word: weight only
+        }else{
+          wght=400-24*P.fig;                                 // ground recedes slightly
         }
-        const k=(180+s.sharp*900)*P.snap*P.snap;             // plosive-ness → snappier
-        const c=2*Math.sqrt(k)*0.32;
-        stepSpring(sp.spring,k,c,dt);
-        let sy=1+sp.spring.x, sx=1-sp.spring.x*0.55;         // volume-preserving squash & stretch
-        // long nucleus → lateral stretch while sounding
-        if(s.len>0.30&&t>=s.t0&&t<=s.t1+0.1){
-          const g=Math.min(1,(t-s.t0)/0.12);
-          sx*=1+Math.min(0.30,(s.len-0.30)*0.9)*g;
-        }
-        // noisy onset (fricative-ness) → shiver
-        let jx=0,jy=0;
-        if(s.noise>0.13&&t>=s.t0&&t<=s.t1){
-          const a=Math.min(1.6,(s.noise-0.13)*14)*P.amp;
-          jx=(Math.random()-0.5)*a;jy=(Math.random()-0.5)*a;
-        }
-        // weight: strong syllable of a prominent word carries the emphasis; weak syllables recede
-        let wght=400;
-        if(isProm&&i2===strongIdx)wght=envelope((t-w.start)*1000,peakWeight(w.prominence));
-        else if(!isProm)wght=400-30*P.fig;
         sp.el.style.fontVariationSettings=`"wght" ${Math.round(wght)}`;
-        sp.el.style.transform=`translate(${jx.toFixed(1)}px,${jy.toFixed(1)}px) scale(${sx.toFixed(3)},${sy.toFixed(3)})`;
+        const tr=(sx!==1||sy!==1||jx||jy)
+          ?`translate(${jx.toFixed(1)}px,${jy.toFixed(1)}px) scale(${sx.toFixed(3)},${sy.toFixed(3)})`:'';
+        sp.el.style.transform=tr;
         if(mode==='hype'){
           const active=t>=w.start&&t<=w.end+0.12;
-          sp.el.style.color=active?'#ffd166':(isProm?'#ffb347':'#fff');
+          sp.el.style.color=active?'#ffd166':(r.mover?'#ffb347':'#fff');
         }else sp.el.style.color='';
       });
       // boundary tone: phrase-final word glides with final-F0 slope, then settles home
