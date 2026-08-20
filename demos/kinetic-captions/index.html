@@ -314,16 +314,40 @@ function render(ts){
           const A=P.amp*(0.18+0.42*drive);
           sp.spring.v-=A*22;                                 // squash first, rebound → stretch
         }
-        let sx=1,sy=1,jx=0,jy=0,wght=400;
+        let sx=1,sy=1,jx=0,jy=0,ty=0,rot=0,wght=400;
         if(carrier){
-          const k=(180+s.sharp*900)*P.snap*P.snap;           // plosive-ness → snappier
-          stepSpring(sp.spring,k,2*Math.sqrt(k)*0.32,dt);
-          sy=1+sp.spring.x; sx=1-sp.spring.x*0.55;           // volume-preserving
-          if(s.len>0.30&&t>=s.t0&&t<=s.t1+0.1){              // long nucleus → stretch
-            const g=Math.min(1,(t-s.t0)/0.12);
-            sx*=1+Math.min(0.30,(s.len-0.30)*0.9)*g;
+          // ── cartoon hop, deterministic in video time (scrub-safe) ──
+          // anticipation squash → launch (stretch) → apex → fall → landing
+          // squash → damped settle wobble
+          const drive=0.55*sig(s.z-0.3)+0.45*sig(wz-0.3);
+          const H=(9+16*drive)*P.amp;                 // hop height px
+          const DUR=0.55/P.snap*(1-0.35*Math.min(1,s.sharp*6)); // plosive → quicker hop
+          const rel=t-s.peak;
+          const dir=((gi*2654435761)>>>3)%2?1:-1;     // stable per-word wiggle direction
+          if(rel>=0&&rel<=DUR){
+            const p=rel/DUR;
+            if(p<0.14){                               // anticipation: crouch
+              const q=p/0.14;
+              sy=1-0.28*q; sx=1+0.20*q;
+            }else if(p<0.72){                         // airborne
+              const q=(p-0.14)/0.58;
+              const arc=Math.sin(Math.PI*q);
+              ty=-H*arc;
+              sy=1+0.22*arc; sx=1-0.13*arc;           // stretch at speed
+              rot=dir*4*Math.sin(Math.PI*q);          // cheeky tilt
+            }else{                                    // landing squash
+              const q=(p-0.72)/0.28;
+              sy=1-0.30*(1-q); sx=1+0.22*(1-q);
+            }
+          }else if(rel>DUR&&rel<=DUR+0.5){            // settle wobble
+            const q=rel-DUR;
+            const wob=Math.exp(-q*7)*Math.sin(q*28);
+            sy=1+0.10*wob; sx=1-0.06*wob;
           }
-          if(s.noise>0.13&&t>=s.t0&&t<=s.t1){                // fricative-ness → shiver
+          if(s.len>0.30&&rel>=0&&rel<=DUR){           // long nucleus → wider stretch
+            sx*=1+Math.min(0.30,(s.len-0.30)*0.9);
+          }
+          if(s.noise>0.13&&t>=s.t0&&t<=s.t1){         // fricative-ness → shiver
             const a=Math.min(1.6,(s.noise-0.13)*14)*P.amp;
             jx=(Math.random()-0.5)*a;jy=(Math.random()-0.5)*a;
           }
@@ -334,8 +358,8 @@ function render(ts){
           wght=400-24*P.fig;                                 // ground recedes slightly
         }
         sp.el.style.fontVariationSettings=`"wght" ${Math.round(wght)}`;
-        const tr=(sx!==1||sy!==1||jx||jy)
-          ?`translate(${jx.toFixed(1)}px,${jy.toFixed(1)}px) scale(${sx.toFixed(3)},${sy.toFixed(3)})`:'';
+        const tr=(sx!==1||sy!==1||jx||jy||ty||rot)
+          ?`translate(${jx.toFixed(1)}px,${(jy+ty).toFixed(1)}px) rotate(${rot.toFixed(1)}deg) scale(${sx.toFixed(3)},${sy.toFixed(3)})`:'';
         sp.el.style.transform=tr;
         if(mode==='hype'){
           const active=t>=w.start&&t<=w.end+0.12;
