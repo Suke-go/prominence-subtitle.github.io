@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic Prosody Captions — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1115; --panel: #1a1e26; --text: #e8eaf0; --dim: #8a91a0;
+    --accent: #5b8cff;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    min-height: 100vh; padding: 1.2rem;
+  }
+  h1 { font-size: 1.05rem; font-weight: 600; margin-bottom: .2rem; }
+  .sub { color: var(--dim); font-size: .8rem; margin-bottom: 1rem; }
+  .stage {
+    position: relative; max-width: 960px; margin: 0 auto;
+    background: #000; border-radius: 10px; overflow: hidden;
+  }
+  video { width: 100%; display: block; }
+  /* Caption overlay */
+  .cap {
+    position: absolute; left: 0; right: 0; bottom: 4%;
+    text-align: center; pointer-events: none;
+    padding: 0 6%;
+  }
+  .cap-line {
+    display: inline-block;
+    background: rgba(0,0,0,0.72);
+    border-radius: 6px;
+    padding: .18em .5em;
+    font-size: clamp(16px, 2.6vw, 26px);
+    line-height: 1.45;
+    color: #fff;
+  }
+  .w {
+    display: inline-block;
+    font-weight: 400;
+    font-variation-settings: "wght" 400;
+    white-space: pre;
+    transition: none;
+  }
+  /* Controls */
+  .controls {
+    max-width: 960px; margin: 1rem auto 0;
+    background: var(--panel); border-radius: 10px; padding: 1rem 1.2rem;
+    display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: center;
+    font-size: .85rem;
+  }
+  .group { display: flex; flex-direction: column; gap: .3rem; }
+  .group label { color: var(--dim); font-size: .72rem; }
+  select, button {
+    background: #232936; color: var(--text); border: 1px solid #333b4d;
+    border-radius: 6px; padding: .35rem .6rem; font-size: .85rem; cursor: pointer;
+  }
+  .modes { display: flex; gap: .4rem; }
+  .modes button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  input[type="range"] { width: 130px; accent-color: var(--accent); }
+  .val { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .note { max-width: 960px; margin: .8rem auto 0; color: var(--dim); font-size: .75rem; line-height: 1.6; }
+</style>
+</head>
+<body>
+<h1>Kinetic Prosody Captions — Prototype</h1>
+<div class="sub">P1: プロミネンス→font-weight包絡(急立ち上がり・緩減衰・痕跡残し) / P2: ポーズ・句読点による韻律句チャンク表示</div>
+
+<div class="stage">
+  <video id="video" controls crossorigin="anonymous"></video>
+  <div class="cap"><span class="cap-line" id="capline" style="display:none"></span></div>
+</div>
+
+<div class="controls">
+  <div class="group">
+    <label>クリップ</label>
+    <select id="clip">
+      <option value="H1">H1 — Ken Robinson</option>
+      <option value="H2">H2 — Brené Brown</option>
+      <option value="H3" selected>H3 — Kelly McGonigal</option>
+      <option value="L1">L1 — Hans Rosling</option>
+      <option value="L2">L2 — David Christian</option>
+      <option value="L3">L3 — Al Gore</option>
+    </select>
+  </div>
+  <div class="group">
+    <label>提示モード</label>
+    <div class="modes">
+      <button id="m-normal">Normal</button>
+      <button id="m-static">Static(実験A: サイズ)</button>
+      <button id="m-kinetic" class="active">Kinetic(weight包絡)</button>
+    </div>
+  </div>
+  <div class="group">
+    <label>プロミネンス閾値 <span class="val" id="thr-v">0.55</span></label>
+    <input type="range" id="thr" min="0.3" max="0.8" step="0.01" value="0.55">
+  </div>
+  <div class="group">
+    <label>減衰時間 <span class="val" id="dec-v">600</span> ms</label>
+    <input type="range" id="dec" min="150" max="1500" step="50" value="600">
+  </div>
+  <div class="group">
+    <label>痕跡weight <span class="val" id="res-v">550</span></label>
+    <input type="range" id="res" min="400" max="700" step="10" value="550">
+  </div>
+</div>
+
+<p class="note">
+  設計文書 docs/kinetic_prosody_caption_design.md の実装スケッチ。weight(t) = 400 + (peak−400)·env(t)。
+  env は語オンセットから120msで立ち上がり、減衰後も痕跡weightを保持(見逃し保険)。peakはプロミネンス値を閾値からの超過分で900までスケール。
+  チャンク境界は語間ギャップ&gt;0.35s または句読点。P3(句末音調→ベースライン軌道)はF0抽出後に追加予定。
+</p>
+
+<script>
+const DATA_BASE = '../../experiments/subtitle_experiment/data';
+const video = document.getElementById('video');
+const capline = document.getElementById('capline');
+let words = [];        // flat word list (normal condition: carries prominence)
+let chunks = [];       // [{start,end,words:[...]}]
+let mode = 'kinetic';
+
+// ── parameters (sliders) ──
+const P = { thr: 0.55, attack: 120, decay: 600, residual: 550, peakMax: 900 };
+
+function bind(id, key, fmt) {
+  const el = document.getElementById(id), lab = document.getElementById(id + '-v');
+  el.addEventListener('input', () => { P[key] = parseFloat(el.value); lab.textContent = fmt(el.value); });
+}
+bind('thr', 'thr', v => (+v).toFixed(2));
+bind('dec', 'decay', v => v);
+bind('res', 'residual', v => v);
+
+// ── chunking (P2): pause >0.35s or sentence punctuation ends a chunk ──
+function buildChunks(ws) {
+  const out = []; let cur = [];
+  for (let i = 0; i < ws.length; i++) {
+    const w = ws[i], prev = ws[i - 1];
+    if (cur.length && prev && (w.start - prev.end) > 0.35) { out.push(cur); cur = []; }
+    cur.push(w);
+    if (/[.?!]$/.test(w.text) || cur.length >= 12) { out.push(cur); cur = []; }
+  }
+  if (cur.length) out.push(cur);
+  return out.map(c => ({ start: c[0].start, end: c[c.length - 1].end, words: c }));
+}
+
+async function loadClip(id) {
+  const subs = await fetch(`${DATA_BASE}/${id}/subtitle.json`).then(r => r.json());
+  words = subs.conditions.normal;
+  chunks = buildChunks(words);
+  video.src = `${DATA_BASE}/${id}/video.mp4`;
+  capline.style.display = 'none';
+  currentChunk = -1;
+}
+
+// ── rendering ──
+let currentChunk = -1;
+let spans = [];
+
+function showChunk(ci) {
+  const ch = chunks[ci];
+  capline.innerHTML = '';
+  spans = ch.words.map((w, i) => {
+    const s = document.createElement('span');
+    s.className = 'w';
+    s.textContent = (i ? ' ' : '') + w.text;
+    capline.appendChild(s);
+    return s;
+  });
+  capline.style.display = 'inline-block';
+  currentChunk = ci;
+}
+
+function peakWeight(prom) {
+  if (prom == null || prom <= P.thr) return 400;
+  const x = Math.min(1, (prom - P.thr) / (1 - P.thr));
+  return 400 + x * (P.peakMax - 400);
+}
+
+// envelope: 0→1 over attack, then decays toward residual fraction, holds
+function envelope(dtMs, peak) {
+  if (dtMs < 0) return 400;
+  if (dtMs <= P.attack) {
+    return 400 + (peak - 400) * (dtMs / P.attack);
+  }
+  const resW = Math.min(peak, P.residual);
+  const k = Math.exp(-(dtMs - P.attack) / P.decay);
+  return resW + (peak - resW) * k;
+}
+
+function render() {
+  const t = video.currentTime;
+  // find active/most recent chunk (lookback keeps caption up between chunks)
+  let ci = -1;
+  for (let i = 0; i < chunks.length; i++) {
+    if (t >= chunks[i].start - 0.05) ci = i; else break;
+  }
+  if (ci >= 0 && t <= chunks[ci].end + 1.6) {
+    if (ci !== currentChunk) showChunk(ci);
+    const ch = chunks[ci];
+    ch.words.forEach((w, i) => {
+      const el = spans[i]; if (!el) return;
+      const appeared = t >= w.start - 0.02;
+      el.style.visibility = appeared ? 'visible' : 'hidden';
+      if (!appeared) return;
+      if (mode === 'normal') {
+        el.style.fontVariationSettings = '"wght" 400';
+        el.style.fontSize = '';
+      } else if (mode === 'static') {
+        // Experiment-A style: 3-bin size by prominence (static)
+        const p = w.prominence ?? 0;
+        const size = p > 0.66 ? '1.15em' : p > 0.33 ? '1.0em' : '0.85em';
+        el.style.fontSize = size;
+        el.style.fontVariationSettings = '"wght" 400';
+      } else {
+        // Kinetic: weight envelope from word onset
+        const peak = peakWeight(w.prominence);
+        const wght = envelope((t - w.start) * 1000, peak);
+        el.style.fontVariationSettings = `"wght" ${Math.round(wght)}`;
+        el.style.fontSize = '';
+      }
+    });
+  } else {
+    capline.style.display = 'none';
+    currentChunk = -1;
+  }
+  requestAnimationFrame(render);
+}
+
+// ── mode buttons ──
+for (const m of ['normal', 'static', 'kinetic']) {
+  document.getElementById('m-' + m).addEventListener('click', (e) => {
+    mode = m;
+    document.querySelectorAll('.modes button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+  });
+}
+
+document.getElementById('clip').addEventListener('change', e => loadClip(e.target.value));
+loadClip('H3');
+requestAnimationFrame(render);
+</script>
+</body>
+</html>
