@@ -68,7 +68,7 @@
 <body>
 <header>
   <h1>Prosody Playground</h1>
-  <span class="tag">sound-driven syllable kinetics — no lexicon, pure DSP · <kbd>1</kbd>–<kbd>5</kbd> presets · hover a word</span>
+  <span class="tag">sound-driven syllable kinetics — no lexicon, pure DSP · <kbd>1</kbd>–<kbd>6</kbd> presets · hover a word</span>
 </header>
 
 <div class="wrap">
@@ -105,8 +105,9 @@
         <button data-p="normal">Normal<span class="key">1</span></button>
         <button data-p="static">Static (Exp A)<span class="key">2</span></button>
         <button data-p="kinetic">Kinetic wght<span class="key">3</span></button>
-        <button data-p="onomatope" class="active">Onomatope<span class="key">4</span></button>
-        <button data-p="hype" style="grid-column:1/3">Hype 🔥 (Onomatope + karaoke)<span class="key">5</span></button>
+        <button data-p="smart" class="active">Smart ✨<span class="key">4</span></button>
+        <button data-p="onomatope">Onomatope<span class="key">5</span></button>
+        <button data-p="hype">Hype 🔥<span class="key">6</span></button>
       </div>
     </div>
 
@@ -150,14 +151,23 @@ const bindS=(id,key)=>{const el=document.getElementById(id),lab=document.getElem
 bindS('thr','thr');bindS('amp','amp');bindS('snap','snap');bindS('bud','budget');bindS('fg','fig');
 
 // ── presets ──
-let mode='onomatope';
+let mode='smart';
+const PRESET_PARAMS={
+  smart:     {amp:0.4, snap:1.3, budget:1, fig:0.3},
+  onomatope: {amp:1.0, snap:1.0, budget:2, fig:0.5},
+  hype:      {amp:1.2, snap:1.0, budget:2, fig:0.5},
+};
+const SLIDER_IDS={amp:'amp',snap:'snap',budget:'bud',fig:'fg'};
 function applyPreset(name){
   mode=name;
+  const pp=PRESET_PARAMS[name];
+  if(pp)for(const k in pp){P[k]=pp[k];const el=document.getElementById(SLIDER_IDS[k]);
+    if(el){el.value=pp[k];document.getElementById(SLIDER_IDS[k]+'-v').textContent=pp[k];}}
   document.querySelectorAll('.presets button').forEach(b=>b.classList.toggle('active',b.dataset.p===name));
 }
 document.querySelectorAll('.presets button').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.p)));
 document.addEventListener('keydown',e=>{
-  const map={'1':'normal','2':'static','3':'kinetic','4':'onomatope','5':'hype'};
+  const map={'1':'normal','2':'static','3':'kinetic','4':'smart','5':'onomatope','6':'hype'};
   if(map[e.key]&&!e.target.matches('input,select'))applyPreset(map[e.key]);
 });
 
@@ -315,7 +325,21 @@ function render(ts){
           sp.spring.v-=A*22;                                 // squash first, rebound → stretch
         }
         let sx=1,sy=1,jx=0,jy=0,ty=0,rot=0,wght=400;
-        if(carrier){
+        if(carrier&&mode==='smart'){
+          // ── Smart: small precise lift with ease-out-back, no squash, no tilt ──
+          const drive=0.55*sig(s.z-0.3)+0.45*sig(wz-0.3);
+          const H=(3+7*drive)*P.amp*2.5;              // 3–10 px at amp .4
+          const DUR=0.42/P.snap;
+          const rel=t-s.peak;
+          if(rel>=0&&rel<=DUR){
+            const p=rel/DUR;
+            let b;
+            if(p<0.35){ const q=p/0.35; const c1=1.70158,c3=c1+1; b=1+c3*Math.pow(q-1,3)+c1*Math.pow(q-1,2); } // ease-out-back
+            else { const q=(p-0.35)/0.65; b=1-(q<0.5?2*q*q:1-Math.pow(-2*q+2,2)/2); }               // ease-in-out return
+            ty=-H*b;
+          }
+          wght=envelope((t-w.start)*1000,peakWeight(w.prominence));
+        }else if(carrier){
           // ── cartoon hop, deterministic in video time (scrub-safe) ──
           // anticipation squash → launch (stretch) → apex → fall → landing
           // squash → damped settle wobble
@@ -356,6 +380,12 @@ function render(ts){
           wght=envelope((t-w.start)*1000,Math.min(560,peakWeight(w.prominence))); // rest of the mover word: weight only
         }else{
           wght=400-24*P.fig;                                 // ground recedes slightly
+        }
+        // Smart: near-subliminal beat pulse on every stressed syllable (the rhythm
+        // that emphasized lifts land on — the "rhyme lands on the beat" feeling)
+        if(mode==='smart'&&!carrier&&s.z>0.2){
+          const d=Math.abs(t-s.peak);
+          if(d<0.09)wght+=22*(1-d/0.09);
         }
         sp.el.style.fontVariationSettings=`"wght" ${Math.round(wght)}`;
         const tr=(sx!==1||sy!==1||jx||jy||ty||rot)
