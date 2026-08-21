@@ -9,8 +9,11 @@ const STRINGS = {
 
   // Participant ID
   pid_preamble: { en: "The experimenter should enter the participant number. This determines condition assignment.", ja: "実験者が参加者番号を入力してください。条件の割り当てに使用されます。" },
-  pid_num_prompt: { en: "Participant number (1–36)", ja: "参加者番号（1〜36）" },
-  pid_id_prompt: { en: "Participant ID (student number)", ja: "参加者ID（学生番号等）" },
+  pid_loading: { en: "Preparing your session…", ja: "セッションを準備しています…" },
+  pid_contact_intro: { en: "Please enter your name and an email address for sending the gift card reward. They are used only for sending the reward and are stored separately from your responses.", ja: "謝礼（Amazonギフトカード）送付のため、お名前とメールアドレスを入力してください。謝礼の送付以外には使用せず、回答データとは分けて管理します。" },
+  pid_name_prompt: { en: "Name", ja: "お名前" },
+  pid_name_placeholder: { en: "e.g. Taro Tsukuba", ja: "例: 筑波 太郎" },
+  pid_email_prompt: { en: "Email address (for the gift card)", ja: "メールアドレス（ギフトカード送付用）" },
   pid_score_placeholder: { en: "e.g. TOEIC 785 / IELTS 6.5", ja: "例: TOEIC 785 / 英検準1級 / IELTS 6.5" },
 
   // Consent

@@ -222,49 +222,56 @@
     };
 
     // ═══════════════════════════════════════════════════
-    // PHASE 1b: Participant Number (auto-assigned) + ID
+    // PHASE 1b: Participant Number (fully automatic) + ID
     // ═══════════════════════════════════════════════════
-    // Fetch the next sequential number from GAS in the background;
-    // falls back to manual entry if unreachable.
-    const autoPidPromise = getNextParticipantNum();
-    autoPidPromise.then(n => { window._autoPid = n; });
-    function registerParticipant(num) {
-      const { pattern, orderIdx } = assignFromNumber(num);
-      jsPsych.data.addProperties({
-        participant_num: num,
-        participant_id: `P${num}`,
-        latin_square_pattern: pattern,
-        presentation_order: orderIdx,
-      });
-      console.log(`Assignment: #${num} → pattern=${pattern}, order=${orderIdx}`);
+    // The number is fetched from GAS (sequential counter → perfect
+    // counterbalancing). Participants never type it. If GAS is unreachable
+    // after retries, fall back to a random number and flag it in the data.
+    async function obtainParticipantNum() {
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const n = await getNextParticipantNum(6000);
+        if (n) return { num: n, source: 'gas' };
+      }
+      return { num: 1 + Math.floor(Math.random() * 36), source: 'random_fallback' };
     }
+    const pidPromise = obtainParticipantNum();
 
-    // Auto-assigned: just confirm the number. Manual entry only as fallback
-    // when GAS is unreachable.
+    // Loading screen: waits until the number is available
+    const pidWait = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: () => `<div class="phase-card" style="text-align:center">
+        <p class="phase-subtitle">${t('pid_loading')}</p></div>`,
+      choices: 'NO_KEYS',
+      on_load: async () => {
+        const { num, source } = await pidPromise;
+        window._pid = { num, source };
+        jsPsych.finishTrial({ participant_num: num, pid_source: source });
+      },
+      data: { phase: 'pid_assign' },
+    };
+
     const participantId = {
-      timeline: [
-        {
-          timeline: [{
-            type: jsPsychHtmlButtonResponse,
-            stimulus: () => `<div class="phase-card" style="text-align:center">
-              <p class="phase-subtitle">${t('pid_auto_assigned', { n: window._autoPid })}</p>
-            </div>`,
-            choices: () => [t('btn_next')],
-            on_finish: () => registerParticipant(window._autoPid),
-          }],
-          conditional_function: () => !!window._autoPid,
-        },
-        {
-          timeline: [{
-            type: jsPsychSurveyText,
-            preamble: () => `<p class="phase-subtitle">${t('pid_preamble')}</p>`,
-            questions: () => [{ prompt: t('pid_num_prompt'),
-              name: 'participant_num', required: true, placeholder: '1' }],
-            on_finish: (data) => registerParticipant(parseInt(data.response.participant_num) || 1),
-          }],
-          conditional_function: () => !window._autoPid,
-        },
+      type: jsPsychSurveyText,
+      preamble: () => `<p class="phase-subtitle">${t('pid_auto_assigned', { n: window._pid.num })}</p>
+        <p>${t('pid_contact_intro')}</p>`,
+      questions: () => [
+        { prompt: t('pid_name_prompt'), name: 'participant_name', required: true, placeholder: t('pid_name_placeholder') },
+        { prompt: t('pid_email_prompt'), name: 'participant_email', required: true, placeholder: 'email@example.com' },
       ],
+      on_finish: (data) => {
+        const num = window._pid.num;
+        const { pattern, orderIdx } = assignFromNumber(num);
+        jsPsych.data.addProperties({
+          participant_num: num,
+          pid_source: window._pid.source,
+          participant_id: `P${String(num).padStart(2, '0')}`,
+          participant_name: data.response.participant_name,
+          participant_email: data.response.participant_email,
+          latin_square_pattern: pattern,
+          presentation_order: orderIdx,
+        });
+        console.log(`Assignment: #${num} (${window._pid.source}) → pattern=${pattern}, order=${orderIdx}`);
+      }
     };
 
     // ═══════════════════════════════════════════════════
@@ -582,25 +589,9 @@
         { prompt: t('post_describe'), name: 'diff_description', rows: 3, required: false },
         { prompt: t('post_impressions'), name: 'impressions', rows: 4, required: false },
       ],
-    };
-
-    // ═══════════════════════════════════════════════════
-    // PHASE 7b: Reward email input
-    // ═══════════════════════════════════════════════════
-    const rewardEmail = {
-      type: jsPsychSurveyText,
-      preamble: () => `<div class="phase-card" style="text-align:center">
-        <h2>🎁 ${t('reward_title')}</h2>
-        <p>${t('reward_body')}</p>
-      </div>`,
-      questions: () => [
-        { prompt: t('reward_email_prompt'), name: 'reward_email', placeholder: 'email@example.com', rows: 1, required: false },
-      ],
       button_label: () => t('reward_submit'),
-      data: { phase: 'reward_email' },
       on_finish: async function() {
-        // Send ALL data to Google Sheets right after email entry
-        // (must happen before the terminal completion screen)
+        // Send ALL data to Google Sheets (must happen before the terminal completion screen)
         const data = jsPsych.data.get().json();
         window._experimentData = data;
         console.log('[GAS] Sending data to Google Sheets...');
@@ -648,7 +639,6 @@
           trials.forEach(t => jsPsych.addNodeToEndOfTimeline(t));
           jsPsych.addNodeToEndOfTimeline(postSurvey1);
           jsPsych.addNodeToEndOfTimeline(postSurvey2);
-          jsPsych.addNodeToEndOfTimeline(rewardEmail);
           jsPsych.addNodeToEndOfTimeline(completion);
         }
       }],
@@ -656,6 +646,7 @@
 
     const timeline = [
       langSelect,
+      pidWait,
       participantId,
       consent,
       consentUpload,
