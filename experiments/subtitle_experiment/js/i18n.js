@@ -74,11 +74,11 @@ const STRINGS = {
   consent_agree: { en: "I agree to participate", ja: "上記の説明を理解し、研究への参加に同意します" },
   consent_checkbox: { en: "I have read and understood the above information, and I voluntarily agree to participate in this study.", ja: "上記の説明事項を読み、内容を理解した上で、本研究に参加することに同意します。" },
 
-  // Consent form download + signed scan upload
-  cupload_title: { en: "Consent Form Submission", ja: "同意書の提出" },
-  cupload_body: { en: "Please download the consent form below, sign it, and upload a scan or photo of the signed form. If you later wish to withdraw your consent, please contact the investigators listed in the consent form (withdrawal is possible up to 90 days after signing).", ja: "以下から同意書をダウンロードして署名し、署名済みの同意書のスキャンまたは写真をアップロードしてください。同意の撤回を希望する場合は、同意書に記載の連絡先（実施責任者・実施分担者）までご連絡ください（署名から90日以内）。" },
-  cupload_dl_consent: { en: "Download consent form (PDF)", ja: "同意書をダウンロード（PDF）" },
-  cupload_upload_prompt: { en: "Upload the signed consent form (image or PDF, max 10 MB):", ja: "署名済み同意書をアップロードしてください（画像またはPDF、最大10MB）：" },
+  // Pledge download + signed scan upload
+  cupload_title: { en: "Pledge Submission", ja: "誓約書の提出" },
+  cupload_body: { en: "Please download the pledge below, sign it, and upload a scan or photo of the signed document.", ja: "以下から誓約書をダウンロードして署名し、署名済みの書類のスキャンまたは写真をアップロードしてください。" },
+  cupload_dl_consent: { en: "Download pledge (PDF)", ja: "誓約書をダウンロード（PDF）" },
+  cupload_upload_prompt: { en: "Upload the signed pledge (image or PDF, max 10 MB):", ja: "署名済み誓約書をアップロードしてください（画像またはPDF、最大10MB）：" },
   cupload_selected: { en: "Selected: {name}", ja: "選択済み: {name}" },
   cupload_too_large: { en: "File is too large (max 10 MB). Please choose a smaller file.", ja: "ファイルが大きすぎます（最大10MB）。小さいファイルを選んでください。" },
   cupload_submit: { en: "Upload and continue", ja: "アップロードして次へ" },
